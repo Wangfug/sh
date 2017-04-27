@@ -1,0 +1,234 @@
+@charset "UTF-8";
+/* CSS Document */
+
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	font-family: '微软雅黑'
+}
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, form, img, dl, dt, dd, table, th, td, blockquote, fieldset, div, strong, label, em {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+img {
+	border: none;
+}
+.main {
+	margin-left: 20px;
+}
+/*表格开始*/
+
+.xyzh div {
+	margin-bottom: 5px;
+	font-size: 16px;
+	color: #333;
+}
+table.altrowstable {
+	font-family: verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	text-align: center;
+	border-width: 1px;
+	border-color: #ddd;
+	border-collapse: collapse;
+	width:1070px;
+}
+table.altrowstable th {
+	border-width: 1px;
+	padding: 8px 20px;
+	border-style: solid;
+	border-color: #ddd;
+	background-color: #3598db;
+	color: white;
+}
+table.altrowstable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #ddd;
+}
+.oddrowcolor {
+	background-color: #fff;
+}
+.evenrowcolor {
+	background-color: #fafafa;
+}
+tr:hover {
+	background-color: #eaf2ff;
+}
+/*表格结束*/
+/*基本信息开始*/
+.infor_box {
+	margin: 10px 0;
+	overflow: hidden;
+}
+.infor_box ul li {
+	overflow: hidden;
+	font-size: 14px;
+	color: #333;
+	margin-bottom: 8px;
+}
+.mc {
+	width: 140px;
+	text-align: right;
+}
+.infor_box li span {
+	display: block;
+	float: left;
+/* 	margin-right: 20px; */
+}
+.infor_box ul {
+	float: left;
+	margin: 20px 80px 10px 30px;
+}
+.infor_box .bt {
+	width: 1060px;
+	line-height: 30px;
+	background-color: #ededed;
+	color: #333;
+	font-size: 14px;
+	border: 1px solid #ddd;
+	padding-left: 10px;
+	border-bottom: none;
+	-moz-border-top-right-radius: 3px;      /* Gecko browsers */
+	-webkit-border-top-right-radius: 3px;   /* Webkit browsers */
+	border-top-right-radius: 3px;
+	-moz-border-top-left-radius: 3px;      /* Gecko browsers */
+	-webkit-border-top-left-radius: 3px;   /* Webkit browsers */
+	border-top-left-radius: 3px;
+}
+.infor {
+	background-color: #fff;
+	border: #ddd solid 1px;
+	width: 1070px;
+	height: 80px;
+	-moz-border-bottom-right-radius: 3px;      /* Gecko browsers */
+	-webkit-border-bottom-right-radius: 3px;   /* Webkit browsers */
+	border-bottom-right-radius: 3px;
+	-moz-border-bottom-left-radius: 3px;      /* Gecko browsers */
+	-webkit-border-bottom-left-radius: 3px;   /* Webkit browsers */
+	border-bottom-left-radius: 3px;
+}
+/*基本信息结束*/
+.button {
+	overflow: hidden;
+}
+.button div {
+	color: #333;
+	font-size: 12px;
+	padding: 0 5px 0 20px;
+	line-height: 22px;
+	background-color: #fafafa;
+	border: 1px solid #ddd;
+	width: 28px;
+	text-align: center;
+	float: left;
+	margin-right: 10px;
+	-moz-border-radius: 3px;      /* Gecko browsers */
+	-webkit-border-radius: 3px;   /* Webkit browsers */
+	border-radius: 3px;
+	cursor: pointer;
+}
+.button div:hover {
+	background-color: #f2f2f2;
+	cursor: pointer;
+}
+.but_01 {
+	background: url(../images/bc.png) 6px center no-repeat;
+}
+.but_02 {
+	background: url(../images/tj.png) 6px center no-repeat;
+}
+.but_03 {
+	background: url(../images/sc.png) 6px center no-repeat;
+}
+.infor_01 {
+	height: 290px;
+	overflow: hidden;
+}
+.infor p label {
+	font-size: 12px;
+	color: #333;
+	width: 140px;
+	text-align: right;
+	display: block;
+	line-height: 20px;
+}
+.infor p input {
+	width: 180px;
+	line-height: 12px;
+	padding: 0 8px;
+	height: 20px;
+	font-size: 12px;
+	color: #666;
+}
+.infor p {
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+.infor label, input {
+	float: left;
+	display: block;
+}
+select {
+	border: #ddd 1px solid;
+	line-height: 20px;
+	width: 200px;
+	height: 20px;
+	padding: 1px 0 0 1px;
+}
+.infor_left, .infor_right {
+	float: left;
+	margin-left: 40px;
+	margin-top: 20px;
+}
+.infor_left {
+	margin-right: 80px;
+}
+.ggysdm{ position:relative; padding-right:20px;}
+.search {
+  background: url(../images/search.png) no-repeat;  display: inline-block;
+  width: 16px;
+  height: 16px;
+  z-index:9999;
+  margin:2px 0 0 5px;
+  cursor:pointer;
+}
+
+/*最后定义释义*/
+.tp {
+	overflow: hidden;
+	margin-left: 20px;
+	margin-bottom: 20px;
+}
+.tp dl {
+	width: 520px;
+	height: 140px;
+	font-size: 12px;
+}
+.tp dl dt, .tp dl dd {
+	width: 470px;
+	margin: auto;
+}
+.dy {
+	background-color: #beeafe;
+	margin-right: 30px;
+}
+.sy {
+	background-color: #fed7e9;
+}
+.sy, .dy {
+	float: left;
+}
+.tp dl dt {
+	color: #e92428;
+	padding: 16px 0 10px 0;
+	font-weight: 600;
+}
+.tp dl dd {
+	color: #666;
+	margin-bottom: 10px;
+}

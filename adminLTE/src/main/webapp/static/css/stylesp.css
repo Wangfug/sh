@@ -1,0 +1,82 @@
+@charset "UTF-8";
+/* CSS Document */
+
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	font-family: '微软雅黑'
+}
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, form, img, dl, dt, dd, table, th, td, blockquote, fieldset, div, strong, label, em {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+img {
+	border: none;
+}
+.main {
+	margin-left: 20px;
+}
+/*基本信息开始*/
+.sp_box {
+	margin: 10px 0;
+	overflow: hidden;
+}
+.sp_box ul li {
+	overflow: hidden;
+	font-size: 14px;
+	color: #333;
+	margin-bottom: 8px;
+}
+.mc {
+	width: 140px;
+	text-align: right;
+}
+.sp_box li span {
+/* 	display: block; */
+/* 	float: left; */
+/* 	width: 180px; */
+/* 	margin-right: 20px; */
+}
+.sp_box ul {
+	float: left;
+/* 	width: 100%;  */
+	margin: 20px 80px 10px 30px;
+}
+.sp_box .sp_bt {
+	width: 1060px;
+	line-height: 30px;
+	background-color: #e0ecfe;
+	color: #333;
+	font-size: 14px;
+	border: 1px solid #95B8E7;
+	padding-left: 10px;
+	border-bottom: none;
+	-moz-border-top-right-radius: 3px;      /* Gecko browsers */
+	-webkit-border-top-right-radius: 3px;   /* Webkit browsers */
+	border-top-right-radius: 3px;
+	-moz-border-top-left-radius: 3px;      /* Gecko browsers */
+	-webkit-border-top-left-radius: 3px;   /* Webkit browsers */
+	border-top-left-radius: 3px;
+}
+.sp_infor {
+	background-color: #fff;
+	border: #95B8E7 solid 1px;
+	border-top: #ddd solid 1px;
+	width: 1070px;
+	height: 80px;
+	-moz-border-bottom-right-radius: 3px;      /* Gecko browsers */
+	-webkit-border-bottom-right-radius: 3px;   /* Webkit browsers */
+	border-bottom-right-radius: 3px;
+	-moz-border-bottom-left-radius: 3px;      /* Gecko browsers */
+	-webkit-border-bottom-left-radius: 3px;   /* Webkit browsers */
+	border-bottom-left-radius: 3px;
+}
+.line {
+	height: 1px;
+	width: 1070px;
+	border: 1px #ccc dotted;
+	margin-top: 20px;
+}

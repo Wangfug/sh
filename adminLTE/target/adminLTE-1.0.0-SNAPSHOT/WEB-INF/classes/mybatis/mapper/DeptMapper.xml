@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.DeptMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.entity.Dept" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="DEPT_CODE" property="deptCode" jdbcType="VARCHAR" />
+    <result column="PARENT_CODE" property="parentCode" jdbcType="VARCHAR" />
+    <result column="DEPT_NAME" property="deptName" jdbcType="VARCHAR" />
+    <result column="DEPT_ATTR" property="deptAttr" jdbcType="VARCHAR" />
+    <result column="IS_LEAF" property="isLeaf" jdbcType="TINYINT" />
+    <result column="COMPANY_CODE" property="companyCode" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="CompanyMap" type="com.lte.admin.entity.Company" >
+    <result column="COMPANY_CODE" property="companyCode" jdbcType="VARCHAR" />
+    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+    <result column="PARENT_COMANY_CODE" property="parentComanyCode" jdbcType="VARCHAR" />
+    <result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, DEPT_CODE, PARENT_CODE, DEPT_NAME, DEPT_ATTR, IS_LEAF, COMPANY_CODE, UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_base_dept
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_base_dept
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.entity.Dept" >
+    insert into t_base_dept (ID, DEPT_CODE, PARENT_CODE, 
+      DEPT_NAME, DEPT_ATTR, IS_LEAF, 
+      COMPANY_CODE, UPDATE_TIME)
+    values (#{id,jdbcType=BIGINT}, #{deptCode,jdbcType=VARCHAR}, #{parentCode,jdbcType=VARCHAR}, 
+      #{deptName,jdbcType=VARCHAR}, #{deptAttr,jdbcType=VARCHAR}, #{isLeaf,jdbcType=TINYINT}, 
+      #{companyCode,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.entity.Dept" >
+    insert into t_base_dept
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="deptCode != null" >
+        DEPT_CODE,
+      </if>
+      <if test="parentCode != null" >
+        PARENT_CODE,
+      </if>
+      <if test="deptName != null" >
+        DEPT_NAME,
+      </if>
+      <if test="deptAttr != null" >
+        DEPT_ATTR,
+      </if>
+      <if test="isLeaf != null" >
+        IS_LEAF,
+      </if>
+      <if test="companyCode != null" >
+        COMPANY_CODE,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="deptCode != null" >
+        #{deptCode,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCode != null" >
+        #{parentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null" >
+        #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptAttr != null" >
+        #{deptAttr,jdbcType=VARCHAR},
+      </if>
+      <if test="isLeaf != null" >
+        #{isLeaf,jdbcType=TINYINT},
+      </if>
+      <if test="companyCode != null" >
+        #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.Dept" >
+    update t_base_dept
+    <set >
+      <if test="deptCode != null" >
+        DEPT_CODE = #{deptCode,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCode != null" >
+        PARENT_CODE = #{parentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null" >
+        DEPT_NAME = #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptAttr != null" >
+        DEPT_ATTR = #{deptAttr,jdbcType=VARCHAR},
+      </if>
+      <if test="isLeaf != null" >
+        IS_LEAF = #{isLeaf,jdbcType=TINYINT},
+      </if>
+      <if test="companyCode != null" >
+        COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.entity.Dept" >
+    update t_base_dept
+    set DEPT_CODE = #{deptCode,jdbcType=VARCHAR},
+      PARENT_CODE = #{parentCode,jdbcType=VARCHAR},
+      DEPT_NAME = #{deptName,jdbcType=VARCHAR},
+      DEPT_ATTR = #{deptAttr,jdbcType=VARCHAR},
+      IS_LEAF = #{isLeaf,jdbcType=TINYINT},
+      COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="findBmListTreeRoot" resultMap="CompanyMap" >
+	select c.COMPANY_CODE,c.COMPANY_NAME
+	from t_base_company c
+	order by c.company_type,c.COMPANY_CODE 
+  </select> 
+  
+  <select id="findBmListTree" resultMap="BaseResultMap" parameterType="java.lang.String" >
+	select d.DEPT_CODE,d.DEPT_NAME
+	from t_base_company c,t_base_dept d
+	  where c.company_code=d.company_code
+	  and d.PARENT_CODE=#{parentCode,jdbcType=VARCHAR}
+	  order by d.DEPT_CODE
+  </select>   
+</mapper>

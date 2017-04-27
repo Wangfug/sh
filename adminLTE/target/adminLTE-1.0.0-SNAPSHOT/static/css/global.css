@@ -1,0 +1,62 @@
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
+.thick_line {
+	border: 3px solid black;
+	border-style: solid none none none;
+}
+
+.ness_line {
+	border: 1px solid black;
+	border-style: solid none none none;
+}
+
+.ptzhxx_font13B {
+	font-size: 13pt;
+	font-weight: bold;
+}
+
+.font_size_normal {
+	font-size: 12pt;
+}
+
+.font_size_label_large {
+	font-size: 11pt;
+	font-weight: bold;
+}
+
+.font_size_label_title {
+	font-size: 11pt;
+	font-weight: bold;
+}
+
+a:link {
+	color: blue;
+	text-decoration: none;
+}
+
+a:hover {
+	color: red;
+	text-decoration: underline;
+}
+
+a:active {
+	color: #ff00ff;
+	text-decoration: none;
+}
+
+.current_a{
+	border: 1px solid #E8E8E8;
+	background-color: #00BFFF;
+	no-repeat 0 0 !important;
+}
+
+.search_a{
+	margin: 5px 0px 5px 0px;
+}
+
+.subtotal {
+	font-weight: bold;
+}

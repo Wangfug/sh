@@ -1,0 +1,179 @@
+@charset "UTF-8";
+/* CSS Document */
+
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	font-family: '微软雅黑'
+}
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, form, img, dl, dt, dd, table, th, td, blockquote, fieldset, div, strong, label, em {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+img {
+	border: none;
+}
+body {
+	background-image: url(../images/bg.png);
+	width: 100%;
+	height: 100%;
+	background-position: center;
+}
+/*正文开始*/
+.name {
+	color: #fff;
+	font-size: 24px;
+	margin-left: 20px;
+	margin-bottom: 52px;
+	letter-spacing: 3px;
+}
+.login_box {
+	width: 895px;
+	margin: auto;
+	overflow: hidden;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -450px;
+	margin-top: -300px;
+}
+.bg {
+	position: fixed;
+	z-index: 9999;
+	left: 50%;
+	top: 50%;
+	margin-left: -500px;
+	margin-top: -255px;
+	background: url(../images/bg_01.png) no-repeat;
+	width: 1001px;
+	height: 135px;
+}
+.login_frame {
+	background: url(../images/sr_bg.png) no-repeat;
+	width: 260px;
+	height: 303px;
+	position: relative;
+}
+.LoginWindow {
+	position: absolute;
+	top: 100px;
+	left: 22px;
+}
+.login label {
+	font-size: 12px;
+	color: #696969;
+	font-weight: 600;
+}
+.login input {
+	width: 128px;
+	height: 29px;
+	line-height: 12px;
+	background: url(../images/input_bg.png) 0 0 no-repeat;
+	margin-left: 15px;
+	border: none;
+	padding: 0 8px;
+	font-size: 12px;
+	color: #666;
+	font-weight: 300;
+}
+p {
+	margin-bottom: 12px;
+}
+.login-button {
+	color: #fff8f8;
+	font-size: 12px;
+	background-color: #4c95d6;
+	width: 75px;
+	height: 30px;
+	line-height: 30px;
+	-moz-border-radius: 5px;      /* Gecko browsers */
+	-webkit-border-radius: 5px;   /* Webkit browsers */
+	border-radius: 5px;            /* W3C syntax */
+	border: none;
+	cursor: pointer;
+	margin-left: 62px;
+	margin-top: 6px;
+}
+.hyc {
+	color: #003686;
+	font-size: 14px;
+	padding: 48px 0 15px 80px;
+	background: url(../images/suo.png) left center no-repeat;
+	position: absolute;
+	bottom: 250px;
+	left: 0;
+	letter-spacing: 3px;
+}
+.rememberPw {
+	margin-top: 46px;
+	margin-left: 60px;
+}
+.rememberPw label {
+	font-size: 12px;
+	color: #5a676c;
+	cursor: pointer;
+}
+input[type="checkbox"] {
+	width: 12px;
+	height: 12px;
+	border: 1px soild #ddd;
+}
+.rememberPw a {
+	font-size: 12px;
+	color: #d28c05;
+	text-decoration: underline;
+	margin-left: 20px;
+	cursor: pointer;
+}
+.kf {
+	background: url(../images/sr_bg_02.png);
+	width: 260px;
+	height: 72px;
+	margin-top: 8px;
+}
+.kf p {
+	font-size: 12px;
+	color: #aaa;
+	width: 208px;
+	margin: auto;
+	padding-top: 18px;
+	line-height: 22px;
+}
+.kf span {
+	color: #d28c05;
+}
+.right img {
+	width: 610px;
+	height: 366px;
+	background-color: #fff;
+	-moz-border-radius: 6px;      /* Gecko browsers */
+	-webkit-border-radius: 6px;   /* Webkit browsers */
+	border-radius: 6px;
+	border: 6px solid #fff;
+}
+.left, .right {
+	float: left;
+}
+.right {
+	margin-left: 10px;
+}
+.warning {
+-  border: 1px solid #facd89;
+-  background-color: #feead4;
+-  width: 230px;
+-  float: left;
+-  padding-bottom: 3px; position:absolute; top:70px; left:15px;
+-}
+-.warning img {
+-  display: inline-block;
+-  vertical-align: middle;
+-  padding-left: 5px;
+-}
+-.warning span {
+-  font-size:12px;
+-  color: #4d4d4c;
+-}
+/*正文结束*/

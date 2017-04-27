@@ -1,0 +1,67 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<configuration>
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="rollinginfoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/adminlte_info.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/adminlte_info.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">  
+	        <level>INFO</level>  
+	        <onMatch>ACCEPT</onMatch>  
+	        <onMismatch>DENY</onMismatch>  
+	    </filter> <!-- 过滤器只打印错误日志 -->
+	</appender>
+	
+	<appender name="rollingdebugFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/adminlte_debug.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/adminlte_debug.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">  
+	        <level>DEBUG</level>  
+	        <onMatch>ACCEPT</onMatch>  
+	        <onMismatch>DENY</onMismatch>  
+	    </filter> <!--  过滤器只打印错误日志 -->
+	</appender>
+	
+	<appender name="rollingerrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/${log.path}/adminlte_error.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/adminlte_debug%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">  
+	        <level>ERROR</level>  
+	        <onMatch>ACCEPT</onMatch>  
+	        <onMismatch>DENY</onMismatch>  
+	    </filter> <!--过滤器只打印错误日志 -->
+	</appender>
+	
+	<logger name="com.lte.admin" level="${log.level}">
+		<appender-ref ref="rollingdebugFile" />
+		<appender-ref ref="rollinginfoFile" />
+		<appender-ref ref="rollingerrorFile" />
+	</logger>
+	
+	<!--log4jdbc -->
+	<logger name="jdbc.sqltiming" level="INFO,DEBUG">
+		<appender-ref ref="rollinginfoFile" />
+	</logger>
+	<root level="${log.level}">
+		<appender-ref ref="rollingdebugFile" />
+	</root>
+</configuration>

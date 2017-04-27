@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.entity.Permission" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="PID" property="pid" jdbcType="BIGINT" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+    <result column="URL" property="url" jdbcType="VARCHAR" />
+    <result column="PERM_CODE" property="permCode" jdbcType="VARCHAR" />
+    <result column="ICON" property="icon" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.lte.admin.entity.Permission" extends="BaseResultMap" >
+    <result column="DESCRIPTION" property="description" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, PID, NAME, TYPE, SORT, URL, PERM_CODE, ICON, STATE
+  </sql>
+  <sql id="Blob_Column_List" >
+    DESCRIPTION
+  </sql>
+  <select id="getAllPermissions" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_base_permission
+  </select>
+  <delete id="deletePermissionById" parameterType="java.lang.Long" >
+    delete from t_base_permission
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.entity.Permission" >
+    insert into t_base_permission (ID, PID, NAME, 
+      TYPE, SORT, URL, PERM_CODE, 
+      ICON, STATE, DESCRIPTION
+      )
+    values (#{id,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{permCode,jdbcType=VARCHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.entity.Permission" >
+    insert into t_base_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="pid != null" >
+        PID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="sort != null" >
+        SORT,
+      </if>
+      <if test="url != null" >
+        URL,
+      </if>
+      <if test="permCode != null" >
+        PERM_CODE,
+      </if>
+      <if test="icon != null" >
+        ICON,
+      </if>
+      <if test="state != null" >
+        STATE,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="permCode != null" >
+        #{permCode,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.Permission" >
+    update t_base_permission
+    <set >
+      <if test="pid != null" >
+        PID = #{pid,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        SORT = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        URL = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="permCode != null" >
+        PERM_CODE = #{permCode,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        ICON = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        STATE = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.lte.admin.entity.Permission" >
+    update t_base_permission
+    set PID = #{pid,jdbcType=BIGINT},
+      NAME = #{name,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=VARCHAR},
+      SORT = #{sort,jdbcType=INTEGER},
+      URL = #{url,jdbcType=VARCHAR},
+      PERM_CODE = #{permCode,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=VARCHAR},
+      STATE = #{state,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.entity.Permission" >
+    update t_base_permission
+    set PID = #{pid,jdbcType=BIGINT},
+      NAME = #{name,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=VARCHAR},
+      SORT = #{sort,jdbcType=INTEGER},
+      URL = #{url,jdbcType=VARCHAR},
+      PERM_CODE = #{permCode,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=VARCHAR},
+      STATE = #{state,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="findPermissionsById" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long">
+    select * from t_base_permission
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="findPermissionsForMenu" resultMap="ResultMapWithBLOBs" parameterType="java.util.Map" >
+		select
+		p.*
+		from t_base_member m,t_base_permission p,t_base_staff_job sj,
+		 t_job_permission jp,t_member_job mj
+		where 
+		  m.member_code=mj.member_code
+		and mj.job_code=jp.job_code
+		and jp.job_code=sj.job_code
+		and m.member_code= #{memberCode,jdbcType=VARCHAR}
+		and sj.dept_code=#{deptCode,jdbcType=VARCHAR}
+
+  </select>
+  <select id="findMenuOperation" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select p.ID id,p.NAME name,p.URL url,p.PERM_CODE permCode,p.DESCRIPTION description 
+    from t_base_permission p 
+	where p.TYPE='O' and p.PID=#{id,jdbcType=BIGINT} order by p.SORT
+  </select>  
+  <select id="findPermissionsMenus" resultMap="ResultMapWithBLOBs" >
+    select p.ID id,p.PID pid,p.NAME name,p.URL url,p.ICON icon,p.SORT sort,p.DESCRIPTION description 
+    from t_base_permission p 
+	where p.TYPE='F' order by p.sort
+  </select>  
+  
+  
+</mapper>

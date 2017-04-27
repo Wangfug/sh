@@ -1,0 +1,216 @@
+@charset "UTF-8";
+/* CSS Document */
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	font-family: '微软雅黑'
+}
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, form, img, dl, dt, dd, table, th, td, blockquote, fieldset, div, strong, label, em {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+img {
+	border: none;
+}
+.main {
+	background-color: #f5f5f5;
+}
+/*基本信息开始*/
+.infor, .xyzh {
+	margin-left: 10px;
+}
+.infor_box {
+	width: 1070px;
+	background-color: #fff;
+	overflow: hidden;
+	border: 1px #ddd solid;
+}
+.bt {
+	width: 1060px;
+	line-height: 30px;
+	background-color: #ededed;
+	color: #333;
+	font-size: 14px;
+	border: 1px solid #ddd;
+	padding-left: 10px;
+	border-bottom: none;
+	-moz-border-top-right-radius: 3px;      /* Gecko browsers */
+	-webkit-border-top-right-radius: 3px;   /* Webkit browsers */
+	border-top-right-radius: 3px;
+	-moz-border-top-left-radius: 3px;      /* Gecko browsers */
+	-webkit-border-top-left-radius: 3px;   /* Webkit browsers */
+	border-top-left-radius: 3px;
+}
+
+.left, .mid, .right {
+	float: left;
+}
+.left {
+	overflow: hidden;
+	padding-left: 20px;
+	margin-top: 45px;
+}
+.left div, .left dl {
+	float: left;
+}
+.left .img {
+	width: 76px;
+	height: 76px;
+	margin-right: 10px;
+}
+.left dl dt {
+	font-size: 16px;
+	color: #333;
+}
+.left dl dd {
+	font-size: 12px;
+	color: #666;
+	margin-top: 8px;
+}
+.left dl dd span {
+/* 	padding-left: 24px; */
+/* 	background: url(../images/pt/jp.png) 4px center no-repeat; */
+}
+.mid ul {
+	width: 150px;
+	overflow: hidden;
+	text-align: center;
+	padding-left: 54px;
+	border-left: 1px dotted #ddd;
+	margin: 15px 80px 15px 50px;
+}
+.mid li {
+	width: 75px;
+	padding-top: 45px;
+	float: left;
+}
+.mid li a {
+	color: #333;
+	font-size: 12px;
+}
+.mid li a:hover {
+	color: red;
+}
+.li_zz {
+	background: url(../images/pt/zk.png) top center no-repeat;
+	margin-bottom: 15px;
+}
+.li_cz {
+	background: url(../images/pt/cz.png) top center no-repeat;
+	margin-bottom: 15px;
+}
+.li_tx {
+	background: url(../images/pt/tx.png) top center no-repeat;
+}
+.li_yx {
+	background: url(../images/pt/yx.png) top center no-repeat;
+}
+.right {
+	width: 390px;
+	height: 140px;
+	background-color: #f5f5f5;
+	margin-top: 20px;
+}
+.right ul {
+	margin: 15px 0 15px 20px;
+}
+.right li span {
+	font-size: 12px;
+	display: inline-block;
+}
+.li_sj {
+	font-size: 12px;
+	color: #333;
+	font-weight: 600;
+}
+.li_bt {
+	display: block;
+	width: 120px;
+	color: #666;
+}
+.li_01 {
+	margin-bottom: 6px;
+}
+/*基本信息结束*/
+
+/*提示信息开始*/
+.tsxx {
+	margin: 20px 0 20px 10px;
+}
+.tsxx ul {
+	width: 1070px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	height: 50px;
+}
+.tsxx ul li {
+	display: inline-block;
+	margin-right: 80px;
+	font-size: 14px;
+	color: #333;
+	line-height: 50px;
+}
+.li_current {
+	margin-left: 10px;
+}
+.tsxx ul li a,.tsxx ul li span {
+	color: #333;
+	padding: 0 5px;
+}
+.tsxx ul li a:hover {
+	color: red;
+}
+.tsxx .bt a{
+	color: #0066cc;
+	font-size: 12px;
+	padding-left: 10px;
+}
+.tsxx .bt a:hover {
+	color: red;
+}
+/*提示信息结束*/
+
+/*表格开始*/
+.xyzh {
+	padding-bottom: 20px;
+}
+.bt_04 {
+	color: #333;
+	font-size: 14px;
+	margin-bottom: 5px;
+}
+table.altrowstable {
+	font-family: verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	text-align: center;
+	border-width: 1px;
+	border-color: #ddd;
+	border-collapse: collapse;
+}
+table.altrowstable th {
+	border-width: 1px;
+	padding: 8px 80px;
+	border-style: solid;
+	border-color: #ddd;
+	background-color: #f2f2f2;
+}
+table.altrowstable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #ddd;
+}
+.oddrowcolor {
+	background-color: #fff;
+}
+.evenrowcolor {
+	background-color: #fafafa;
+}
+tr:hover {
+	background-color: #eaf2ff;
+}
+/*表格结束*/

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.order.OrderInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.order.entity.OrderInfo" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="CREATE_BY" property="createBy" jdbcType="BIGINT" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CAR_ID" property="carId" jdbcType="BIGINT" />
+  </resultMap>
+  <!--
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_base_company
+    where ID = #{id,jdbcType=BIGINT}
+  </select>-->
+  <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_base_company
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>-->
+  <sql id="Base_Column_List" >
+    ID, CREATE_BY,CREATE_TIME,STATE,LAST_TIME,LAST_BY,CUSTOMER,ORDER_NO,OPEN_OPINION,CLOSE_OPINION,TOTAL_OPINION,TIME_START,TIME_END,TOTAL_FEE,RESERVE_TIME,PAY_TIME,PAY_WAY,PAY_ACCOUNT,RESERVE_TYPE, CAR_ID;
+</sql>
+  <select id="findOrderList" resultMap="BaseResultMap"  parameterType="java.util.Map">
+    select
+    o.order_no,o.time_start,o.time_end,o.state,c.name,c.mobile_phone
+    from order_info o left join customer c
+    <where>
+      <if test="customer != null" >
+        and c.CUSTOMER  LIKE CONCAT(CONCAT('%', #{customer}), '%')
+      </if>
+      <if test="state != null" >
+        and o.STATE = #{state}
+      </if>
+      <if test="order_no != null" >
+        and o.ORDER_NO = #{orderNo,jdbcType=VARCHAR}
+      </if>
+    </where>
+
+  </select>
+  <insert id="save" parameterType="com.lte.admin.order.entity.OrderInfo" >
+    insert into order_info ( CREATE_BY, CREATE_TIME,
+      CAR_ID
+      )
+    values (#{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP},
+      #{carId,jdbcType=BIGINT}
+      )
+  </insert>
+  <!--<insert id="insertSelective" parameterType="com.lte.admin.entity.Company" >
+    insert into t_base_company
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="companyCode != null" >
+        COMPANY_CODE,
+      </if>
+      <if test="companyName != null" >
+        COMPANY_NAME,
+      </if>
+      <if test="parentComanyCode != null" >
+        PARENT_COMANY_CODE,
+      </if>
+      <if test="companyType != null" >
+        COMPANY_TYPE,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="companyCode != null" >
+        #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentComanyCode != null" >
+        #{parentComanyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyType != null" >
+        #{companyType,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>-->
+  <!--<update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.Company" >
+    update t_base_company
+    <set >
+      <if test="companyCode != null" >
+        COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentComanyCode != null" >
+        PARENT_COMANY_CODE = #{parentComanyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyType != null" >
+        COMPANY_TYPE = #{companyType,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.entity.Company" >
+    update t_base_company
+    set COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+      COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      PARENT_COMANY_CODE = #{parentComanyCode,jdbcType=VARCHAR},
+      COMPANY_TYPE = #{companyType,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>-->
+</mapper>
