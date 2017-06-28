@@ -15,7 +15,7 @@
 	<bean name="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="myJobTrigger" />
+				<ref bean="closeOrderJob"/>
 			</list>
 		</property>
 	</bean>
@@ -23,25 +23,29 @@
 
 	<!-- 调度的配置开始 -->
 	<!-- quartz-2.x的配置 -->
-	<bean id="myJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	<bean id="closeOrderJob" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
-			<ref bean="myJobDetail" />
+			<ref bean="closeOrderJobDetail" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0 12 * * ?</value>
+			<value>0 0/30 * * * ?</value>
 		</property>
 	</bean>
 	<!-- 调度的配置结束 -->
 
-	<!-- job的配置开始 -->
-	<bean id="myJobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	<!-- job的配置开始-->
+	<!-- 定义调用对象和调用对象的方法A -->
+	<bean id="closeOrderJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
 		<property name="targetObject">
-			<ref bean="myJob" />
+			<ref bean="jobA"/>
 		</property>
+		<!-- 调用类中的方法 -->
 		<property name="targetMethod">
-			<value>work</value>
+			<value>CloseOrder</value>
 		</property>
 	</bean>
+	<bean id="jobA" class="com.lte.admin.common.schedulJob.OrderCloseJob"/>
 	<!-- job的配置结束 -->
+
 </beans>

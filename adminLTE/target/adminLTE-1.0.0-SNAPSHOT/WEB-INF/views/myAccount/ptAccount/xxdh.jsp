@@ -119,7 +119,7 @@
 					<li><span class="mc">开户行账号：</span><span id="xxdh_khhzh">${mapData.khhzh }</span></li>
 				</ul>
 				<ul>
-					<li><span class="mc">公司名称：</span><span id="xxdh_gsmc">汇通达网络股份有限公司</span></li>
+					<li><span class="mc">公司名称：</span><span id="xxdh_gsmc">舜昊集团</span></li>
 					<li><span class="mc"> </span><span> </span></li>
 				</ul>
 			</div>

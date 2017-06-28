@@ -12,7 +12,7 @@ request.setAttribute("error", error);
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>汇通达金融服务平台</title>
+	<title>舜昊租车平台</title>
 	<script src="${ctx}/static/plugins/easyui/jquery/jquery-1.11.1.min.js"></script>	
 	<link rel="stylesheet" type="text/css" href="${ctx}/static/css/style_login.css?${currentTime}" />
 	<link rel="shortcut icon" href="${ctx}/static/images/favicon.ico" />
@@ -26,7 +26,7 @@ request.setAttribute("error", error);
 <body>
 <div class="bg"></div>
 <div class="login_box">
-  <div class="name">小牛金服</div>
+  <div class="name">舜昊租车</div>
   <div class="left">
     <div class="login_frame">
       <div class="hyc">欢迎您登录!</div>
@@ -63,7 +63,7 @@ request.setAttribute("error", error);
         咨询：<span>400-639-9988</span></p>
     </div>
   </div>
-  <div class="right"><img src="${ctx}/static/images/xd_gg.png" alt="汇通达信贷系统"/></div>
+  <div class="right"><img src="${ctx}/static/images/xd_gg.png" alt="舜昊租车系统"/></div>
 </div>
 <script>
 $(function(){

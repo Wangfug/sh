@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lte.admin.mapper.JobPermissionMapper" >
-  <resultMap id="BaseResultMap" type="com.lte.admin.entity.JobPermission" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.entity.GwPermission" >
     <id column="ID" property="id" jdbcType="BIGINT" />
-    <result column="JOB_CODE" property="jobCode" jdbcType="VARCHAR" />
+    <result column="JOB_CODE" property="pkOmJob" jdbcType="VARCHAR" />
     <result column="PERMISSION_ID" property="permissionId" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
@@ -19,19 +19,24 @@
     delete from t_job_permission
     where ID = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.lte.admin.entity.JobPermission" >
+  <delete id="deleteGP" parameterType="com.lte.admin.entity.GwPermission" >
+    delete from t_job_permission
+    where JOB_CODE = #{pkOmJob,jdbcType=VARCHAR}
+    and PERMISSION_ID = #{permissionId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.entity.GwPermission" >
     insert into t_job_permission (ID, JOB_CODE, PERMISSION_ID
       )
-    values (#{id,jdbcType=BIGINT}, #{jobCode,jdbcType=VARCHAR}, #{permissionId,jdbcType=BIGINT}
+    values (#{id,jdbcType=BIGINT}, #{pkOmJob,jdbcType=VARCHAR}, #{permissionId,jdbcType=BIGINT}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.lte.admin.entity.JobPermission" >
+  <insert id="insertSelective" parameterType="com.lte.admin.entity.GwPermission" >
     insert into t_job_permission
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         ID,
       </if>
-      <if test="jobCode != null" >
+      <if test="pkOmJob != null" >
         JOB_CODE,
       </if>
       <if test="permissionId != null" >
@@ -42,19 +47,19 @@
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="jobCode != null" >
-        #{jobCode,jdbcType=VARCHAR},
+      <if test="pkOmJob != null" >
+        #{pkOmJob,jdbcType=VARCHAR},
       </if>
       <if test="permissionId != null" >
         #{permissionId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.JobPermission" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.GwPermission" >
     update t_job_permission
     <set >
-      <if test="jobCode != null" >
-        JOB_CODE = #{jobCode,jdbcType=VARCHAR},
+      <if test="pkOmJob != null" >
+        JOB_CODE = #{pkOmJob,jdbcType=VARCHAR},
       </if>
       <if test="permissionId != null" >
         PERMISSION_ID = #{permissionId,jdbcType=BIGINT},
@@ -62,10 +67,35 @@
     </set>
     where ID = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.lte.admin.entity.JobPermission" >
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.entity.GwPermission" >
     update t_job_permission
-    set JOB_CODE = #{jobCode,jdbcType=VARCHAR},
+    set JOB_CODE = #{pkOmJob,jdbcType=VARCHAR},
       PERMISSION_ID = #{permissionId,jdbcType=BIGINT}
     where ID = #{id,jdbcType=BIGINT}
   </update>
+
+<!-- 根据岗位查权限 -->
+  <select id="findPermissionsByGw" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_job_permission
+    where JOB_CODE = #{jobCode,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 根据岗位和权限查找 -->
+
+  <select id="findPermissionsByGwAndPID" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_job_permission
+    <where>
+      <if test="code != null" >
+        and JOB_CODE = #{job,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null" >
+        and PERMISSION_ID = #{permissionId,jdbcType=BIGINT}
+      </if>
+    </where>
+  </select>
+
 </mapper>

@@ -4,19 +4,24 @@
 <head>
 <title></title>
 <%@ include file="/WEB-INF/views/include/easyui.jsp"%>
-<script type="text/javascript" src="${ctx}/static/plugins/jquery/jquery.form.js"></script>
+
 </head>
 <body class="easyui-layout" data-options="fit: true">
- <form id="fileform" action="${ctx }/system/fileupload" method="post" enctype="multipart/form-data">  
-            选择文件:<input type="file" name="upFile">  
-            <input type="text" name="fileName" id="t1">
-            <input type="button" value="提交" id="submitfile">
-            <input type="button" value="下载" id="downfile">  
+ <form id="fileform" action="${ctx }/system/fileupload" method="post" enctype="multipart/form-data">
+     <div style="margin-left:180px;margin-top:100px; ">
+         <input type="file" name="upFile" id="upFile" >  <br/>
+     </div>
+     <%--<div>--%>
+         <%--<span type="text" name="fileName" id="t1"></span>--%>
+     <%--</div>--%>
+            <%--<input type="button" value="提交" id="submitfile">--%>
+            <%--<input type="button" value="下载" id="downfile">  --%>
     </form>  
-    <br>
-    <a id="down"  href="${ctx }/system/fileupload/down">先上传文件，点提交，再点此下载连接</a>
+    <%--<br>--%>
+    <%--<a id="down"  href="${ctx }/system/fileupload/down">先上传文件，点提交，再点此下载连接</a>--%>
 <script type="text/javascript">
 $(function(){
+    $("#upFile").trigger("click");
 	$("#submitfile").click(function(){
 		$('#fileform').form('submit', {
 			url : '${ctx }/system/fileupload',

@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.car.CarMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.car.entity.Car" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="car_name" property="carName" jdbcType="VARCHAR" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="car_type" property="carType" jdbcType="VARCHAR" />
+    <result column="carton_number" property="cartonNumber" jdbcType="VARCHAR" />
+    <result column="displacement" property="displacement" jdbcType="VARCHAR" />
+    <result column="block_number" property="blockNumber" jdbcType="VARCHAR" />
+    <result column="belong" property="belong" jdbcType="BIGINT" />
+    <result column="addtional_service" property="addtionalService" jdbcType="VARCHAR" />
+    <result column="car_shop" property="carShop" jdbcType="BIGINT" />
+    <result column="car_code" property="carCode" jdbcType="VARCHAR" />
+    <result column="engine_no" property="engineNo" jdbcType="VARCHAR" />
+    <result column="frame_no" property="frameNo" jdbcType="VARCHAR" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="buy_time" property="buyTime" jdbcType="TIMESTAMP" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="leave_factory_time" property="leaveFactoryTime" jdbcType="TIMESTAMP" />
+    <result column="bind_obj" property="bindObj" jdbcType="VARCHAR" />
+    <result column="remark1" property="remark1" jdbcType="VARCHAR" />
+    <result column="remark2" property="remark2" jdbcType="VARCHAR" />
+    <result column="remark3" property="remark3" jdbcType="VARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="vehicle_license" property="vehicleLicense" jdbcType="BIGINT" />
+    <result column="money_buy" property="moneyBuy" jdbcType="DOUBLE" />
+    <result column="mileage" property="mileage" jdbcType="VARCHAR" />
+    <result column="owner" property="owner" jdbcType="BIGINT" />
+    <result column="intime" property="intime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, car_name, create_by, create_time, state, last_time, last_by, car_type, carton_number, 
+    displacement, block_number, belong, addtional_service, car_shop, car_code, engine_no,
+    frame_no, color, buy_time, brand, model, leave_factory_time, bind_obj, remark1, remark2,
+    remark3, attachment, vehicle_license,money_buy,mileage,owner,intime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from car
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getCarByShop" resultType="java.util.Map" parameterType="java.util.Map">
+    SELECT
+    car.brand,car.model,car.car_shop,car.carton_number,car.displacement,
+    car.block_number,COUNT(*) count,dict.NAME car_type,car.car_type type_code,
+    ifnull(price.price_by_day,pr.price_by_day) day_price_shop,
+    ifnull(price.price_by_hour,pr.price_by_hour) hour_price_shop,
+    ifnull(price.img,pr.img) attachment,
+    pr.price_by_day day_price_company,
+    pr.price_by_hour hour_price_company,
+    ifnull(price.fee_insurance,pr.fee_insurance) fee_insurance,
+    ifnull(price.fee_deductible,pr.fee_deductible) fee_deductible
+    FROM
+    car
+    LEFT JOIN car_rent_price price on price.brand=car.brand and price.model=car.model
+    <if test="carShopId != null">
+      and price.car_shop = #{carShopId,jdbcType=BIGINT}
+    </if>
+    LEFT JOIN car_rent_price pr on pr.brand=car.brand and pr.model=car.model and pr.car_shop is null
+	inner JOIN car_shops shop on shop.id = car.car_shop and shop.city = #{city,jdbcType=VARCHAR}
+    LEFT JOIN t_base_dict_type dict on dict.CODE = (select substring_index(car.car_type, ',', 1))
+    WHERE
+    car.state='20001' and car.id not in
+    (select o1.car_id from car_occupy o1 where o1.state = '1' and ((o1.time_start BETWEEN #{startTime,jdbcType=TIMESTAMP } and #{endTime,jdbcType=TIMESTAMP }) or (o1.time_end BETWEEN #{startTime,jdbcType=TIMESTAMP } and #{endTime,jdbcType=TIMESTAMP })) GROUP BY o1.car_id)
+    GROUP BY
+    car.brand,
+    car.model
+    <trim prefix="having" prefixOverrides="and | or">
+      <if test="lowPrice != null and heighPrice !=null">
+        and price_by_day  BETWEEN  #{lowPrice} AND #{heighPrice}
+      </if>
+
+      <if test="brand != null" >
+      and #{brand}  LIKE CONCAT(CONCAT('%', brand), '%')
+    </if>
+      <if test="model != null" >
+        and #{model}  LIKE CONCAT(CONCAT('%', model), '%')
+      </if>
+
+      <trim prefix="and" prefixOverrides="and | or">
+        <if test="carType != null" >
+          <foreach collection="carType" item="item" index="index" open="(" separator="or" close=")">
+            type_code LIKE CONCAT(CONCAT('%', #{item}  ), '%')
+          </foreach>
+        </if>
+        <!--<if test="carType != null" >-->
+        <!--and #{carType} LIKE CONCAT(CONCAT('%',type_code ), '%')-->
+        <!--</if>-->
+      </trim>
+
+    </trim>
+
+  </select>
+
+
+  <select id="getCarsByShopId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+   car.*
+    FROM
+    car
+    inner JOIN car_shops shop on shop.id=car.car_shop and shop.id = #{shopId,jdbcType=BIGINT }
+    <trim prefix="where" prefixOverrides="and | or">
+      car.state='20001'
+      <if test="brand != null" >
+        and car.brand = #{brand,jdbcType=VARCHAR }
+      </if>
+      <if test="model != null">
+        and car.model = #{model,jdbcType=VARCHAR}
+      </if>
+      <if test="startTime != null and endTime !=null" >
+      and car.id not in
+      (select o1.car_id from car_occupy o1 where o1.state = '1' and ((o1.time_start BETWEEN #{startTime,jdbcType=TIMESTAMP } and #{endTime,jdbcType=TIMESTAMP }) or (o1.time_end BETWEEN #{startTime,jdbcType=TIMESTAMP } and #{endTime,jdbcType=TIMESTAMP })) GROUP BY o1.car_id)
+      </if>
+    </trim>
+  </select>
+
+  <select id="getCarsByCity" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    car.*
+    FROM
+    car
+    inner JOIN car_shops shop on shop.id=car.car_shop and shop.city = #{city,jdbcType=VARCHAR }
+    <trim prefix="where" prefixOverrides="and | or">
+      car.state='20001'
+      <if test="brand != null" >
+        and car.brand = #{brand,jdbcType=VARCHAR }
+      </if>
+      <if test="model != null">
+        and car.model = #{model,jdbcType=VARCHAR}
+      </if>
+      <if test="startTime != null and endTime !=null" >
+        and car.id not in
+        (select o1.car_id from car_occupy o1 where o1.state = '1' and ((o1.time_start BETWEEN #{startTime,jdbcType=TIMESTAMP } and #{endTime,jdbcType=TIMESTAMP }) or (o1.time_end BETWEEN #{startTime,jdbcType=TIMESTAMP } and #{endTime,jdbcType=TIMESTAMP })) GROUP BY o1.car_id)
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from car
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="carCode != null" >
+        and car_code  LIKE CONCAT(CONCAT('%', #{carCode}), '%')
+      </if>
+      <if test="bindObj != null" >
+        and bind_obj  LIKE CONCAT(CONCAT('%', #{bindObj}), '%')
+      </if>
+      <if test="brand != null" >
+        and brand = #{brand,jdbcType=VARCHAR }
+      </if>
+      <if test="state != null and state !='0'.toString()">
+        and state = #{state,jdbcType=INTEGER}
+      </if>
+      <if test="engineNo != null" >
+        and engine_no = #{engineNo,jdbcType=INTEGER}
+      </if>
+      <if test="shopId != null" >
+        and car_shop = #{shopId,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllList1" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from car
+  </select>
+
+  <select id="getAllList2" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    id, car_code
+    from car
+  </select>
+  <select id="getCarBrands" resultType="java.lang.String">
+  select brand from car GROUP BY brand ORDER BY convert(brand using gbk) ASC
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from car
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="carId" parameterType="com.lte.admin.car.entity.Car" >
+    insert into car (id, car_name, create_by, 
+      create_time, state, last_time, 
+      last_by, car_type, carton_number, 
+      displacement, block_number, belong,
+      addtional_service, car_shop, car_code, 
+      engine_no, frame_no, color, 
+      buy_time, brand, model,
+      leave_factory_time, bind_obj, remark1, 
+      remark2, remark3, attachment, 
+      vehicle_license,money_buy,mileage,owner,intime)
+    values (#{id,jdbcType=BIGINT}, #{carName,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP},
+      #{lastBy,jdbcType=BIGINT}, #{carType,jdbcType=VARCHAR}, #{cartonNumber,jdbcType=VARCHAR}, 
+      #{displacement,jdbcType=VARCHAR}, #{blockNumber,jdbcType=VARCHAR}, #{belong,jdbcType=BIGINT},
+      #{addtionalService,jdbcType=VARCHAR}, #{carShop,jdbcType=BIGINT}, #{carCode,jdbcType=VARCHAR}, 
+      #{engineNo,jdbcType=VARCHAR}, #{frameNo,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, 
+      #{buyTime,jdbcType=TIMESTAMP}, #{brand,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR},
+      #{leaveFactoryTime,jdbcType=TIMESTAMP}, #{bindObj,jdbcType=VARCHAR}, #{remark1,jdbcType=VARCHAR}, 
+      #{remark2,jdbcType=VARCHAR}, #{remark3,jdbcType=VARCHAR}, #{attachment,jdbcType=VARCHAR},
+      #{vehicleLicense,jdbcType=BIGINT},#{moneyBuy,jdbcType=BIGINT},#{mileage,jdbcType=VARCHAR},
+      #{owner,jdbcType=BIGINT}, #{intime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="carId"  parameterType="com.lte.admin.car.entity.Car" >
+    insert into car
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="carName != null" >
+        car_name,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="carType != null" >
+        car_type,
+      </if>
+      <if test="cartonNumber != null" >
+        carton_number,
+      </if>
+      <if test="displacement != null" >
+        displacement,
+      </if>
+      <if test="blockNumber != null" >
+        block_number,
+      </if>
+      <if test="belong != null" >
+        belong,
+      </if>
+      <if test="addtionalService != null" >
+        addtional_service,
+      </if>
+      <if test="carShop != null" >
+        car_shop,
+      </if>
+      <if test="carCode != null" >
+        car_code,
+      </if>
+      <if test="engineNo != null" >
+        engine_no,
+      </if>
+      <if test="frameNo != null" >
+        frame_no,
+      </if>
+      <if test="color != null" >
+        color,
+      </if>
+      <if test="buyTime != null" >
+        buy_time,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="model != null" >
+        model,
+      </if>
+      <if test="leaveFactoryTime != null" >
+        leave_factory_time,
+      </if>
+      <if test="bindObj != null" >
+        bind_obj,
+      </if>
+      <if test="remark1 != null" >
+        remark1,
+      </if>
+      <if test="remark2 != null" >
+        remark2,
+      </if>
+      <if test="remark3 != null" >
+        remark3,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="vehicleLicense != null" >
+        vehicle_license,
+      </if>
+      <if test="moneyBuy != null" >
+        money_buy,
+      </if>
+      <if test="mileage != null" >
+        mileage,
+      </if>
+      <if test="owner != null" >
+        owner,
+      </if>
+      <if test="intime != null" >
+        intime
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="carName != null" >
+        #{carName,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carType != null" >
+        #{carType,jdbcType=VARCHAR},
+      </if>
+      <if test="cartonNumber != null" >
+        #{cartonNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="displacement != null" >
+        #{displacement,jdbcType=VARCHAR},
+      </if>
+      <if test="blockNumber != null" >
+        #{blockNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="belong != null" >
+        #{belong,jdbcType=BIGINT},
+      </if>
+      <if test="addtionalService != null" >
+        #{addtionalService,jdbcType=VARCHAR},
+      </if>
+      <if test="carShop != null" >
+        #{carShop,jdbcType=BIGINT},
+      </if>
+      <if test="carCode != null" >
+        #{carCode,jdbcType=VARCHAR},
+      </if>
+      <if test="engineNo != null" >
+        #{engineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="frameNo != null" >
+        #{frameNo,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="buyTime != null" >
+        #{buyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveFactoryTime != null" >
+        #{leaveFactoryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bindObj != null" >
+        #{bindObj,jdbcType=VARCHAR},
+      </if>
+      <if test="remark1 != null" >
+        #{remark1,jdbcType=VARCHAR},
+      </if>
+      <if test="remark2 != null" >
+        #{remark2,jdbcType=VARCHAR},
+      </if>
+      <if test="remark3 != null" >
+        #{remark3,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleLicense != null" >
+        #{vehicleLicense,jdbcType=BIGINT},
+      </if>
+      <if test="moneyBuy != null" >
+        #{moneyBuy,jdbcType=DOUBLE},
+      </if>
+      <if test="mileage != null" >
+        #{mileage,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null" >
+        #{owner,jdbcType=BIGINT},
+      </if>
+      <if test="intime != null" >
+        #{intime,jdbcType=TIMESTAMP}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.car.entity.Car" >
+    update car
+    <set >
+      <if test="carName != null" >
+        car_name = #{carName,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carType != null" >
+        car_type = #{carType,jdbcType=VARCHAR},
+      </if>
+      <if test="cartonNumber != null" >
+        carton_number = #{cartonNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="displacement != null" >
+        displacement = #{displacement,jdbcType=VARCHAR},
+      </if>
+      <if test="blockNumber != null" >
+        block_number = #{blockNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="belong != null" >
+        belong = #{belong,jdbcType=BIGINT},
+      </if>
+      <if test="addtionalService != null" >
+        addtional_service = #{addtionalService,jdbcType=VARCHAR},
+      </if>
+      <if test="carShop != null" >
+        car_shop = #{carShop,jdbcType=BIGINT},
+      </if>
+      <if test="carCode != null" >
+        car_code = #{carCode,jdbcType=VARCHAR},
+      </if>
+      <if test="engineNo != null" >
+        engine_no = #{engineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="frameNo != null" >
+        frame_no = #{frameNo,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        color = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="buyTime != null" >
+        buy_time = #{buyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        model = #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveFactoryTime != null" >
+        leave_factory_time = #{leaveFactoryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bindObj != null" >
+        bind_obj = #{bindObj,jdbcType=VARCHAR},
+      </if>
+      <if test="remark1 != null" >
+        remark1 = #{remark1,jdbcType=VARCHAR},
+      </if>
+      <if test="remark2 != null" >
+        remark2 = #{remark2,jdbcType=VARCHAR},
+      </if>
+      <if test="remark3 != null" >
+        remark3 = #{remark3,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleLicense != null" >
+        vehicle_license = #{vehicleLicense,jdbcType=BIGINT},
+      </if>
+      <if test="moneyBuy != null" >
+        money_buy = #{moneyBuy,jdbcType=DOUBLE},
+      </if>
+      <if test="mileage != null" >
+        mileage = #{mileage,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null" >
+        owner = #{owner,jdbcType=BIGINT},
+      </if>
+      <if test="intime != null" >
+        intime = #{intime,jdbcType=TIMESTAMP}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.car.entity.Car" >
+    update car
+    set car_name = #{carName,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      car_type = #{carType,jdbcType=VARCHAR},
+      carton_number = #{cartonNumber,jdbcType=VARCHAR},
+      displacement = #{displacement,jdbcType=VARCHAR},
+      block_number = #{blockNumber,jdbcType=VARCHAR},
+      belong = #{belong,jdbcType=BIGINT},
+      addtional_service = #{addtionalService,jdbcType=VARCHAR},
+      car_shop = #{carShop,jdbcType=BIGINT},
+      car_code = #{carCode,jdbcType=VARCHAR},
+      engine_no = #{engineNo,jdbcType=VARCHAR},
+      frame_no = #{frameNo,jdbcType=VARCHAR},
+      color = #{color,jdbcType=VARCHAR},
+      buy_time = #{buyTime,jdbcType=TIMESTAMP},
+      brand = #{brand,jdbcType=VARCHAR},
+      model = #{model,jdbcType=VARCHAR},
+      leave_factory_time = #{leaveFactoryTime,jdbcType=TIMESTAMP},
+      bind_obj = #{bindObj,jdbcType=VARCHAR},
+      remark1 = #{remark1,jdbcType=VARCHAR},
+      remark2 = #{remark2,jdbcType=VARCHAR},
+      remark3 = #{remark3,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      vehicle_license = #{vehicleLicense,jdbcType=BIGINT},
+      money_buy = #{moneyBuy,jdbcType=DOUBLE},
+      mileage = #{mileage,jdbcType=VARCHAR},
+      owner = #{owner,jdbcType=BIGINT},
+      intime = #{intime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- 根据筛选条件查询一条车辆 -->
+  <select id="getCarByFilter" resultType="java.lang.Long" parameterType="java.util.Map">
+    select car.id from  car
+    where car.brand = #{brand,jdbcType=VARCHAR} and car.model = #{model,jdbcType=VARCHAR}
+    and car.id not in
+    (select o1.car_id from car_occupy o1
+    where o1.state = '1' and ((o1.time_start BETWEEN #{reserveTimeStart,jdbcType=TIMESTAMP} and #{reserveTimeEnd,jdbcType=TIMESTAMP})
+    or (o1.time_end BETWEEN #{reserveTimeStart,jdbcType=TIMESTAMP} and #{reserveTimeEnd,jdbcType=TIMESTAMP})))
+  </select>
+  <!-- 根据车牌号一条车辆 -->
+  <select id="getCarByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+     from  car
+    where car_code = #{carCode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getCarBrandModel" resultType="java.util.Map">
+     select brand,model from car GROUP BY brand,model
+  </select>
+
+  <select id="getCarByCode1" resultType="java.util.Map" parameterType="java.lang.String">
+    select
+    car.*,car_shops.shop_name shopName
+    from  car
+    left join car_shops on car.car_shop = car_shops.id
+    where car_code = #{carCode,jdbcType=VARCHAR}
+  </select>
+  <!--根据城市查询车辆-->
+  <select id="getListByShop1" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    car.*
+    from  car
+    inner join
+    (select shop.id from car_shops shop
+inner join (
+select shop1.id,shop1.shop_code from car_shops shop1 WHERE shop1.parent_code=#{shopCode,jdbcType=VARCHAR}) supShop
+on supShop.shop_code = shop.parent_code) cityshop
+    on car.car_shop = cityshop.id
+  </select>
+  <!--根据自营或联营查询车辆-->
+  <select id = "getListByShop2" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    car.*
+    from  car
+    inner join car_shops shop on car.car_shop = shop.id
+    inner join
+    (select shop1.id from car_shops shop1 where
+    parent_code=#{shopCode,jdbcType=VARCHAR}) cityshop
+    on cityshop.id = shop.id
+  </select>
+</mapper>

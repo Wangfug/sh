@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.order.OrderWorkMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.order.entity.OrderWork" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="order_type" property="orderType" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="way" property="way" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="person" property="person" jdbcType="VARCHAR" />
+    <result column="order_state" property="orderState" jdbcType="VARCHAR" />
+    <result column="car_shop" property="carShop" jdbcType="BIGINT" />
+    <result column="e_no" property="eno" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="car_id" property="carId" jdbcType="BIGINT" />
+    <result column="car_check_detail" property="carCheckDetail" jdbcType="VARCHAR" />
+    <result column="run_time" property="runTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, order_type, last_time, last_by, way, address, person, 
+    order_state, car_shop, e_no, order_no, attachment, car_id, car_check_detail,run_time,state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_work
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <!-- 根据条件查询多条订单 -->
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    ow.*,shop.shop_name shop
+    from order_work ow
+    left join car_shops shop on ow.car_shop = shop.id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="orderNo != null" >
+      and ow.order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+    </if>
+      <if test="orderType != null" >
+        and ow.order_type  LIKE CONCAT(CONCAT('%', #{orderType}), '%')
+      </if>
+      <if test="way != null" >
+        and ow.way  LIKE CONCAT(CONCAT('%', #{way}), '%')
+      </if>
+      <if test="orderState != null" >
+        and ow.order_state  LIKE CONCAT(CONCAT('%', #{orderState}), '%')
+      </if>
+      <if test="carShop != null" >
+        and ow.car_shop  LIKE CONCAT(CONCAT('%', #{carShop}), '%')
+      </if>
+      <if test="eno != null" >
+        and ow.e_no  LIKE CONCAT(CONCAT('%', #{eno}), '%')
+      </if>
+      <if test="car != null" >
+        and ow.car_id  LIKE CONCAT(CONCAT('%', #{car}), '%')
+      </if>
+      <if test="shopCode != null" >
+        and shop.shop_code  LIKE CONCAT(CONCAT('%', #{shopCode}), '%')
+      </if>
+      <if test="parentCode != null" >
+        and shop.parent_code  LIKE CONCAT(CONCAT('%', #{parentCode}), '%')
+      </if>
+    </trim>
+  </select>
+  <select id="getAllList1" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    ow.*,shop.shop_name shopname,m.member_name ename,dict.name dictname,car.car_code carcode,oi.state orderstate
+    from order_work ow
+    left join car_shops shop on ow.car_shop = shop.id
+    left join t_base_employee tbe on ow.e_no = tbe.id
+    left join t_base_dict_type dict on ow.order_state = dict.code
+    left join car on ow.car_id = car.id
+    left join t_base_member m on tbe.create_by = m.member_code
+    left join order_info oi on oi.order_no = ow.order_no
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="orderNo != null" >
+        and ow.order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+      </if>
+      <if test="orderType != null" >
+        and ow.order_type  LIKE CONCAT(CONCAT('%', #{orderType}), '%')
+      </if>
+      <if test="way != null" >
+        and ow.way  LIKE CONCAT(CONCAT('%', #{way}), '%')
+      </if>
+      <if test="orderState != null" >
+        and ow.order_state  LIKE CONCAT(CONCAT('%', #{orderState}), '%')
+      </if>
+      <if test="carShop != null" >
+        and ow.car_shop  LIKE CONCAT(CONCAT('%', #{carShop}), '%')
+      </if>
+      <if test="eno != null" >
+        and ow.e_no  LIKE CONCAT(CONCAT('%', #{eno}), '%')
+      </if>
+      <if test="car != null" >
+        and car.car_code  LIKE CONCAT(CONCAT('%', #{car}), '%')
+      </if>
+      <if test="shopCode != null" >
+        and shop.shop_code  LIKE CONCAT(CONCAT('%', #{shopCode}), '%')
+      </if>
+      <if test="parentCode != null" >
+        and shop.parent_code  LIKE CONCAT(CONCAT('%', #{parentCode}), '%')
+      </if>
+      <if test="state != null" >
+        and oi.state =#{state,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </select>
+
+  <!-- 根据条件查询多条订单 -->
+  <select id="getListByToken" resultType="java.util.Map" parameterType="java.util.Map" >
+
+    select tbe.id,m.MEMBER_NAME,ow.create_time,ow.id order_work_id,ow.way,ow.state,ow.run_time,ow.order_type orderType,
+    tbdt.name order_work_state,oi.order_no,oi.reserve_time_start ,
+    oi.reserve_time_end,car.carton_number,car.displacement,car.block_number,car.attachment,car.brand,car.model,dict.name car_type,
+    eval.get_vehicle_service getVehicleService,eval.return_vehicle_service returnVehicleService,
+    eval.close_opinion closeOpinion,eval.open_opinion openOpinion
+    from order_work ow
+    left join  t_base_employee tbe  on ow.e_no = tbe.id
+    left join  t_base_member m  on m.member_code = tbe.create_by
+    LEFT JOIN order_info oi on oi.order_no = ow.order_no
+    LEFT JOIN car  on car.id=oi.car_id
+    LEFT JOIN t_base_dict_type tbdt on tbdt.code=ow.order_state
+    LEFT JOIN order_evaluate eval on eval.order_no=oi.order_no
+    LEFT JOIN t_base_dict_type dict on dict.CODE = (select substring_index(car.car_type, ',', 1))
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="token != null" >
+        and tbe.token  = #{token,jdbcType=VARCHAR}
+      </if>
+      <if test="orderType != null" >
+        and ow.order_type =#{orderType,jdbcType=INTEGER}
+      </if>
+      <if test="orderState != null" >
+        and ow.order_state =#{orderState,jdbcType=INTEGER}
+      </if>
+      <if test="state != null" >
+        and ow.state =#{state,jdbcType=INTEGER}
+      </if>
+      order by
+      ow.state DESC,
+      ow.run_time ASC,
+      ow.create_time ASC
+      <!--<if test="orderType == 0" >
+        order by oi.reserve_time_start desc
+      </if>
+      <if test="orderType == 1" >
+        order by oi.reserve_time_end desc
+      </if>
+      <if test="orderType == null" >
+        order by ow.create_time desc,
+        ow.state DESC,
+        ow.run_time ASC
+      </if>-->
+    </trim>
+
+  </select>
+
+  <!-- 根据订单号获取送取单 -->
+  <select id="getByOrder" resultType="java.util.Map" parameterType="java.lang.String" >
+    select ow.id,ow.order_type,shop_name shopName
+    from order_work ow
+    left join car_shops shop on ow.car_shop = shop.id
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from order_work
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.order.entity.OrderWork" >
+    insert into order_work (id, create_by, create_time, 
+      order_type, last_time, last_by, 
+      way, address, person, 
+      order_state, car_shop, e_no, 
+      order_no, attachment, car_id,
+      car_check_detail,run_time,state)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{orderType,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{way,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{person,jdbcType=VARCHAR}, 
+      #{orderState,jdbcType=VARCHAR}, #{carShop,jdbcType=BIGINT}, #{eno,jdbcType=BIGINT},
+      #{orderNo,jdbcType=VARCHAR}, #{attachment,jdbcType=VARCHAR}, #{carId,jdbcType=BIGINT},
+      #{carCheckDetail,jdbcType=VARCHAR},#{runTime,jdbcType=TIMESTAMP},
+      #{state,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.order.entity.OrderWork" >
+    insert into order_work
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="orderType != null" >
+        order_type,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="way != null" >
+        way,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="person != null" >
+        person,
+      </if>
+      <if test="orderState != null" >
+        order_state,
+      </if>
+      <if test="carShop != null" >
+        car_shop,
+      </if>
+      <if test="eno != null" >
+        e_no,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
+      <if test="carCheckDetail != null" >
+        car_check_detail,
+      </if>
+      <if test="runTime != null" >
+        run_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="way != null" >
+        #{way,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="person != null" >
+        #{person,jdbcType=VARCHAR},
+      </if>
+      <if test="orderState != null" >
+        #{orderState,jdbcType=VARCHAR},
+      </if>
+      <if test="carShop != null" >
+        #{carShop,jdbcType=BIGINT},
+      </if>
+      <if test="eno != null" >
+        #{eno,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="carCheckDetail != null" >
+        #{carCheckDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="runTime != null" >
+        #{runTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.order.entity.OrderWork" >
+    update order_work
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderType != null" >
+        order_type = #{orderType,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="way != null" >
+        way = #{way,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="person != null" >
+        person = #{person,jdbcType=VARCHAR},
+      </if>
+      <if test="orderState != null" >
+        order_state = #{orderState,jdbcType=VARCHAR},
+      </if>
+      <if test="carShop != null" >
+        car_shop = #{carShop,jdbcType=BIGINT},
+      </if>
+      <if test="eno != null" >
+        e_no = #{eno,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="carId != null" >
+        car_id = #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="carCheckDetail != null" >
+        car_check_detail = #{carCheckDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="runTime != null" >
+        run_time = #{runTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.order.entity.OrderWork" >
+    update order_work
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      order_type = #{orderType,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      way = #{way,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      person = #{person,jdbcType=VARCHAR},
+      order_state = #{orderState,jdbcType=VARCHAR},
+      car_shop = #{carShop,jdbcType=BIGINT},
+      e_no = #{eno,jdbcType=BIGINT},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      car_id = #{carId,jdbcType=BIGINT},
+      car_check_detail = #{carCheckDetail,jdbcType=VARCHAR},
+      run_time = #{runTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 获取还车单数量 -->
+  <select id = "getReturnNumber" resultType="java.lang.Long">
+      select
+      count(*)
+      from order_work ow,t_base_employee tbe
+      where ow.state = 1 and ow.order_type = 1
+      and ow.e_no = tbe.id and tbe.token = #{token,jdbcType=VARCHAR}
+  </select>
+  <!-- 获取取车单数量 -->
+  <select id = "getGetNumber" resultType="java.lang.Long">
+      select
+      count(*)
+      from order_work ow,t_base_employee tbe
+      where ow.state = 1 and ow.order_type = 0
+      and ow.e_no = tbe.id and tbe.token = #{token,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据订单查工单-->
+  <select id="getByOrder1" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List" />
+     from order_work
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="orderType != null" >
+        and order_type =#{orderType,jdbcType=INTEGER}
+      </if>
+      <if test="orderNo != null" >
+        and order_no =#{orderNo,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+<!-- 根据门店和订单号去查找工单 -->
+  <select id="getByOrderShop" resultType="java.util.Map" parameterType="java.util.Map">
+    select ow.id,ow.order_type,ow.e_no
+    from order_work ow
+    left join car_shops shop on shop.id = ow.car_shop
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+    and shop.shop_code = #{shopCode,jdbcType=VARCHAR}
+  </select>
+<select id="getNotAssign" parameterType="java.lang.String" resultType="java.lang.Long">
+  select count(*) from order_work ow
+  left join order_info oi on ow.order_no = oi.order_no
+  left join car_shops shop on ow.car_shop = shop.id
+  where oi.state=10002 and shop.shop_code = #{shopCode,jdbcType=VARCHAR}
+</select>
+</mapper>

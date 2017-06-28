@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.car.CarFaultHandleMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.car.entity.CarFaultHandle" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="car_id" property="carId" jdbcType="BIGINT" />
+    <result column="fault_componengt" property="faultComponengt" jdbcType="VARCHAR" />
+    <result column="handle_by" property="handleBy" jdbcType="VARCHAR" />
+    <result column="fault_order" property="faultOrder" jdbcType="BIGINT" />
+    <result column="out_danger_no" property="outDangerNo" jdbcType="BIGINT" />
+    <result column="get_money" property="getMoney" jdbcType="DOUBLE" />
+    <result column="compensator" property="compensator" jdbcType="VARCHAR" />
+    <result column="repair_money" property="repairMoney" jdbcType="DOUBLE" />
+    <result column="provide_shop" property="provideShop" jdbcType="BIGINT" />
+    <result column="fault_time" property="faultTime" jdbcType="TIMESTAMP" />
+    <result column="repair_time" property="repairTime" jdbcType="TIMESTAMP" />
+    <result column="fault_descr" property="faultDescr" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, car_id, fault_componengt, 
+    handle_by, fault_order, out_danger_no, get_money, compensator, repair_money, provide_shop, 
+    fault_time, repair_time, fault_descr, remark, attachment
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from car_fault_handle
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectDetailByPrimaryKey" resultType="java.util.Map" parameterType="java.lang.Long" >
+    select cfh.*,car.car_code,cs.shop_name,oi.order_no from car_fault_handle cfh LEFT JOIN car on car.id = cfh.car_id LEFT JOIN car_shops cs on cs.id = cfh.provide_shop LEFT JOIN  order_info oi on oi.id=cfh.fault_order
+    where cfh.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllDetail" resultType="java.util.Map" parameterType="java.util.Map">
+        select cfh.*,car.car_code,cs.shop_name,oi.order_no from car_fault_handle cfh LEFT JOIN car on car.id = cfh.car_id LEFT JOIN car_shops cs on cs.id = cfh.provide_shop LEFT JOIN  order_info oi on oi.id=cfh.fault_order
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="car_code != null" >
+        and car_code LIKE CONCAT(CONCAT('%', #{car_code}), '%')
+      </if>
+      <if test="fault_order != null" >
+        and oi.order_no LIKE CONCAT(CONCAT('%', #{fault_order}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from car_fault_handle
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="carId != null">
+        and car_id = #{carId,jdbcType=BIGINT }
+      </if>
+      <if test="faultOrder != null" >
+        and fault_order = #{faultOrder,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from car_fault_handle
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.car.entity.CarFaultHandle" >
+    insert into car_fault_handle (id, create_by, create_time, 
+      state, last_time, last_by, 
+      car_id, fault_componengt, handle_by, 
+      fault_order, out_danger_no, get_money, 
+      compensator, repair_money, provide_shop, 
+      fault_time, repair_time, fault_descr, 
+      remark, attachment)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{carId,jdbcType=BIGINT}, #{faultComponengt,jdbcType=VARCHAR}, #{handleBy,jdbcType=VARCHAR}, 
+      #{faultOrder,jdbcType=BIGINT}, #{outDangerNo,jdbcType=BIGINT}, #{getMoney,jdbcType=DOUBLE}, 
+      #{compensator,jdbcType=VARCHAR}, #{repairMoney,jdbcType=DOUBLE}, #{provideShop,jdbcType=BIGINT}, 
+      #{faultTime,jdbcType=TIMESTAMP}, #{repairTime,jdbcType=TIMESTAMP}, #{faultDescr,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{attachment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.car.entity.CarFaultHandle" >
+    insert into car_fault_handle
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
+      <if test="faultComponengt != null" >
+        fault_componengt,
+      </if>
+      <if test="handleBy != null" >
+        handle_by,
+      </if>
+      <if test="faultOrder != null" >
+        fault_order,
+      </if>
+      <if test="outDangerNo != null" >
+        out_danger_no,
+      </if>
+      <if test="getMoney != null" >
+        get_money,
+      </if>
+      <if test="compensator != null" >
+        compensator,
+      </if>
+      <if test="repairMoney != null" >
+        repair_money,
+      </if>
+      <if test="provideShop != null" >
+        provide_shop,
+      </if>
+      <if test="faultTime != null" >
+        fault_time,
+      </if>
+      <if test="repairTime != null" >
+        repair_time,
+      </if>
+      <if test="faultDescr != null" >
+        fault_descr,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="faultComponengt != null" >
+        #{faultComponengt,jdbcType=VARCHAR},
+      </if>
+      <if test="handleBy != null" >
+        #{handleBy,jdbcType=VARCHAR},
+      </if>
+      <if test="faultOrder != null" >
+        #{faultOrder,jdbcType=BIGINT},
+      </if>
+      <if test="outDangerNo != null" >
+        #{outDangerNo,jdbcType=BIGINT},
+      </if>
+      <if test="getMoney != null" >
+        #{getMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="compensator != null" >
+        #{compensator,jdbcType=VARCHAR},
+      </if>
+      <if test="repairMoney != null" >
+        #{repairMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="provideShop != null" >
+        #{provideShop,jdbcType=BIGINT},
+      </if>
+      <if test="faultTime != null" >
+        #{faultTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="repairTime != null" >
+        #{repairTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="faultDescr != null" >
+        #{faultDescr,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.car.entity.CarFaultHandle" >
+    update car_fault_handle
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carId != null" >
+        car_id = #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="faultComponengt != null" >
+        fault_componengt = #{faultComponengt,jdbcType=VARCHAR},
+      </if>
+      <if test="handleBy != null" >
+        handle_by = #{handleBy,jdbcType=VARCHAR},
+      </if>
+      <if test="faultOrder != null" >
+        fault_order = #{faultOrder,jdbcType=BIGINT},
+      </if>
+      <if test="outDangerNo != null" >
+        out_danger_no = #{outDangerNo,jdbcType=BIGINT},
+      </if>
+      <if test="getMoney != null" >
+        get_money = #{getMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="compensator != null" >
+        compensator = #{compensator,jdbcType=VARCHAR},
+      </if>
+      <if test="repairMoney != null" >
+        repair_money = #{repairMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="provideShop != null" >
+        provide_shop = #{provideShop,jdbcType=BIGINT},
+      </if>
+      <if test="faultTime != null" >
+        fault_time = #{faultTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="repairTime != null" >
+        repair_time = #{repairTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="faultDescr != null" >
+        fault_descr = #{faultDescr,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.car.entity.CarFaultHandle" >
+    update car_fault_handle
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      car_id = #{carId,jdbcType=BIGINT},
+      fault_componengt = #{faultComponengt,jdbcType=VARCHAR},
+      handle_by = #{handleBy,jdbcType=VARCHAR},
+      fault_order = #{faultOrder,jdbcType=BIGINT},
+      out_danger_no = #{outDangerNo,jdbcType=BIGINT},
+      get_money = #{getMoney,jdbcType=DOUBLE},
+      compensator = #{compensator,jdbcType=VARCHAR},
+      repair_money = #{repairMoney,jdbcType=DOUBLE},
+      provide_shop = #{provideShop,jdbcType=BIGINT},
+      fault_time = #{faultTime,jdbcType=TIMESTAMP},
+      repair_time = #{repairTime,jdbcType=TIMESTAMP},
+      fault_descr = #{faultDescr,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

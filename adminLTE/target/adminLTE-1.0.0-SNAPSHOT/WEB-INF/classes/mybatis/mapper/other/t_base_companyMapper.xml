@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.other.t_base_companyMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.other.entity.TbaseCompany" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="COMPANY_CODE" property="companyCode" jdbcType="VARCHAR" />
+    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+    <result column="PARENT_COMANY_CODE" property="parentComanyCode" jdbcType="VARCHAR" />
+    <result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="city_id" property="cityId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, COMPANY_CODE, COMPANY_NAME, PARENT_COMANY_CODE, COMPANY_TYPE, UPDATE_TIME, city_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_base_company
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  select
+  <include refid="Base_Column_List" />
+  from t_base_company
+  <trim prefix="where" prefixOverrides="and | or">
+    <if test="cityId != null" >
+      and city_id =  #{cityId,jdbcType=BIGINT}
+    </if>
+    <if test="companyName != null" >
+      and COMPANY_NAME LIKE CONCAT(CONCAT('%', #{companyName}), '%')
+    </if>
+  </trim>
+</select>
+
+  <select id="getAllList1" resultType="java.util.Map" parameterType="java.util.Map" >
+    select tbc.ID id, tbc.COMPANY_CODE comcode, tbc.COMPANY_NAME comname, tbc.PARENT_COMANY_CODE, tbc.COMPANY_TYPE, tbc.UPDATE_TIME,
+    city.city_name cityname ,a.COMPANY_CODE supercode, a.COMPANY_NAME supername,dict.name comtype from t_base_company tbc INNER JOIN (select * from t_base_company ) a
+    on a.COMPANY_CODE = tbc.PARENT_COMANY_CODE left join t_base_dict_type dict on tbc.COMPANY_TYPE = dict.code
+    left JOIN t_base_city city on tbc.city_id = city.id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="comCode != null" >
+        and tbc.COMPANY_CODE LIKE CONCAT(CONCAT('%', #{comCode}), '%')
+      </if>
+      <if test="comName != null" >
+        and tbc.COMPANY_NAME LIKE CONCAT(CONCAT('%', #{comName}), '%')
+      </if>
+      <if test="parComCode != null" >
+        and a.COMPANY_CODE LIKE CONCAT(CONCAT('%', #{parComCode}), '%')
+      </if>
+      <if test="parComName != null" >
+        and a.COMPANY_NAME LIKE CONCAT(CONCAT('%', #{parComName}), '%')
+      </if>
+      <if test="comType != null" >
+        and dict.code =  #{comType,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllList2" resultType="java.util.Map" parameterType="java.util.Map" >
+    select COMPANY_CODE comCode,  COMPANY_NAME comName from t_base_company
+  </select>
+
+  <select id="getCompanyListTreeByParent" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_company
+    where PARENT_COMANY_CODE = #{parentComanyCode,jdbcType=VARCHAR} and PARENT_COMANY_CODE &lt;&gt; COMPANY_CODE
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_base_company
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.other.entity.TbaseCompany" >
+    insert into t_base_company (ID, COMPANY_CODE, COMPANY_NAME, 
+      PARENT_COMANY_CODE, COMPANY_TYPE, UPDATE_TIME, 
+      city_id)
+    values (#{id,jdbcType=BIGINT}, #{companyCode,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, 
+      #{parentComanyCode,jdbcType=VARCHAR}, #{companyType,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{cityId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.other.entity.TbaseCompany" >
+    insert into t_base_company
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="companyCode != null" >
+        COMPANY_CODE,
+      </if>
+      <if test="companyName != null" >
+        COMPANY_NAME,
+      </if>
+      <if test="parentComanyCode != null" >
+        PARENT_COMANY_CODE,
+      </if>
+      <if test="companyType != null" >
+        COMPANY_TYPE,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="companyCode != null" >
+        #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentComanyCode != null" >
+        #{parentComanyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyType != null" >
+        #{companyType,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.other.entity.TbaseCompany" >
+    update t_base_company
+    <set >
+      <if test="companyCode != null" >
+        COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentComanyCode != null" >
+        PARENT_COMANY_CODE = #{parentComanyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyType != null" >
+        COMPANY_TYPE = #{companyType,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cityId != null" >
+        city_id = #{cityId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.other.entity.TbaseCompany" >
+    update t_base_company
+    set COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+      COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      PARENT_COMANY_CODE = #{parentComanyCode,jdbcType=VARCHAR},
+      COMPANY_TYPE = #{companyType,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      city_id = #{cityId,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.custom.CustomerMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.custom.entity.Customer" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="mobile_phone" property="mobilePhone" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="attachmenrt" property="attachmenrt" jdbcType="VARCHAR" />
+    <result column="balance" property="balance" jdbcType="DOUBLE" />
+    <result column="identity_card" property="identityCard" jdbcType="BIGINT" />
+    <result column="driving_licence" property="drivingLicence" jdbcType="BIGINT" />
+    <result column="other_card" property="otherCard" jdbcType="VARCHAR" />
+    <result column="integral" property="integral" jdbcType="BIGINT" />
+    <result column="lock_balance" property="lockBalance" jdbcType="DOUBLE" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+    <result column="auth_reason" property="authReason" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, name, mobile_phone, password, 
+    email, attachmenrt, balance, identity_card, driving_licence, other_card, integral,lock_balance,img,auth_reason
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByPrimaryKey1" resultType="java.util.Map" parameterType="java.lang.Long" >
+    select
+    cu.*,cc.credential_type credentialtype,cc.credential_code
+    from customer cu left join customer_credential cc on cu.identity_card = cc.id
+    where cu.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getOneByMobileOrPsw" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List" />
+    from customer
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="mobilePhone != null" >
+        and mobile_phone = #{mobilePhone,jdbcType=VARCHAR}
+      </if>
+      <if test="password != null" >
+        and password = #{password,jdbcType=VARCHAR}
+      </if>
+    </trim>
+
+  </select>
+
+  <select id="getMyDetail" resultType="java.util.Map" parameterType="java.util.Map">
+    SELECT
+    cu.id,cu.balance,cu.integral,COUNT(hold.id) coupon
+    FROM
+    customer cu
+    LEFT JOIN customer_discount_hold hold ON hold.customer = cu.id
+    LEFT JOIN customer_discount discount on discount.id = hold.discount
+    where
+    cu.password = #{password,jdbcType=VARCHAR}
+    and hold.state = '1'
+    and discount.discount_state='1'
+    and discount.validtime &gt;= now()
+  </select>
+
+  <!-- 查询客户信息 -->
+  <select id="getCustomerInfo" resultType="java.util.Map" parameterType="java.util.Map">
+    select
+        c.name,cc.credential_code credentialCode
+    from customer c
+    left join  customer_credential cc on c.identity_card = cc.id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="mobilePhone != null" >
+        and mobile_phone = #{mobilePhone,jdbcType=VARCHAR}
+      </if>
+      <if test="password != null" >
+        and password = #{password,jdbcType=VARCHAR}
+      </if>
+    </trim>
+
+  </select>
+
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from customer
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="name != null" >
+        and name  LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </if>
+      <if test="mobilePhone != null" >
+        and mobile_phone  LIKE CONCAT(CONCAT('%', #{mobilePhone}), '%')
+      </if>
+      <if test="createTime != null" >
+        and create_time  LIKE CONCAT(CONCAT('%', #{createTime}), '%')
+      </if>
+      <if test="email != null" >
+        and email  LIKE CONCAT(CONCAT('%', #{email}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllList2" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    cu.*,dd.file_number,dd.quasi_driving_type,cc.credential_code,dict.name credentialtype
+    from customer cu left join customer_driving_licence dd on cu.driving_licence = dd.id
+    left join customer_credential cc on cu.identity_card = cc.id
+    left join t_base_dict_type dict on cc.credential_type = dict.code
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="name != null" >
+        and name  LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </if>
+      <if test="mobilePhone != null" >
+        and mobile_phone  LIKE CONCAT(CONCAT('%', #{mobilePhone}), '%')
+      </if>
+      <if test="createTime != null" >
+        and create_time  LIKE CONCAT(CONCAT('%', #{createTime}), '%')
+      </if>
+      <if test="email != null" >
+        and email  LIKE CONCAT(CONCAT('%', #{email}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <select id="getOneCustomerAuth" resultType="java.util.Map" parameterType="java.lang.Long" >
+    select
+    cu.*,dd.file_number,dd.quasi_driving_type,dd.get_time,cc.credential_code,dict.name credentialtype
+    from customer cu left join customer_driving_licence dd on cu.driving_licence = dd.id
+    left join customer_credential cc on cu.identity_card = cc.id
+    left join t_base_dict_type dict on cc.credential_type = dict.code
+   where cu.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList1" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    id,name
+    from customer
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from customer
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.custom.entity.Customer" >
+    insert into customer (id, create_by, create_time, 
+      state, last_time, last_by, 
+      name, mobile_phone, password, 
+      email, attachmenrt, balance, 
+      identity_card, driving_licence, other_card, 
+      integral,lock_balance,img,auth_reason)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{name,jdbcType=VARCHAR}, #{mobilePhone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{attachmenrt,jdbcType=VARCHAR}, #{balance,jdbcType=DOUBLE}, 
+      #{identityCard,jdbcType=BIGINT}, #{drivingLicence,jdbcType=BIGINT}, #{otherCard,jdbcType=VARCHAR}, 
+      #{integral,jdbcType=BIGINT}, #{lockBalance,jdbcType=DOUBLE}, #{img,jdbcType=VARCHAR}), #{authReason,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertCustomerSelective" parameterType="com.lte.admin.custom.entity.Customer" >
+    insert into customer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="mobilePhone != null" >
+        mobile_phone,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="attachmenrt != null" >
+        attachmenrt,
+      </if>
+      <if test="balance != null" >
+        balance,
+      </if>
+      <if test="identityCard != null" >
+        identity_card,
+      </if>
+      <if test="drivingLicence != null" >
+        driving_licence,
+      </if>
+      <if test="otherCard != null" >
+        other_card,
+      </if>
+      <if test="integral != null" >
+        integral,
+      </if>
+      <if test="lockBalance != null" >
+        lock_balance,
+      </if>
+      <if test="img != null" >
+        img,
+      </if>
+      <if test="authReason != null" >
+        auth_reason,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilePhone != null" >
+        #{mobilePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmenrt != null" >
+        #{attachmenrt,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null" >
+        #{balance,jdbcType=DOUBLE},
+      </if>
+      <if test="identityCard != null" >
+        #{identityCard,jdbcType=BIGINT},
+      </if>
+      <if test="drivingLicence != null" >
+        #{drivingLicence,jdbcType=BIGINT},
+      </if>
+      <if test="otherCard != null" >
+        #{otherCard,jdbcType=VARCHAR},
+      </if>
+      <if test="integral != null" >lockBalance
+        #{integral,jdbcType=BIGINT},
+      </if>
+      <if test="lockBalance != null" >
+        #{lockBalance,jdbcType=DOUBLE},
+      </if>
+      <if test="img != null" >
+        #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="authReason != null" >
+        #{authReason,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.custom.entity.Customer" >
+    update customer
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilePhone != null" >
+        mobile_phone = #{mobilePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmenrt != null" >
+        attachmenrt = #{attachmenrt,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=DOUBLE},
+      </if>
+      <if test="identityCard != null" >
+        identity_card = #{identityCard,jdbcType=BIGINT},
+      </if>
+      <if test="drivingLicence != null" >
+        driving_licence = #{drivingLicence,jdbcType=BIGINT},
+      </if>
+      <if test="otherCard != null" >
+        other_card = #{otherCard,jdbcType=VARCHAR},
+      </if>
+      <if test="integral != null" >
+        integral = #{integral,jdbcType=BIGINT},
+      </if>
+      <if test="lockBalance != null" >
+        lock_balance = #{lockBalance,jdbcType=DOUBLE},
+      </if>
+      <if test="img != null" >
+        img = #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="authReason != null" >
+        auth_reason =  #{authReason,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.custom.entity.Customer" >
+    update customer
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      mobile_phone = #{mobilePhone,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      attachmenrt = #{attachmenrt,jdbcType=VARCHAR},
+      balance = #{balance,jdbcType=DOUBLE},
+      identity_card = #{identityCard,jdbcType=BIGINT},
+      driving_licence = #{drivingLicence,jdbcType=BIGINT},
+      other_card = #{otherCard,jdbcType=VARCHAR},
+      integral = #{integral,jdbcType=BIGINT},
+      lock_balance = #{lockBalance,jdbcType=DOUBLE},
+       img = #{img,jdbcType=VARCHAR},
+       auth_reason =  #{authReason,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--getCustomerInfo-->
+</mapper>

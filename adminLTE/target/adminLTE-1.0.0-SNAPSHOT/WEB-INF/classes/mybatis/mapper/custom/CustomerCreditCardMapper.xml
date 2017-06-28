@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.custom.CustomerCreditCardMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.custom.entity.CustomerCreditCard" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="credit_state" property="creditState" jdbcType="INTEGER" />
+    <result column="credit_no" property="creditNo" jdbcType="VARCHAR" />
+    <result column="credit_bank" property="creditBank" jdbcType="VARCHAR" />
+    <result column="security" property="security" jdbcType="VARCHAR" />
+    <result column="linkephone" property="linkephone" jdbcType="VARCHAR" />
+    <result column="validity_time" property="validityTime" jdbcType="TIMESTAMP" />
+    <result column="customer" property="customer" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, credit_state, credit_no, credit_bank, security, linkephone, 
+    validity_time, customer
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer_credit_card
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    ccc.*,c.name
+    from customer_credit_card ccc left join customer c on ccc.customer = c.id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="name != null" >
+        and c.name  LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </if>
+    </trim>
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from customer_credit_card
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.custom.entity.CustomerCreditCard" >
+    insert into customer_credit_card (id, create_by, create_time, 
+      credit_state, credit_no, credit_bank, 
+      security, linkephone, validity_time, 
+      customer)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{creditState,jdbcType=INTEGER}, #{creditNo,jdbcType=VARCHAR}, #{creditBank,jdbcType=VARCHAR}, 
+      #{security,jdbcType=VARCHAR}, #{linkephone,jdbcType=VARCHAR}, #{validityTime,jdbcType=TIMESTAMP}, 
+      #{customer,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.custom.entity.CustomerCreditCard" >
+    insert into customer_credit_card
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="creditState != null" >
+        credit_state,
+      </if>
+      <if test="creditNo != null" >
+        credit_no,
+      </if>
+      <if test="creditBank != null" >
+        credit_bank,
+      </if>
+      <if test="security != null" >
+        security,
+      </if>
+      <if test="linkephone != null" >
+        linkephone,
+      </if>
+      <if test="validityTime != null" >
+        validity_time,
+      </if>
+      <if test="customer != null" >
+        customer,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creditState != null" >
+        #{creditState,jdbcType=INTEGER},
+      </if>
+      <if test="creditNo != null" >
+        #{creditNo,jdbcType=VARCHAR},
+      </if>
+      <if test="creditBank != null" >
+        #{creditBank,jdbcType=VARCHAR},
+      </if>
+      <if test="security != null" >
+        #{security,jdbcType=VARCHAR},
+      </if>
+      <if test="linkephone != null" >
+        #{linkephone,jdbcType=VARCHAR},
+      </if>
+      <if test="validityTime != null" >
+        #{validityTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="customer != null" >
+        #{customer,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.custom.entity.CustomerCreditCard" >
+    update customer_credit_card
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creditState != null" >
+        credit_state = #{creditState,jdbcType=INTEGER},
+      </if>
+      <if test="creditNo != null" >
+        credit_no = #{creditNo,jdbcType=VARCHAR},
+      </if>
+      <if test="creditBank != null" >
+        credit_bank = #{creditBank,jdbcType=VARCHAR},
+      </if>
+      <if test="security != null" >
+        security = #{security,jdbcType=VARCHAR},
+      </if>
+      <if test="linkephone != null" >
+        linkephone = #{linkephone,jdbcType=VARCHAR},
+      </if>
+      <if test="validityTime != null" >
+        validity_time = #{validityTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="customer != null" >
+        customer = #{customer,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.custom.entity.CustomerCreditCard" >
+    update customer_credit_card
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      credit_state = #{creditState,jdbcType=INTEGER},
+      credit_no = #{creditNo,jdbcType=VARCHAR},
+      credit_bank = #{creditBank,jdbcType=VARCHAR},
+      security = #{security,jdbcType=VARCHAR},
+      linkephone = #{linkephone,jdbcType=VARCHAR},
+      validity_time = #{validityTime,jdbcType=TIMESTAMP},
+      customer = #{customer,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

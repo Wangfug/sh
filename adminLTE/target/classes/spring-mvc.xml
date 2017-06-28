@@ -81,6 +81,7 @@
             <bean class="com.lte.admin.common.interceptor.LogInterceptor"></bean>
         </mvc:interceptor>-->
         <mvc:interceptor>
+
             <mvc:mapping path="/**/**"/>
 <!--             <mvc:exclude-mapping path="/services/**"/> -->
             <bean class="com.lte.admin.common.interceptor.MaintenanceInterceptor">
@@ -92,7 +93,25 @@
                     <value>/error/maintenance.jsp</value>  
                 </property>
             </bean>
-        </mvc:interceptor>
-    </mvc:interceptors>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/mobile/customer/**"/> <!-- 用户手机登录拦截 -->
+			<mvc:exclude-mapping path="/mobile/**/login"/>
+			<mvc:exclude-mapping path="/mobile/**/getCarByShop"/>
+			<mvc:exclude-mapping path="/mobile/**/getSelected"/>
+			<mvc:exclude-mapping path="/mobile/**/getCarCities"/>
+			<mvc:exclude-mapping path="/mobile/**/getCarShops"/>
+			<mvc:exclude-mapping path="/mobile/**/getHotCar"/>
+			<mvc:exclude-mapping path="/mobile/**/getHotCarFee"/>
+			<bean class="com.lte.admin.common.interceptor.MobileCustomerInterceptor"></bean>
+		</mvc:interceptor>
+
+		<mvc:interceptor>
+			<mvc:mapping path="/mobile/employee/**"/> <!-- 业务员手机登录拦截 -->
+			<mvc:exclude-mapping path="/mobile/**/login"/>
+			<mvc:exclude-mapping path="/mobile/**/updatePassword"/>
+			<bean class="com.lte.admin.common.interceptor.MobileEmployeeInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
 	
 </beans>

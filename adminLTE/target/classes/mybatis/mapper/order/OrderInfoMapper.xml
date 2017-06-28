@@ -2,121 +2,736 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lte.admin.mapper.order.OrderInfoMapper" >
   <resultMap id="BaseResultMap" type="com.lte.admin.order.entity.OrderInfo" >
-    <id column="ID" property="id" jdbcType="BIGINT" />
-    <result column="CREATE_BY" property="createBy" jdbcType="BIGINT" />
-    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="CAR_ID" property="carId" jdbcType="BIGINT" />
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="customer" property="customer" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="real_time_start" property="realTimeStart" jdbcType="TIMESTAMP" />
+    <result column="real_time_end" property="realTimeEnd" jdbcType="TIMESTAMP" />
+    <result column="total_fee" property="totalFee" jdbcType="DOUBLE" />
+    <result column="reserve_time_start" property="reserveTimeStart" jdbcType="TIMESTAMP" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="pay_way" property="payWay" jdbcType="VARCHAR" />
+    <result column="pay_account" property="payAccount" jdbcType="VARCHAR" />
+    <result column="reserve_type" property="reserveType" jdbcType="VARCHAR" />
+    <result column="car_id" property="carId" jdbcType="BIGINT" />
+    <result column="reserve_time_end" property="reserveTimeEnd" jdbcType="TIMESTAMP" />
+    <result column="real_car_type" property="realCarType" jdbcType="VARCHAR" />
+    <result column="real_pay" property="realPay" jdbcType="DOUBLE" />
+    <result column="final_fee" property="finalFee" jdbcType="BIGINT" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
+    <result column="way" property="way" jdbcType="VARCHAR" />
+    <result column="invoice" property="invoice" jdbcType="VARCHAR" />
+    <result column="is_pre_authorized" property="isPreAuthorized" jdbcType="VARCHAR" />
+    <result column="pay_state" property="payState" jdbcType="VARCHAR" />
+    <result column="initial_mileage" property="initialMileage" jdbcType="VARCHAR" />
+    <result column="final_mileage" property="finalMileage" jdbcType="VARCHAR" />
+
+    <result column="car_shop_get" property="carShopGet" jdbcType="BIGINT" />
+    <result column="car_shop_return" property="carShopReturn" jdbcType="BIGINT" />
+    <result column="address_get" property="addressGet" jdbcType="VARCHAR" />
+    <result column="address_return" property="addressReturn" jdbcType="VARCHAR" />
+
   </resultMap>
-  <!--
+  <sql id="Base_Column_List">
+    id, create_by, create_time, state, last_time, last_by, customer, order_no, real_time_start, 
+    real_time_end, total_fee, reserve_time_start, pay_time, pay_way, pay_account, reserve_type, 
+    car_id, reserve_time_end, real_car_type, real_pay, final_fee,delete_flag,way,invoice,
+    is_pre_authorized,pay_state,initial_mileage,final_mileage,car_shop_get,car_shop_return,address_get,
+    address_return
+  </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from t_base_company
-    where ID = #{id,jdbcType=BIGINT}
-  </select>-->
-  <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from t_base_company
-    where ID = #{id,jdbcType=BIGINT}
-  </delete>-->
-  <sql id="Base_Column_List" >
-    ID, CREATE_BY,CREATE_TIME,STATE,LAST_TIME,LAST_BY,CUSTOMER,ORDER_NO,OPEN_OPINION,CLOSE_OPINION,TOTAL_OPINION,TIME_START,TIME_END,TOTAL_FEE,RESERVE_TIME,PAY_TIME,PAY_WAY,PAY_ACCOUNT,RESERVE_TYPE, CAR_ID;
-</sql>
-  <select id="findOrderList" resultMap="BaseResultMap"  parameterType="java.util.Map">
+    from order_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="closeOrder" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    UPDATE order_info set state='10006',last_time=NOW() where state='10001' and create_time &lt; date_sub(now(),INTERVAL 30 MINUTE)
+  </select>
+
+
+  <!-- 根据条件查询多条订单 -->
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
-    o.order_no,o.time_start,o.time_end,o.state,c.name,c.mobile_phone
-    from order_info o left join customer c
-    <where>
+    <include refid="Base_Column_List" />
+    from order_info
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="carId != null" >
+        and car_id  LIKE CONCAT(CONCAT('%', #{carId}), '%')
+      </if>
+      <if test="orderNo != null" >
+        and order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <!-- 根据条件查询多条订单 -->
+  <select id="getListByCustomer" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    oi.id, oi.order_no,oi.way,  oi.invoice,oi.reserve_time_start,  oi.reserve_time_end,tbdt.code state_code,tbdt.name state,car.carton_number,car.displacement,car.block_number,car.attachment,car.brand,car.model
+    from order_info oi
+    LEFT join customer cu on cu.id=oi.customer
+    LEFT join car on car.id=oi.car_id
+    LEFT JOIN t_base_dict_type tbdt on tbdt.code=oi.state
+    <trim prefix="where" prefixOverrides="and | or">
       <if test="customer != null" >
-        and c.CUSTOMER  LIKE CONCAT(CONCAT('%', #{customer}), '%')
+        and oi.customer =#{customer,jdbcType=BIGINT}
+      </if>
+      <if test="token != null" >
+        and cu.password  = #{token,jdbcType=VARCHAR}
+      </if>
+      <if test="deleteFlag != null" >
+        and oi.delete_flag =#{deleteFlag,jdbcType=INTEGER}
       </if>
       <if test="state != null" >
-        and o.STATE = #{state}
+        and oi.state  = #{state,jdbcType=INTEGER}
       </if>
-      <if test="order_no != null" >
-        and o.ORDER_NO = #{orderNo,jdbcType=VARCHAR}
-      </if>
-    </where>
-
+      order by oi.create_time desc
+    </trim>
   </select>
-  <insert id="save" parameterType="com.lte.admin.order.entity.OrderInfo" >
-    insert into order_info ( CREATE_BY, CREATE_TIME,
-      CAR_ID
+
+  <!-- 根据条件查询多条订单号 -->
+  <select id="getOrderNoList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    id,order_no
+    from order_info
+  </select>
+  <!-- 根据订单号获得订单 -->
+  <select id="getByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getDetailByOrderNo" resultType="java.util.Map" parameterType="java.lang.String" >
+     SELECT
+  myorder.id,
+  myorder.order_no,
+  myorder.state,
+  car.attachment img,
+  car.brand,
+  car.model,
+  car.carton_number,
+  car.displacement,
+  car.block_number,
+  dict.NAME car_type,
+  myorder.reserve_time_start start_time,
+  myorder.reserve_time_end end_time,
+  myorder.way,
+  myorder.address_get,
+  myorder.address_return,
+  myorder.total_fee,
+  myorder.real_pay,
+  getshop.shop_name get_shop,
+  returnshop.shop_name return_shop,
+  fee.total_fee,
+  fee.car_rent_fee,
+  fee.send_car_fee,
+  fee.base_fee,
+  fee.other_fee,
+  fee.Additional_bujimianpei buji,
+  fee.handing_charge,
+  fee.pre_authorized
+  FROM
+  order_info myorder
+  INNER JOIN car ON car.id = myorder.car_id
+  LEFT JOIN car_shops getshop ON getshop.id = myorder.car_shop_get
+  LEFT JOIN car_shops returnshop ON returnshop.id = myorder.car_shop_return
+  INNER JOIN order_fee fee ON fee.id = myorder.final_fee
+  LEFT JOIN t_base_dict_type dict ON dict. CODE = (
+  SELECT
+  substring_index(car.car_type, ',', 1)
+  )
+  WHERE
+     myorder.order_no = #{orderNo,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from order_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.order.entity.OrderInfo" >
+    insert into order_info (id, create_by, create_time, 
+      state, last_time, last_by, 
+      customer, order_no, real_time_start, 
+      real_time_end, total_fee, reserve_time_start, 
+      pay_time, pay_way, pay_account, 
+      reserve_type, car_id, reserve_time_end, 
+      real_car_type, real_pay, final_fee,delete_flag,way,invoice,
+      is_pre_authorized,pay_state,initial_mileage,final_mileage,
+      car_shop_get,car_shop_return,address_get,address_return
       )
-    values (#{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP},
-      #{carId,jdbcType=BIGINT}
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{customer,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{realTimeStart,jdbcType=TIMESTAMP}, 
+      #{realTimeEnd,jdbcType=TIMESTAMP}, #{totalFee,jdbcType=DOUBLE}, #{reserveTimeStart,jdbcType=TIMESTAMP}, 
+      #{payTime,jdbcType=TIMESTAMP}, #{payWay,jdbcType=VARCHAR}, #{payAccount,jdbcType=VARCHAR}, 
+      #{reserveType,jdbcType=VARCHAR}, #{carId,jdbcType=BIGINT}, #{reserveTimeEnd,jdbcType=TIMESTAMP}, 
+      #{realCarType,jdbcType=VARCHAR}, #{realPay,jdbcType=DOUBLE}, #{finalFee,jdbcType=BIGINT},
+       #{deleteFlag,jdbcType=INTEGER}, #{way,jdbcType=VARCHAR}, #{invoice,jdbcType=VARCHAR},
+        #{isPreAuthorized,jdbcType=VARCHAR}, #{payState,jdbcType=VARCHAR},
+        #{initialMileage,jdbcType=VARCHAR}, #{finalMileage,jdbcType=VARCHAR},
+        #{carShopGet,jdbcType=BIGINT}, #{carShopReturn,jdbcType=BIGINT},
+        #{addressGet,jdbcType=VARCHAR}, #{addressReturn,jdbcType=VARCHAR}
       )
   </insert>
-  <!--<insert id="insertSelective" parameterType="com.lte.admin.entity.Company" >
-    insert into t_base_company
+  <insert id="insertSelective" parameterType="com.lte.admin.order.entity.OrderInfo" >
+    insert into order_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        ID,
+        id,
       </if>
-      <if test="companyCode != null" >
-        COMPANY_CODE,
+      <if test="createBy != null" >
+        create_by,
       </if>
-      <if test="companyName != null" >
-        COMPANY_NAME,
+      <if test="createTime != null" >
+        create_time,
       </if>
-      <if test="parentComanyCode != null" >
-        PARENT_COMANY_CODE,
+      <if test="state != null" >
+        state,
       </if>
-      <if test="companyType != null" >
-        COMPANY_TYPE,
+      <if test="lastTime != null" >
+        last_time,
       </if>
-      <if test="updateTime != null" >
-        UPDATE_TIME,
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="customer != null" >
+        customer,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="realTimeStart != null" >
+        real_time_start,
+      </if>
+      <if test="realTimeEnd != null" >
+        real_time_end,
+      </if>
+      <if test="totalFee != null" >
+        total_fee,
+      </if>
+      <if test="reserveTimeStart != null" >
+        reserve_time_start,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="payWay != null" >
+        pay_way,
+      </if>
+      <if test="payAccount != null" >
+        pay_account,
+      </if>
+      <if test="reserveType != null" >
+        reserve_type,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
+      <if test="reserveTimeEnd != null" >
+        reserve_time_end,
+      </if>
+      <if test="realCarType != null" >
+        real_car_type,
+      </if>
+      <if test="realPay != null" >
+        real_pay,
+      </if>
+      <if test="finalFee != null" >
+        final_fee,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="way != null" >
+        way,
+      </if>
+      <if test="invoice != null" >
+        invoice,
+      </if>
+      <if test="isPreAuthorized != null" >
+      is_pre_authorized,
+    </if>
+      <if test="payState != null" >
+        pay_state,
+      </if>
+      <if test="initialMileage != null" >
+        initial_mileage,
+      </if>
+      <if test="finalMileage != null" >
+        final_mileage,
+      </if>
+      <if test="carShopGet != null" >
+        car_shop_get,
+      </if>
+      <if test="carShopReturn != null" >
+        car_shop_return,
+      </if>
+      <if test="addressGet != null" >
+        address_get,
+      </if>
+      <if test="addressReturn != null" >
+        address_return
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="companyCode != null" >
-        #{companyCode,jdbcType=VARCHAR},
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
       </if>
-      <if test="companyName != null" >
-        #{companyName,jdbcType=VARCHAR},
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="parentComanyCode != null" >
-        #{parentComanyCode,jdbcType=VARCHAR},
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
       </if>
-      <if test="companyType != null" >
-        #{companyType,jdbcType=VARCHAR},
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
       </if>
+      <if test="customer != null" >
+        #{customer,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="realTimeStart != null" >
+        #{realTimeStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="realTimeEnd != null" >
+        #{realTimeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalFee != null" >
+        #{totalFee,jdbcType=DOUBLE},
+      </if>
+      <if test="reserveTimeStart != null" >
+        #{reserveTimeStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payWay != null" >
+        #{payWay,jdbcType=VARCHAR},
+      </if>
+      <if test="payAccount != null" >
+        #{payAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="reserveType != null" >
+        #{reserveType,jdbcType=VARCHAR},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="reserveTimeEnd != null" >
+        #{reserveTimeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="realCarType != null" >
+        #{realCarType,jdbcType=VARCHAR},
+      </if>
+      <if test="realPay != null" >
+        #{realPay,jdbcType=DOUBLE},
+      </if>
+      <if test="finalFee != null" >
+        #{finalFee,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=INTEGER},
+      </if>
+      <if test="way != null" >
+        #{way,jdbcType=VARCHAR},
+      </if>
+      <if test="invoice != null" >
+        #{invoice,jdbcType=VARCHAR},
+      </if>
+      <if test="isPreAuthorized != null" >
+        #{isPreAuthorized,jdbcType=VARCHAR},
+      </if>
+      <if test="payState != null" >
+        #{payState,jdbcType=VARCHAR},
+      </if>
+      <if test="initialMileage != null" >
+        #{initialMileage,jdbcType=VARCHAR},
+      </if>
+      <if test="finalMileage != null" >
+        #{finalMileage,jdbcType=VARCHAR},
+      </if>
+      <if test="carShopGet != null" >
+        #{carShopGet,jdbcType=BIGINT},
+      </if>
+      <if test="carShopReturn != null" >
+        #{carShopReturn,jdbcType=BIGINT},
+      </if>
+      <if test="addressGet != null" >
+        #{addressGet,jdbcType=VARCHAR},
+      </if>
+      <if test="addressReturn != null" >
+        #{addressReturn,jdbcType=VARCHAR}
+      </if>
+
     </trim>
-  </insert>-->
-  <!--<update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.Company" >
-    update t_base_company
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.order.entity.OrderInfo" >
+    update order_info
     <set >
-      <if test="companyCode != null" >
-        COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
       </if>
-      <if test="companyName != null" >
-        COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="parentComanyCode != null" >
-        PARENT_COMANY_CODE = #{parentComanyCode,jdbcType=VARCHAR},
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
       </if>
-      <if test="companyType != null" >
-        COMPANY_TYPE = #{companyType,jdbcType=VARCHAR},
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="customer != null" >
+        customer = #{customer,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="realTimeStart != null" >
+        real_time_start = #{realTimeStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="realTimeEnd != null" >
+        real_time_end = #{realTimeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalFee != null" >
+        total_fee = #{totalFee,jdbcType=DOUBLE},
+      </if>
+      <if test="reserveTimeStart != null" >
+        reserve_time_start = #{reserveTimeStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payWay != null" >
+        pay_way = #{payWay,jdbcType=VARCHAR},
+      </if>
+      <if test="payAccount != null" >
+        pay_account = #{payAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="reserveType != null" >
+        reserve_type = #{reserveType,jdbcType=VARCHAR},
+      </if>
+      <if test="carId != null" >
+        car_id = #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="reserveTimeEnd != null" >
+        reserve_time_end = #{reserveTimeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="realCarType != null" >
+        real_car_type = #{realCarType,jdbcType=VARCHAR},
+      </if>
+      <if test="realPay != null" >
+        real_pay = #{realPay,jdbcType=DOUBLE},
+      </if>
+      <if test="finalFee != null" >
+        final_fee = #{finalFee,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      </if>
+      <if test="way != null" >
+        way = #{way,jdbcType=VARCHAR},
+      </if>
+      <if test="invoice != null" >
+        invoice = #{invoice,jdbcType=VARCHAR},
+      </if>
+      <if test="isPreAuthorized != null" >
+        is_pre_authorized = #{isPreAuthorized,jdbcType=VARCHAR},
+      </if>
+      <if test="payState != null" >
+        pay_state = #{payState,jdbcType=VARCHAR},
+      </if>
+      <if test="initialMileage != null" >
+        initial_mileage = #{initialMileage,jdbcType=VARCHAR},
+      </if>
+      <if test="finalMileage != null" >
+        final_mileage = #{finalMileage,jdbcType=VARCHAR},
+      </if>
+      <if test="carShopGet != null" >
+        car_shop_get = #{carShopGet,jdbcType=BIGINT},
+      </if>
+      <if test="carShopReturn != null" >
+        car_shop_return = #{carShopReturn,jdbcType=BIGINT},
+      </if>
+      <if test="addressGet != null" >
+        address_get = #{addressGet,jdbcType=VARCHAR},
+      </if>
+      <if test="addressReturn != null" >
+        address_return = #{addressReturn,jdbcType=VARCHAR}
       </if>
     </set>
-    where ID = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.lte.admin.entity.Company" >
-    update t_base_company
-    set COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
-      COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
-      PARENT_COMANY_CODE = #{parentComanyCode,jdbcType=VARCHAR},
-      COMPANY_TYPE = #{companyType,jdbcType=VARCHAR},
-      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-    where ID = #{id,jdbcType=BIGINT}
-  </update>-->
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.order.entity.OrderInfo" >
+    update order_info
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      customer = #{customer,jdbcType=BIGINT},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      real_time_start = #{realTimeStart,jdbcType=TIMESTAMP},
+      real_time_end = #{realTimeEnd,jdbcType=TIMESTAMP},
+      total_fee = #{totalFee,jdbcType=DOUBLE},
+      reserve_time_start = #{reserveTimeStart,jdbcType=TIMESTAMP},
+      pay_time = #{payTime,jdbcType=TIMESTAMP},
+      pay_way = #{payWay,jdbcType=VARCHAR},
+      pay_account = #{payAccount,jdbcType=VARCHAR},
+      reserve_type = #{reserveType,jdbcType=VARCHAR},
+      car_id = #{carId,jdbcType=BIGINT},
+      reserve_time_end = #{reserveTimeEnd,jdbcType=TIMESTAMP},
+      real_car_type = #{realCarType,jdbcType=VARCHAR},
+      real_pay = #{realPay,jdbcType=DOUBLE},
+      final_fee = #{finalFee,jdbcType=BIGINT},
+      delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      way = #{way,jdbcType=VARCHAR},
+      invoice = #{invoice,jdbcType=VARCHAR},
+      is_pre_authorized = #{isPreAuthorized,jdbcType=VARCHAR},
+      pay_state = #{payState,jdbcType=VARCHAR},
+      initial_mileage = #{initialMileage,jdbcType=VARCHAR},
+      final_mileage = #{finalMileage,jdbcType=VARCHAR},
+      car_shop_get = #{carShopGet,jdbcType=BIGINT},
+      car_shop_return = #{carShopReturn,jdbcType=BIGINT},
+      address_get = #{addressGet,jdbcType=VARCHAR},
+    address_return = #{addressReturn,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id = "getOrderNo" resultType="java.lang.Long">
+    select nextval('orderNo')
+  </select>
+<!--查询自营或联营的门店订单-->
+
+  <select id = "getOrderList66" resultType="java.util.Map" parameterType="java.util.Map">
+    select getShop.shop_name getshopname,
+    returnShop.shop_name returnshopname,o.id, o.state, o.order_no, o.real_time_start,o.invoice,
+    o.real_time_end,c1.name,c1.mobile_phone
+    from order_info o
+    left join customer c1 on o.customer=c1.id
+    left join
+    (select o1.id,shop1.shop_name,shop1.shop_code,shop1.parent_code from car_shops shop1
+    left join order_info o1 on shop1.id = o1.car_shop_get
+    ) getShop on getShop.id = o.id
+    left join
+    (select o1.id,shop1.shop_name,shop1.shop_code,shop1.parent_code from car_shops shop1
+    left join order_info o1 on shop1.id = o1.car_shop_return
+    ) returnShop on returnShop.id = o.id
+    INNER JOIN (select shop66.shop_code from car_shops shop66 where shop66.parent_code=#{parentCode,jdbcType=VARCHAR}) shop11
+    on (getShop.parent_code = shop11.shop_code OR returnShop.parent_code = shop11.shop_code)
+    <trim prefix="where" prefixOverrides="and | or">
+      and (o.delete_flag=0 || o.delete_flag is null)
+      <if test="orderNo != null" >
+        and o.order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+      </if>
+      <if test="orderState != null" >
+        and o.state  LIKE CONCAT(CONCAT('%', #{orderState}), '%')
+      </if>
+      <if test="realTimeStart != null" >
+        and o.real_time_start  &gt;= str_to_date(#{realTimeStart},'%Y-%m-%d')
+      </if>
+      <if test="realTimeEnd != null" >
+        and o.real_time_end  &lt;= str_to_date(#{realTimeEnd},'%Y-%m-%d')
+      </if>
+      <if test="name != null" >
+        and c1.name  LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </if>
+      <if test="mobilePhone != null" >
+        and c1.mobile_phone  LIKE CONCAT(CONCAT('%', #{mobilePhone}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <select id = "getOrderList" resultType="java.util.Map" parameterType="java.util.Map">
+    select getShop.shop_name getshopname,
+    returnShop.shop_name returnshopname,o.id, o.state, o.order_no, o.real_time_start,o.invoice,
+    o.real_time_end,c1.name,c1.mobile_phone
+    from order_info o
+    left join customer c1 on o.customer=c1.id
+    left join
+    (select o1.id,shop1.shop_name,shop1.shop_code from car_shops shop1
+    left join order_info o1 on shop1.id = o1.car_shop_get
+    ) getShop on getShop.id = o.id
+    left join
+    (select o1.id,shop1.shop_name,shop1.shop_code from car_shops shop1
+    left join order_info o1 on shop1.id = o1.car_shop_return
+    ) returnShop on returnShop.id = o.id
+    <trim prefix="where" prefixOverrides="and | or">
+      and (o.delete_flag=0 || o.delete_flag is null)
+      <if test="orderNo != null" >
+        and o.order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+      </if>
+      <if test="orderState != null" >
+        and o.state  LIKE CONCAT(CONCAT('%', #{orderState}), '%')
+      </if>
+      <if test="realTimeStart != null" >
+      and o.real_time_start  &gt;= str_to_date(#{realTimeStart},'%Y-%m-%d')
+    </if>
+      <if test="realTimeEnd != null" >
+        and o.real_time_end  &lt;= str_to_date(#{realTimeEnd},'%Y-%m-%d')
+      </if>
+      <if test="name != null" >
+        and c1.name  LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </if>
+      <if test="mobilePhone != null" >
+        and c1.mobile_phone  LIKE CONCAT(CONCAT('%', #{mobilePhone}), '%')
+      </if>
+      <if test="shopCode != null" >
+        and (getShop.shop_code  =#{shopCode,jdbcType=VARCHAR} or returnShop.shop_code  =#{shopCode,jdbcType=VARCHAR})
+      </if>
+      <if test="parentCode != null" >
+        and (getShop.parent_code  =#{parentCode,jdbcType=VARCHAR} or returnShop.parent_code  =#{parentCode,jdbcType=VARCHAR})
+      </if>
+    </trim>
+  </select>
+  <!-- left join car on o.car_id = car.id -->
+  <select id = "getOrderDetail" resultType="java.util.Map" parameterType="java.lang.String">
+    select orderDetail.*, getEmp.name getName,returnEmp.name returnName from
+    (select o.id, o.state, o.order_no orderNo, o.reserve_time_start reserveTimeStart,o.reserve_time_end reserveTimeEnd,
+    o.reserve_type reserveType,o.real_car_type realCarType,o.way,o.is_pre_authorized isPreAuthorized,o.pay_state payState,c.name,c.mobile_phone phone,
+    fee.car_rent_fee carRentFee,fee.send_car_fee sendCarFee,fee.base_fee baseFee,fee.other_fee otherFee,
+    fee.Additional_bujimianpei bujimianpei,fee.handing_charge handingCharge,fee.Additional_fee_for_three AdditionalFeeForThree,
+    fee.total_fee totalFee,fee.pre_authorized preAuthorized,fee.pre_authorized_way preAuthorizedWay,
+    car.car_code carCode,car.brand,car.model,car.carton_number cartonNumber,car.displacement,
+    car.block_number blockNumber,car.car_type carType ,car.attachment,
+    cc.credential_code credentialCode,cdl.file_number fileNumber,
+    eval.grade,eval.content,eval.vehicle_condition vehicleCondition,eval.get_vehicle_service getVehicleService,
+    eval.return_vehicle_service returnVehicleService,eval.total_service totalService,eval.open_opinion openOpinion,
+    eval.close_opinion closeOpinion,eval.total_opinion  totalOpinion,o.car_shop_get getShop,o.car_shop_return returnShop,o.pay_way
+    payWay,o.pay_account payAccount,o.address_get,o.address_return
+    from order_info o
+    left join customer c on o.customer=c.id
+    left join car on o.car_id = car.id
+    left join customer_credential cc on c.identity_card = cc.id
+    left join customer_driving_licence cdl on cdl.id = c.driving_licence
+    left join order_fee fee on fee.id = o.final_fee
+    left join order_evaluate eval on eval.order_no = o.order_no
+    where o.order_no = #{orderNo,jdbcType=VARCHAR})
+     orderDetail
+     left join
+    (select m.MEMBER_NAME name,ow.order_type orderType,ow.order_no from order_work ow
+    LEFT JOIN t_base_employee emp on ow.e_no = emp.id
+    LEFT JOIN t_base_member m on m.member_code = emp.create_by
+    where ow.order_no = #{orderNo,jdbcType=VARCHAR} and ow.order_type = 0) getEmp on getEmp.order_no = orderDetail.orderNo
+    left join
+    (select m.MEMBER_NAME name,ow.order_type orderType,ow.order_no from order_work ow
+    LEFT JOIN t_base_employee emp on ow.e_no = emp.id
+    LEFT JOIN t_base_member m on m.member_code = emp.create_by
+    where ow.order_no = #{orderNo,jdbcType=VARCHAR} and ow.order_type = 1) returnEmp on returnEmp.order_no = orderDetail.orderNo
+
+  </select>
+
+  <select id = "getOrderWorkList" resultType="java.util.Map" parameterType="java.lang.String">
+    select
+        order_type type,way
+    from order_work
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </select>
+  <!--获取取车投诉次数-->
+
+  <select id = "getComplaintNumber1" resultType="java.lang.Long" parameterType="java.util.Map">
+    select count(*)
+    from order_work ow
+    left join order_info o on o.order_no=ow.order_no
+    left join order_evaluate eval on o.order_no = eval.order_no
+    left join t_base_employee emp on emp.id=ow.e_no
+    <trim prefix="where" prefixOverrides="and | or">
+      and eval.get_vehicle_service&lt;3
+      <if test="token != null" >
+        and emp.token = #{token,jdbcType=VARCHAR}
+      </if>
+      <if test="orderState != null" >
+        and ow.order_type = #{orderState,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+  <!--获取收车投诉次数-->
+  <select id = "getComplaintNumber2" resultType="java.lang.Long" parameterType="java.util.Map">
+    select count(*)
+    from order_work ow
+    left join order_info o on o.order_no=ow.order_no
+    left join order_evaluate eval on o.order_no = eval.order_no
+    left join t_base_employee emp on emp.id=ow.e_no
+    <trim prefix="where" prefixOverrides="and | or">
+      and eval.return_vehicle_service&lt;3
+      <if test="token != null" >
+        and emp.token = #{token,jdbcType=VARCHAR}
+      </if>
+      <if test="orderState != null" >
+        and ow.order_type = #{orderState,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+  <select id="getForBreakRule" parameterType="java.util.Map" resultType="java.lang.String">
+    select order_no from order_info where real_time_start&lt;#{illTime,jdbcType=TIMESTAMP} and
+    real_time_end &gt;#{illTime,jdbcType=TIMESTAMP} and car_id=#{carId,jdbcType=BIGINT}
+  </select>
+  <select id="getNewOrderNumber" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+      select count(*) from order_info where create_time
+      BETWEEN date_sub(SYSDATE(),INTERVAL #{time,jdbcType=INTEGER} minute) AND SYSDATE()
+  </select>
+
+  <select id="getAttachOrderList" parameterType="java.util.Map" resultType="java.util.Map">
+    select getShop.shop_name getshopname,car.bind_obj cname
+    returnShop.shop_name returnshopname,o.id, o.state, o.order_no, o.real_time_start,o.invoice,
+    o.real_time_end,c1.name,c1.mobile_phone
+    from order_info o
+    left join customer c1 on o.customer=c1.id
+    left join
+    (select o1.id,shop1.shop_name,shop1.shop_code from car_shops shop1
+    left join order_info o1 on shop1.id = o1.car_shop_get
+    ) getShop on getShop.id = o.id
+    left join
+    (select o1.id,shop1.shop_name,shop1.shop_code from car_shops shop1
+    left join order_info o1 on shop1.id = o1.car_shop_return
+    ) returnShop on returnShop.id = o.id
+    left join car on car.id = o.car_id
+    <trim prefix="where" prefixOverrides="and | or">
+      and car.belong=50003
+      and (o.delete_flag=0 || o.delete_flag is null)
+      <if test="orderNo != null" >
+        and o.order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+      </if>
+      <if test="orderState != null" >
+        and o.state  LIKE CONCAT(CONCAT('%', #{orderState}), '%')
+      </if>
+      <if test="realTimeStart != null" >
+        and o.real_time_start  &gt;= str_to_date(#{realTimeStart},'%Y-%m-%d')
+      </if>
+      <if test="realTimeEnd != null" >
+        and o.real_time_end  &lt;= str_to_date(#{realTimeEnd},'%Y-%m-%d')
+      </if>
+      <if test="name != null" >
+        and c1.name  LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </if>
+      <if test="mobilePhone != null" >
+        and c1.mobile_phone  LIKE CONCAT(CONCAT('%', #{mobilePhone}), '%')
+      </if>
+      <if test="shopCode != null" >
+        and (getShop.shop_code  =#{shopCode,jdbcType=VARCHAR} or returnShop.shop_code  =#{shopCode,jdbcType=VARCHAR})
+      </if>
+      <if test="parentCode != null" >
+        and (getShop.parent_code  =#{parentCode,jdbcType=VARCHAR} or returnShop.parent_code  =#{parentCode,jdbcType=VARCHAR})
+      </if>
+    </trim>
+  </select>
+
 </mapper>

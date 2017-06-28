@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.custom.CustomerBalanceChangeMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.custom.entity.CustomerBalanceChange" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="before_change" property="beforeChange" jdbcType="DOUBLE" />
+    <result column="after_change" property="afterChange" jdbcType="DOUBLE" />
+    <result column="balance_customer" property="balanceCustomer" jdbcType="BIGINT" />
+    <result column="change_money" property="changeMoney" jdbcType="DOUBLE" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="transaction_no" property="transactionNo" jdbcType="BIGINT" />
+    <result column="pay_way" property="payWay" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, before_change, after_change, balance_customer,change_money,type,transaction_no,pay_way
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer_balance_change
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    cbc.*,c.name
+    from customer_balance_change cbc left join customer c on cbc.balance_customer = c.id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="name != null" >
+        and c.name  LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </if>
+      <if test="createTime != null" >
+        and cbc.create_time  LIKE CONCAT(CONCAT('%', #{createTime}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <select id="getHistory" resultType="java.util.Map" parameterType="java.util.Map" >
+    SELECT
+    cbc.create_time,
+    cbc.type,
+    cbc.change_money,
+    cbc.transaction_no,
+    cash.state cash_state
+    FROM
+    customer_balance_change cbc
+    LEFT JOIN customer_balance_cash cash ON cbc.transaction_no = cash.id
+    WHERE
+    cbc.create_by =  #{createBy,jdbcType=BIGINT}
+    ORDER BY cbc.create_time desc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from customer_balance_change
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.custom.entity.CustomerBalanceChange" >
+    insert into customer_balance_change (id, create_by, create_time, 
+      before_change, after_change, balance_customer,change_money,type,transaction_no,pay_way
+      )
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{beforeChange,jdbcType=DOUBLE}, #{afterChange,jdbcType=DOUBLE}, #{balanceCustomer,jdbcType=BIGINT},#{changeMoney,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER}, #{transactionNo,jdbcType=BIGINT}, #{payWay,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="changeId"  parameterType="com.lte.admin.custom.entity.CustomerBalanceChange" >
+    insert into customer_balance_change
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="beforeChange != null" >
+        before_change,
+      </if>
+      <if test="afterChange != null" >
+        after_change,
+      </if>
+      <if test="balanceCustomer != null" >
+        balance_customer,
+      </if>
+      <if test="changeMoney != null" >
+        change_money,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="transactionNo != null" >
+        transaction_no,
+      </if>
+      <if test="payWay != null" >
+        pay_way,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beforeChange != null" >
+        #{beforeChange,jdbcType=DOUBLE},
+      </if>
+      <if test="afterChange != null" >
+        #{afterChange,jdbcType=DOUBLE},
+      </if>
+      <if test="balanceCustomer != null" >
+        #{balanceCustomer,jdbcType=BIGINT},
+      </if>
+
+      <if test="changeMoney != null" >
+        #{changeMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="transactionNo != null" >
+        #{transactionNo,jdbcType=BIGINT},
+      </if>
+      <if test="payWay != null" >
+        #{payWay,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.custom.entity.CustomerBalanceChange" >
+    update customer_balance_change
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beforeChange != null" >
+        before_change = #{beforeChange,jdbcType=DOUBLE},
+      </if>
+      <if test="afterChange != null" >
+        after_change = #{afterChange,jdbcType=DOUBLE},
+      </if>
+      <if test="balanceCustomer != null" >
+        balance_customer = #{balanceCustomer,jdbcType=BIGINT},
+      </if>
+      <if test="changeMoney != null" >
+        change_money=#{changeMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="type != null" >
+        type=#{type,jdbcType=INTEGER},
+      </if>
+      <if test="transactionNo != null" >
+        transaction_no=#{transactionNo,jdbcType=BIGINT},
+      </if>
+      <if test="payWay != null" >
+        pay_way= #{payWay,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.custom.entity.CustomerBalanceChange" >
+    update customer_balance_change
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      before_change = #{beforeChange,jdbcType=DOUBLE},
+      after_change = #{afterChange,jdbcType=DOUBLE},
+      balance_customer = #{balanceCustomer,jdbcType=BIGINT},
+       change_money=#{changeMoney,jdbcType=DOUBLE},
+       type=#{type,jdbcType=INTEGER},
+       transaction_no=#{transactionNo,jdbcType=BIGINT},
+        pay_way= #{payWay,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

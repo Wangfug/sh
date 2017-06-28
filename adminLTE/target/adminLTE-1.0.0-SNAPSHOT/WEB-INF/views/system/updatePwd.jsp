@@ -12,17 +12,20 @@
 		<tr>
 			<td>原密码：</td>
 			<td>
-			<input type="hidden" name="psncode" value="${user.psncode }"/>
-			<input id="oldPassword" name="oldPassword" type="password" class="required"/>
+				<%--<c:if test="${!empty user.psncode}">
+					<input type="hidden" name="psncode" value="${user.psncode }"/>
+				</c:if>--%>
+					<input type="hidden" name="psncode" value="${user.id }"/>
+			<input id="oldPassword" name="oldPassword" type="password" class="easyui-validatebox" required="required"/>
 			</td>
 		</tr>
 		<tr>
 			<td>密码：</td>
-			<td><input id="plainPassword" name="plainPassword" type="password" class="required" minlength="6" maxlength="20"/></td>
+			<td><input id="plainPassword" name="plainPassword" type="password" class="easyui-validatebox" required="required" minlength="6" maxlength="20"/></td>
 		</tr>
 		<tr>
 			<td>确认密码：</td>
-			<td><input id="confirmPassword" name="confirmPassword" type="password" class="required" equalTo="#plainPassword"/></td>
+			<td><input id="confirmPassword" name="confirmPassword" type="password" class="easyui-validatebox" required="required" equalTo="#plainPassword"/></td>
 		</tr>
 		<tr>
 			<td><input id="submit" type="submit" value="submit" style="display: none"/></td>
@@ -48,6 +51,7 @@ $(function(){
 		},
 		 submitHandler:function(form){
 				$("#mainform").ajaxSubmit(function(data){
+//				    console.log(data)
 					 if(data=='success'){
 						 parent.$.messager.show({ title : "提示",msg: "操作成功！", position: "bottomRight" });
 							parent.d.panel('close');

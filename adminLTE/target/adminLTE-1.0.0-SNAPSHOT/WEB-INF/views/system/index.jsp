@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>汇通达金融服务平台</title>
+<title>舜昊租车平台</title>
 <%@ include file="/WEB-INF/views/include/easyui.jsp"%>
 <%@ include file="/WEB-INF/views/include/validation.jsp"%>
 <c:set var="GSBZ_PT" value="<%= DictConsts.GSBZ_PT %>"/>
@@ -135,7 +135,7 @@ $.ajax({
 	success: function(data){
 		var menuData={data:data};
 		var html = template('menu', menuData);
-		$('#myMenu').html(html); 
+		$('#myMenu').html(html);
 	}
 });
 
@@ -148,7 +148,7 @@ $('.easyui-linkbutton').on('click', function(){
 
 
 $(function(){
-	window.mainpage.mainTabs.addModule('主页','system/home/indexmain','icon-hamburg-home',true, false);
+	window.mainpage.mainTabs.addModule('主页','${accountInfoUrl}','icon-hamburg-home',true, false);
 	
 	$("#btnChangePWD").click(function () {
 		d = $("#dlgpwd").dialog({   

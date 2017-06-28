@@ -54,6 +54,9 @@
       <if test="memberCode != null" >
         #{memberCode,jdbcType=VARCHAR},
       </if>
+      <if test="jobId != null" >
+        #{jobId,jdbcType=BIGINT},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.MemberJob" >

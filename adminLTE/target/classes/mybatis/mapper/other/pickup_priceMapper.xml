@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.other.pickup_priceMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.other.entity.PickupPrice" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
+    <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
+    <result column="scope_price" property="scopePrice" jdbcType="DOUBLE" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="beyond_price" property="beyondPrice" jdbcType="DOUBLE" />
+    <result column="regulation_scope" property="regulationScope" jdbcType="VARCHAR" />
+    <result column="regulation_unit" property="regulationUnit" jdbcType="VARCHAR" />
+    <result column="beyond_unit" property="beyondUnit" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, city, area, starttime, endtime, 
+    scope_price, remark, beyond_price, regulation_scope, regulation_unit, beyond_unit
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from pickup_price
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from pickup_price
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="activityId != null" >
+        and activity_id =  #{activityId,jdbcType=BIGINT}
+      </if>
+      <if test="state != null" >
+        and state = #{state,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from pickup_price
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.other.entity.PickupPrice" >
+    insert into pickup_price (id, create_by, create_time, 
+      state, last_time, last_by, 
+      city, area, starttime, 
+      endtime, scope_price, remark, 
+      beyond_price, regulation_scope, regulation_unit, 
+      beyond_unit)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{starttime,jdbcType=TIMESTAMP}, 
+      #{endtime,jdbcType=TIMESTAMP}, #{scopePrice,jdbcType=DOUBLE}, #{remark,jdbcType=VARCHAR}, 
+      #{beyondPrice,jdbcType=DOUBLE}, #{regulationScope,jdbcType=VARCHAR}, #{regulationUnit,jdbcType=VARCHAR}, 
+      #{beyondUnit,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.other.entity.PickupPrice" >
+    insert into pickup_price
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="starttime != null" >
+        starttime,
+      </if>
+      <if test="endtime != null" >
+        endtime,
+      </if>
+      <if test="scopePrice != null" >
+        scope_price,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="beyondPrice != null" >
+        beyond_price,
+      </if>
+      <if test="regulationScope != null" >
+        regulation_scope,
+      </if>
+      <if test="regulationUnit != null" >
+        regulation_unit,
+      </if>
+      <if test="beyondUnit != null" >
+        beyond_unit,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scopePrice != null" >
+        #{scopePrice,jdbcType=DOUBLE},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="beyondPrice != null" >
+        #{beyondPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="regulationScope != null" >
+        #{regulationScope,jdbcType=VARCHAR},
+      </if>
+      <if test="regulationUnit != null" >
+        #{regulationUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="beyondUnit != null" >
+        #{beyondUnit,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.other.entity.PickupPrice" >
+    update pickup_price
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        starttime = #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        endtime = #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scopePrice != null" >
+        scope_price = #{scopePrice,jdbcType=DOUBLE},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="beyondPrice != null" >
+        beyond_price = #{beyondPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="regulationScope != null" >
+        regulation_scope = #{regulationScope,jdbcType=VARCHAR},
+      </if>
+      <if test="regulationUnit != null" >
+        regulation_unit = #{regulationUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="beyondUnit != null" >
+        beyond_unit = #{beyondUnit,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.other.entity.PickupPrice" >
+    update pickup_price
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      starttime = #{starttime,jdbcType=TIMESTAMP},
+      endtime = #{endtime,jdbcType=TIMESTAMP},
+      scope_price = #{scopePrice,jdbcType=DOUBLE},
+      remark = #{remark,jdbcType=VARCHAR},
+      beyond_price = #{beyondPrice,jdbcType=DOUBLE},
+      regulation_scope = #{regulationScope,jdbcType=VARCHAR},
+      regulation_unit = #{regulationUnit,jdbcType=VARCHAR},
+      beyond_unit = #{beyondUnit,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

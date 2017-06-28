@@ -177,11 +177,12 @@
 		from t_base_member m,t_base_permission p,t_base_staff_job sj,
 		 t_job_permission jp,t_member_job mj
 		where 
-		  m.member_code=mj.member_code
-		and mj.job_code=jp.job_code
-		and jp.job_code=sj.job_code
-		and m.member_code= #{memberCode,jdbcType=VARCHAR}
-		and sj.dept_code=#{deptCode,jdbcType=VARCHAR}
+		  m.MEMBER_CODE=mj.MEMBER_CODE
+		and mj.JOB_CODE=jp.JOB_CODE
+		and jp.JOB_CODE=sj.JOB_CODE
+		and p.ID = jp.PERMISSION_ID
+		and m.MEMBER_CODE= #{memberCode,jdbcType=VARCHAR}
+		and sj.DEPT_CODE=#{deptCode,jdbcType=VARCHAR}
 
   </select>
   <select id="findMenuOperation" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >

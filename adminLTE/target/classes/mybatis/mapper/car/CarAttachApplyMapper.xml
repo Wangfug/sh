@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.car.CarAttachApplyMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.car.entity.CarAttachApply" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="customer_id" property="customerId" jdbcType="BIGINT" />
+    <result column="drive_lic_img" property="driveLicImg" jdbcType="VARCHAR" />
+    <result column="car_attach_detail" property="carAttachDetail" jdbcType="VARCHAR" />
+    <result column="car_info" property="carInfo" jdbcType="VARCHAR" />
+    <result column="car_shop" property="carShop" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_time, state, customer_id, drive_lic_img, car_attach_detail, car_info,car_shop
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from car_attach_apply
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    apply.*,customer.name,customer.mobile_phone
+    from car_attach_apply apply
+    left join customer on customer.id = apply.customer_id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="state != null" >
+        and apply.state=#{state,jdbcType=INTEGER}
+      </if>
+      <if test="customerId != null" >
+        and apply.customer_id = #{customerId,jdbcType=BIGINT}
+      </if>
+      <if test="shopId != null" >
+        and apply.car_shop = #{shopId,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from car_attach_apply
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.car.entity.CarAttachApply" >
+    insert into car_attach_apply (id, create_time, state,
+    customer_id, drive_lic_img, car_attach_detail,
+    car_info,car_shop)
+    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER},
+    #{customerId,jdbcType=BIGINT}, #{driveLicImg,jdbcType=VARCHAR}, #{carAttachDetail,jdbcType=VARCHAR},
+    #{carInfo,jdbcType=VARCHAR},#{car_shop,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.car.entity.CarAttachApply" >
+    insert into car_attach_apply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+      <if test="driveLicImg != null" >
+        drive_lic_img,
+      </if>
+      <if test="carAttachDetail != null" >
+        car_attach_detail,
+      </if>
+      <if test="carInfo != null" >
+        car_info,
+      </if>
+      <if test="carShop != null" >
+        car_shop
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="driveLicImg != null" >
+        #{driveLicImg,jdbcType=VARCHAR},
+      </if>
+      <if test="carAttachDetail != null" >
+        #{carAttachDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="carInfo != null" >
+        #{carInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="carShop != null" >
+        #{carShop,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.car.entity.CarAttachApply" >
+    update car_attach_apply
+    <set >
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="driveLicImg != null" >
+        drive_lic_img = #{driveLicImg,jdbcType=VARCHAR},
+      </if>
+      <if test="carAttachDetail != null" >
+        car_attach_detail = #{carAttachDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="carInfo != null" >
+        car_info = #{carInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="carShop != null" >
+        car_shop = #{carShop,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.car.entity.CarAttachApply" >
+    update car_attach_apply
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      customer_id = #{customerId,jdbcType=BIGINT},
+      drive_lic_img = #{driveLicImg,jdbcType=VARCHAR},
+      car_attach_detail = #{carAttachDetail,jdbcType=VARCHAR},
+      car_info = #{carInfo,jdbcType=VARCHAR},
+      car_shop = #{carShop,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

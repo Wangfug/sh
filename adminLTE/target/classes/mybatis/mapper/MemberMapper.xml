@@ -15,15 +15,20 @@
   
   
   <resultMap id="MemberLoginResultMap" type="com.lte.admin.entity.MemberLogin" >
-    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
-    <result column="dept_code" property="deptCode" jdbcType="VARCHAR" />
-    <result column="COMPANY_CODE" property="companyCode" jdbcType="VARCHAR" />
-    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
-    <result column="member_code" property="memberCode" jdbcType="VARCHAR" />
-    <result column="member_name" property="memberName" jdbcType="VARCHAR" />
-    <result column="job_code" property="jobCode" jdbcType="VARCHAR" />
-    <result column="job_name" property="jobName" jdbcType="VARCHAR" />
-    <result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />
+    <result column="ID" property="id" jdbcType="BIGINT" />
+    <result column="DEPT_NAME" property="deptName" jdbcType="VARCHAR" />
+    <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+    <result column="DEPT_CODE" property="deptCode" jdbcType="VARCHAR" />
+    <!--<result column="COMPANY_CODE" property="companyCode" jdbcType="VARCHAR" />-->
+    <!--<result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />-->
+    <result column="shop_code" property="shopCode" jdbcType="VARCHAR" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="MEMBER_CODE" property="memberCode" jdbcType="VARCHAR" />
+    <result column="MEMBER_NAME" property="memberName" jdbcType="VARCHAR" />
+    <result column="JOB_CODE" property="jobCode" jdbcType="VARCHAR" />
+    <result column="JOB_NAME" property="jobName" jdbcType="VARCHAR" />
+    <!--<result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />-->
+    <result column="shop_type" property="shopType" jdbcType="VARCHAR" />
   </resultMap>
   
   <sql id="Base_Column_List" >
@@ -36,12 +41,28 @@
     from t_base_member
     where MEMBER_CODE = #{memberCode,jdbcType=VARCHAR}
   </select>
+  <select id="selectBymemberCode1" resultType="com.lte.admin.entity.Ryxx" parameterType="java.lang.String" >
+    select
+    m.MEMBER_CODE psncode, m.salt,m.MEMBER_NAME psnname,m.password
+    from t_base_member m
+    where m.MEMBER_CODE = #{psncode,jdbcType=VARCHAR}
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from t_base_member
     where ID = #{id,jdbcType=BIGINT}
-  </select>  
+  </select>
+
+  <select id="selectByMobile" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_member
+    where mobile = #{mobile,jdbcType=VARCHAR}
+  </select>
+
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from t_base_member
     where ID = #{id,jdbcType=BIGINT}
@@ -117,6 +138,43 @@
       </if>
     </trim>
   </insert>
+  <insert id="saveRyxx" useGeneratedKeys="true" keyProperty="pkPsnbasdoc" parameterType="com.lte.admin.entity.Ryxx" >
+    insert into t_base_member
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="psnname != null" >
+        MEMBER_CODE,
+      </if>
+      <if test="password != null" >
+        PASSWORD,
+      </if>
+      <if test="salt != null" >
+        SALT,
+      </if>
+      <if test="memberName != null" >
+        MEMBER_NAME,
+      </if>
+      <if test="mobile != null" >
+        MOBILE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="psnname != null" >
+        #{psnname,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.Member" >
     update t_base_member
     <set >
@@ -147,6 +205,9 @@
     </set>
     where ID = #{id,jdbcType=BIGINT}
   </update>
+
+
+
   <update id="updateByPrimaryKey" parameterType="com.lte.admin.entity.Member" >
     update t_base_member
     set MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
@@ -159,54 +220,119 @@
       UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=BIGINT}
   </update>
-  
+
+  <update id="updatePwd" parameterType="com.lte.admin.entity.Ryxx" >
+    update t_base_member
+    set PASSWORD = #{password,jdbcType=VARCHAR},SALT = #{salt,jdbcType=VARCHAR}
+    where MEMBER_CODE = #{psncode,jdbcType=VARCHAR}
+  </update>
+  <!-- 门店取代公司 -->
   <select id="findRygwList" resultMap="MemberLoginResultMap" parameterType="java.lang.String" >
 	select
-	  d.dept_name,d.dept_code,c.COMPANY_CODE,c.COMPANY_NAME,c.company_type,
-	  m.member_code,m.member_name,sj.job_code,sj.job_name
+	  d.DEPT_NAME,d.DEPT_CODE,c.shop_code,c.shop_name,c.shop_type,
+	  m.ID,m.MEMBER_CODE,m.MEMBER_NAME,m.salt,m.mobile,sj.JOB_CODE,sj.JOB_NAME
 	from t_base_member m,t_member_job j,
-	 t_base_staff_job sj,t_base_dept d,t_base_company c
-	where m.member_code=j.member_code
-	and j.job_code=sj.job_code
-	and d.dept_code=sj.dept_code
-	and c.COMPANY_CODE=d.COMPANY_CODE
-	and m.member_code=#{memberCode,jdbcType=VARCHAR}
+	 t_base_staff_job sj,t_base_dept d,car_shops c
+	where m.MEMBER_CODE=j.MEMBER_CODE
+	and j.JOB_CODE=sj.JOB_CODE
+	and d.DEPT_CODE=sj.DEPT_CODE
+	and c.shop_code=d.COMPANY_CODE
+	and m.MEMBER_CODE=#{memberCode,jdbcType=VARCHAR}
   </select>  
-  
-    <select id="findByByMemberCodeAndJobCode" resultMap="MemberLoginResultMap" parameterType="java.util.Map" >
+  <!-- 门店取代公司 -->
+    <select id="findByMemberCodeAndJobCode" resultMap="MemberLoginResultMap" parameterType="java.util.Map" >
 	select
-	  d.dept_name,d.dept_code,c.COMPANY_CODE,c.COMPANY_NAME,c.company_type,
-	  m.member_code,m.member_name,sj.job_code,sj.job_name
+	  d.dept_name,d.dept_code,c.shop_code,c.shop_name,c.shop_type,
+	  m.ID,m.member_code,m.member_name,m.salt,m.mobile,sj.job_code,sj.job_name
 	from t_base_member m,t_member_job j,
-	 t_base_staff_job sj,t_base_dept d,t_base_company c
+	 t_base_staff_job sj,t_base_dept d,car_shops c
 	where m.member_code=j.member_code
 	and j.job_code=sj.job_code
 	and d.dept_code=sj.dept_code
-	and c.COMPANY_CODE=d.COMPANY_CODE
+	and c.shop_code=d.COMPANY_CODE
 	and m.member_code=#{memberCode,jdbcType=VARCHAR}
 	and sj.job_code=#{jobCode,jdbcType=VARCHAR}
   </select>
-  
-  <select id="getMemberList" resultMap="MemberLoginResultMap" parameterType="java.lang.String" >
-	select
-	  d.dept_name,d.dept_code,c.COMPANY_CODE,c.COMPANY_NAME,c.company_type,
-	  m.member_code,m.member_name,sj.job_code,sj.job_name
-	from t_base_member m,t_member_job j,
-	 t_base_staff_job sj,t_base_dept d,t_base_company c
-	where m.member_code=j.member_code
-	and j.job_code=sj.job_code
-	and d.dept_code=sj.dept_code
-	and c.COMPANY_CODE=d.COMPANY_CODE
+  <!--
+  内连接关联5张表
+  select
+   d.dept_name,d.dept_code,c.COMPANY_CODE,c.COMPANY_NAME,c.company_type,
+   m.member_code,m.member_name,sj.job_code,sj.job_name
+   from t_base_member m,t_member_job j,
+   t_base_staff_job sj,t_base_dept d,t_base_company c
+   where m.member_code=j.member_code
+   and j.job_code=sj.job_code
+   and d.dept_code=sj.dept_code
+   and c.COMPANY_CODE=d.COMPANY_CODE -->
+  <!--<select id="getMemberList" resultMap="MemberLoginResultMap" parameterType="java.lang.String" >
+    select
+    m.ID,d.DEPT_NAME ,d.DEPT_CODE,c.COMPANY_CODE,c.COMPANY_NAME,c.COMPANY_TYPE,
+    m.MEMBER_CODE,m.MEMBER_NAME,sj.JOB_CODE,sj.JOB_NAME
+    from t_base_member m left join t_member_job j on m.ID=j.MEMBER_ID left join
+    t_base_staff_job sj on j.JOB_ID=sj.ID left join t_base_dept d on d.ID=sj.DEPT_ID
+    left join t_base_company c on c.COMPANY_CODE=d.COMPANY_CODE
+    where 1=1 and m.MEMBER_CODE &lt;&gt; 'admin'
 	<if test="memberName != null" >
-      and   m.MEMBER_NAME = #{memberName,jdbcType=VARCHAR}
+      and   m.MEMBER_NAME LIKE CONCAT(CONCAT('', #{memberName}), '%')
     </if>
-    
     <if test="memberCode != null" >
-      and   m.member_code = #{memberCode,jdbcType=VARCHAR}
+      and   m.MEMBER_CODE LIKE CONCAT(CONCAT('', #{memberCode}), '%')
     </if>
-
     <if test="deptCode != null" >
-       and  d.dept_code LIKE CONCAT(CONCAT('', #{deptCode}), '%')
+       and  d.DEPT_CODE LIKE CONCAT(CONCAT('', #{deptCode}), '%')
     </if>    
-  </select>   
+  </select>   -->
+<!-- 门店取代公司 -->
+  <select id="getMemberList" resultType="java.util.Map" parameterType="java.lang.String" >
+  select
+  m.ID id,m.MEMBER_CODE membercode,m.MEMBER_NAME membername,m.MOBILE mobile,e.e_no eno,sj.JOB_NAME job,d.DEPT_NAME dept,
+    c.shop_name company
+  from t_base_member m
+    left join t_base_employee e on m.MEMBER_CODE = e.create_by
+    left join t_member_job j on m.MEMBER_CODE=j.MEMBER_CODE
+    left join t_base_staff_job sj on j.JOB_CODE=sj.JOB_CODE
+    left join t_base_dept d on d.DEPT_CODE=sj.DEPT_CODE
+    left join car_shops c on c.shop_code=d.COMPANY_CODE
+  where 1=1 and m.MEMBER_CODE &lt;&gt; 'admin'
+  <if test="memberName != null" >
+    and   m.MEMBER_NAME LIKE CONCAT(CONCAT('', #{memberName}), '%')
+  </if>
+  <if test="memberCode != null" >
+    and   m.MEMBER_CODE LIKE CONCAT(CONCAT('', #{memberCode}), '%')
+  </if>
+  <if test="eno != null" >
+    and  e.e_no LIKE CONCAT(CONCAT('', #{eno}), '%')
+  </if>
+    <if test="deptCode != null" >
+      and   d.DEPT_CODE =#{deptCode,jdbcType=VARCHAR}
+    </if>
+    <if test="comCode != null" >
+      and  c.shop_code =#{comCode,jdbcType=VARCHAR}
+    </if>
+</select>
+<!-- 门店取代公司 -->
+  <select id="getMemberById" resultType="java.util.Map" parameterType="java.lang.Long" >
+    select
+    m.ID id,m.MEMBER_CODE memberCode,tmb.JOB_CODE jobCode,dept.DEPT_CODE deptCode,com.dept_code comCode
+    from t_base_member m left join t_member_job tmb on m.MEMBER_CODE = tmb.MEMBER_CODE
+    left join t_base_staff_job tbsj on tmb.JOB_CODE = tbsj.JOB_CODE
+    left join t_base_dept dept on dept.DEPT_CODE = tbsj.DEPT_CODE
+    left join car_shops com on com.dept_code = dept.COMPANY_CODE
+    where m.ID = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <!-- 根据code查用户 -->
+  <select id="getMemberByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_member
+    where MEMBER_CODE = #{code,jdbcType=VARCHAR}
+  </select>
+    <select id="getMemberById1" resultMap="BaseResultMap" parameterType="java.lang.Long">
+      select
+      <include refid="Base_Column_List" />
+      from t_base_member
+      where id = #{id,jdbcType=BIGINT}
+    </select>
 </mapper>

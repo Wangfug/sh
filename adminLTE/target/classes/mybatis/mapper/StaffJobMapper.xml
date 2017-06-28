@@ -12,16 +12,83 @@
   <sql id="Base_Column_List" >
     ID, JOB_CODE, JOB_NAME, DEPT_CODE, DELETE_FLAG, UPDATE_TIME
   </sql>
+<!-- 岗位查询-->
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from t_base_staff_job
     where ID = #{id,jdbcType=BIGINT}
   </select>
+
+  <select id="getOneStaffJobByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_staff_job
+    where JOB_CODE = #{gwxx,jdbcType=VARCHAR}
+  </select>
+<!-- 公司职能被门店取代-->
+  <select id="selectByPrimaryKey1" resultType="java.util.Map" parameterType="java.lang.Long" >
+    select
+    j.ID id, j.JOB_CODE jobCode,j.JOB_NAME jobName, j.DEPT_CODE deptCode,shop.shop_code shopCode
+    from t_base_staff_job j,t_base_dept dept,car_shops shop
+    where j.DEPT_CODE = dept.DEPT_CODE and dept.COMPANY_CODE = shop.shop_code
+    and j.ID = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="findStaffJobList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_staff_job
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="jobCode != null" >
+        and JOB_CODE  LIKE CONCAT(CONCAT('%', #{jobCode}), '%')
+      </if>
+      <if test="jobName != null" >
+        and JOB_NAME  LIKE CONCAT(CONCAT('%', #{jobName}), '%')
+      </if>
+      <if test="deptCode != null" >
+        and DEPT_CODE  = #{deptCode,jdbcType=VARCHAR}
+      </if>
+
+    </trim>
+  </select>
+  <select id="findStaffJobList1" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    gw.ID id,gw.JOB_CODE jobCode,gw.JOB_NAME jobName,gw.DEPT_CODE deptCode,gw.DELETE_FLAG deleteFlag,
+    gw.UPDATE_TIME updateTime,dept.DEPT_NAME deptName
+    from t_base_staff_job gw
+    left join t_base_dept dept on gw.DEPT_CODE = dept.DEPT_CODE
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="jobCode != null" >
+        and JOB_CODE  LIKE CONCAT(CONCAT('%', #{jobCode}), '%')
+      </if>
+      <if test="jobName != null" >
+        and JOB_NAME  LIKE CONCAT(CONCAT('%', #{jobName}), '%')
+      </if>
+      <if test="deptCode != null" >
+        and DEPT_CODE  = #{deptCode,jdbcType=VARCHAR}
+      </if>
+
+    </trim>
+  </select>
+
+<!-- 根据用户查角色-->
+  <select id="getUserRolesByUserId" resultType="com.lte.admin.entity.UserRole" parameterType="java.lang.String" >
+    select
+      b.ID id,b.JOB_CODE jobCode,b.MEMBER_CODE memberCode
+    from t_member_job b
+    where b.MEMBER_CODE = #{memberCode,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from t_base_staff_job
-    where ID = #{id,jdbcType=BIGINT}
+  delete from t_base_staff_job
+  where ID = #{id,jdbcType=BIGINT}
+</delete>
+  <delete id="delUserRolesByUser" parameterType="com.lte.admin.entity.UserRole" >
+    delete from t_member_job
+    where JOB_CODE = #{jobCode,jdbcType=VARCHAR}
+    and MEMBER_CODE = #{memberCode,jdbcType=VARCHAR}
   </delete>
+
   <insert id="insert" parameterType="com.lte.admin.entity.StaffJob" >
     insert into t_base_staff_job (ID, JOB_CODE, JOB_NAME, 
       DEPT_CODE, DELETE_FLAG, UPDATE_TIME
@@ -73,6 +140,11 @@
       </if>
     </trim>
   </insert>
+  <insert id="saveUserRolesByUser" parameterType="com.lte.admin.entity.StaffJob" >
+    insert into t_member_job (ID,JOB_CODE,MEMBER_CODE)
+    values (#{id,jdbcType=BIGINT}, #{jobCode,jdbcType=VARCHAR}, #{memberCode,jdbcType=VARCHAR})
+  </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.entity.StaffJob" >
     update t_base_staff_job
     <set >
@@ -104,11 +176,51 @@
     where ID = #{id,jdbcType=BIGINT}
   </update>
   <select id="getJobsByCompanyCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
-	select j.ID,j.JOB_CODE,j.JOB_NAME
+	select j.ID,j.JOB_CODE,j.JOB_NAME,j.DEPT_CODE
 	from t_base_company c, t_base_dept d, t_base_staff_job j
 	where
 	c.COMPANY_CODE = d.COMPANY_CODE
 	and d.DEPT_CODE = j.DEPT_CODE
     and c.COMPANY_CODE=#{companyCode,jdbcType=VARCHAR}
-  </select>  
+  </select>
+  <select id="getJobsByDeptCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select j.ID,j.JOB_CODE,j.JOB_NAME,j.DEPT_CODE
+    from t_base_dept d, t_base_staff_job j
+    where d.DEPT_CODE = j.DEPT_CODE
+    and d.DEPT_CODE=#{deptCode,jdbcType=VARCHAR}
+  </select>
+  <select id="getJobsByFiter" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select j.ID,j.JOB_CODE,j.JOB_NAME,j.DEPT_CODE
+    from t_base_dept d, t_base_staff_job j,car_shops com
+    where d.DEPT_CODE = j.DEPT_CODE
+    and d.COMPANY_CODE = com.shop_code
+    and d.DEPT_CODE=#{deptCode,jdbcType=VARCHAR}
+    and com.shop_code = #{companyCode,jdbcType=VARCHAR}
+
+  </select>
+  <select id="getJobs" resultMap="BaseResultMap"  >
+    select j.ID,j.JOB_CODE,j.JOB_NAME,j.DEPT_CODE
+    from t_base_staff_job j
+  </select>
+
+  <!--查找店员-->
+  <select id="getDianyuan" resultType="java.lang.String" parameterType="java.lang.String">
+    select j.JOB_CODE
+    from t_base_staff_job j
+    where j.dept_code = #{deptCode,jdbcType=VARCHAR}
+    and j.JOB_CODE like 'DY-%'
+  </select>
+
+  <select id="findStaffJobList2" resultType="java.util.Map">
+    select JOB_CODE jobCode,job_name jobName
+    from t_base_staff_job
+  </select>
+
+  <select id="getStaffJobListBySP" parameterType="java.lang.String" resultType="java.util.Map">
+    select JOB_CODE jobCode,job_name jobName
+    from t_base_staff_job job
+    left join t_base_dept dept on job.dept_code = dept.dept_code
+    left join car_shops shop on dept.company_code = shop.shop_code
+    where shop.shop_code = #{shopCode,jdbcType=VARCHAR}
+  </select>
 </mapper>

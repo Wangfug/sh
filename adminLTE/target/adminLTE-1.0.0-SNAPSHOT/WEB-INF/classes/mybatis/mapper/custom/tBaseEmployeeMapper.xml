@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.custom.TbaseEmployeeMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.custom.entity.TbaseEmployee" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <!--<result column="job" property="job" jdbcType="VARCHAR" />-->
+    <result column="e_no" property="eno" jdbcType="VARCHAR" />
+    <!--<result column="car_shop" property="carShop" jdbcType="BIGINT" />-->
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <!--<result column="e_name" property="ename" jdbcType="VARCHAR" />-->
+    <!--<result column="e_phone" property="ephone" jdbcType="VARCHAR" />-->
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="credential" property="credential" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, e_no, attachment,token,email,credential
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_base_employee
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getEmpByShop" resultType="java.util.Map" parameterType="java.lang.String" >
+    select
+    tbe.id,m.member_code code,m.member_name name
+    from t_base_employee tbe
+    left join t_base_member m on tbe.create_by = m.member_code
+    left join t_member_job tmb on m.member_code = tmb.member_code
+    left join t_base_staff_job job on tmb.job_code = job.job_code
+    left join t_base_dept dept on job.dept_code = dept.dept_code
+    left join car_shops shop on shop.shop_code = dept.company_code
+    where shop.shop_code = #{shopCode,jdbcType=VARCHAR}
+    AND job.job_code like 'DY-%'
+  </select>
+
+  <select id="getAllList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    tbe.create_time,tbe.e_no,m.MEMBER_NAME e_name,m.MOBILE e_phone
+    from t_base_employee tbe
+    left join t_base_member m on tbe.create_by = m.member_code
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="eno != null" >
+        and tbe.e_no  LIKE CONCAT(CONCAT('%', #{eno}), '%')
+      </if>
+      <if test="ename != null" >
+        and m.MEMBER_NAME  LIKE CONCAT(CONCAT('%', #{ename}), '%')
+      </if>
+      <if test="ephone != null" >
+        and m.MOBILE  LIKE CONCAT(CONCAT('%', #{ephone}), '%')
+      </if>
+    </trim>
+  </select>
+  <select id="getEmpListByDZ" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    tbe.create_time,tbe.e_no,m.MEMBER_NAME e_name,m.MOBILE e_phone
+    from t_base_employee tbe
+    left join t_base_member m on tbe.create_by = m.MEMBER_CODE
+
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="eno != null" >
+        and tbe.e_no  LIKE CONCAT(CONCAT('%', #{eno}), '%')
+      </if>
+      <if test="ename != null" >
+        and m.MEMBER_NAME  LIKE CONCAT(CONCAT('%', #{ename}), '%')
+      </if>
+      <if test="ephone != null" >
+        and m.MOBILE  LIKE CONCAT(CONCAT('%', #{ephone}), '%')
+      </if>
+    </trim>
+  </select>
+
+
+  <!-- 获取所有店长 -->
+  <select id="getManager" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    id
+    from t_base_employee
+  </select>
+
+  <!-- 根据token获取 -->
+  <select id="selectByToken" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_employee
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="ephone != null" >
+        and e_phone = #{ephone,jdbcType=VARCHAR}
+      </if>
+      <if test="token != null" >
+        and token = #{token,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+  <select id="getOneByCreateBy" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_employee
+    where create_by = #{code,jdbcType=VARCHAR}
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_base_employee
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.custom.entity.TbaseEmployee" >
+    insert into t_base_employee (id, create_by, create_time, 
+      state, last_time, last_by, e_no, attachment,
+      token,email,credential)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+       #{eno,jdbcType=VARCHAR}, #{attachment,jdbcType=VARCHAR},  #{token,jdbcType=VARCHAR},
+      , #{email,jdbcType=VARCHAR}, #{credential,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.custom.entity.TbaseEmployee" >
+    insert into t_base_employee
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="eno != null" >
+        e_no,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="credential != null" >
+        credential
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="eno != null" >
+        #{eno,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="credential != null" >
+        #{credential,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.custom.entity.TbaseEmployee" >
+    update t_base_employee
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="eno != null" >
+        e_no = #{eno,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="credential != null" >
+        credential = #{credential,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.custom.entity.TbaseEmployee" >
+    update t_base_employee
+    set create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      e_no = #{eno,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      credential = #{credential,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id = "getEmployeeByToken" parameterType="java.lang.String" resultType="java.util.Map">
+    select
+    detail.name,detail.mobile,GROUP_CONCAT(detail.JOB_NAME) job,
+    detail.eno,detail.email,detail.credentialType,detail.credentialCode,
+	detail.shop_name shopName,detail.attachment
+    from (select
+    job.JOB_NAME,tbe.token,m.MEMBER_NAME name,m.MOBILE mobile,tbe.e_no eno,tbe.attachment,
+	shop.shop_name,tbe.email,dict.NAME credentialType,cc.credential_code credentialCode
+    from t_base_employee tbe
+		left join t_base_member m on tbe.create_by = m.member_code
+        left join t_member_job tmb on m.MEMBER_CODE = tmb.MEMBER_CODE
+        left join t_base_staff_job job on tmb.JOB_CODE = job.JOB_CODE
+		left join t_base_dept dept on dept.DEPT_CODE = job.DEPT_CODE
+		left join car_shops shop on dept.COMPANY_CODE = shop.shop_code
+		left join customer_credential cc on tbe.credential = cc.id
+		left join t_base_dict_type dict on dict.CODE = cc.credential_type
+    where tbe.token = #{token,jdbcType=VARCHAR}) detail
+  </select>
+  <select id = "getEmployeeByToken1" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_base_employee
+    where token = #{token,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getEmployeeInfo" resultType="java.util.Map" parameterType="java.lang.Long">
+        select
+          m.member_code psnname,m.member_name memberName,m.mobile,emp.email,emp.e_no eno,cre.credential_code certificateCode,
+          dict.name certificateType
+        from t_base_employee emp left join t_base_member m on emp.create_by = m.member_code
+        left join customer_credential cre on emp.credential = cre.id
+        left join t_base_dict_type dict on dict.code = cre.credential_type
+        where m.id=#{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getEno" resultType="java.lang.Integer">
+    select
+    nextval('eno')
+    from dual
+  </select>
+</mapper>

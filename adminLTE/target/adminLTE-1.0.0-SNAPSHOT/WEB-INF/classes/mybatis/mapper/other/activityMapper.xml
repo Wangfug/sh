@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.other.activityMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.other.entity.Activity" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="activity_page" property="activityPage" jdbcType="VARCHAR" />
+    <result column="activity_position" property="activityPosition" jdbcType="VARCHAR" />
+    <result column="activity_no" property="activityNo" jdbcType="VARCHAR" />
+    <result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+    <result column="activity_start" property="activityStart" jdbcType="TIMESTAMP" />
+    <result column="activity_end" property="activityEnd" jdbcType="TIMESTAMP" />
+    <result column="activity_type" property="activityType" jdbcType="VARCHAR" />
+    <result column="activity_sort" property="activitySort" jdbcType="VARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="activity_remark" property="activityRemark" jdbcType="VARCHAR" />
+    <result column="main_page" property="mainPage" jdbcType="VARCHAR" />
+    <result column="main_title" property="mainTitle" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="sub_title" property="subTitle" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="coupon" property="coupon" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, activity_page, activity_position,
+    activity_no, activity_name, activity_start, activity_end, activity_type, activity_sort,
+    attachment, activity_remark, main_page, main_title,content,sub_title,price,coupon
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from activity
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from activity
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="activityNo != null" >
+        and activity_no  LIKE CONCAT(CONCAT('%', #{activityNo}), '%')
+      </if>
+      <if test="activityName != null" >
+        and activity_name  LIKE CONCAT(CONCAT('%', #{activityName}), '%')
+      </if>
+      <if test="state != null" >
+        and state = #{state,jdbcType=INTEGER}
+      </if>
+      <if test="activityType != null" >
+        and activity_type = #{activityType,jdbcType=INTEGER}
+      </if>
+      <if test="mainPage != null" >
+        and main_page = #{mainPage,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllList1" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    id, state,create_time, activity_position,activity_start, activity_end, activity_type,
+    attachment, activity_remark, main_page, main_title,sub_title,price
+    from activity
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="activityNo != null" >
+        and activity_no  LIKE CONCAT(CONCAT('%', #{activityNo}), '%')
+      </if>
+      <if test="activityName != null" >
+        and activity_name  LIKE CONCAT(CONCAT('%', #{activityName}), '%')
+      </if>
+      <if test="state != null" >
+        and state = #{state,jdbcType=INTEGER}
+      </if>
+      <if test="activityType != null" >
+        and activity_type = #{activityType,jdbcType=INTEGER}
+      </if>
+      <if test="mainPage != null" >
+        and main_page = #{mainPage,jdbcType=VARCHAR}
+      </if>
+      <if test="cityName != null" >
+        and activity_position = #{cityName,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from activity
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.other.entity.Activity" >
+    insert into activity (id, create_by, create_time,
+      state, last_time, last_by,
+      activity_page, activity_position, activity_no,
+      activity_name, activity_start, activity_end,
+      activity_type, activity_sort, attachment,
+      activity_remark, main_page, main_title,
+      content,sub_title,price,coupon)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP},
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT},
+      #{activityPage,jdbcType=VARCHAR}, #{activityPosition,jdbcType=VARCHAR}, #{activityNo,jdbcType=VARCHAR},
+      #{activityName,jdbcType=VARCHAR}, #{activityStart,jdbcType=TIMESTAMP}, #{activityEnd,jdbcType=TIMESTAMP},
+      #{activityType,jdbcType=VARCHAR}, #{activitySort,jdbcType=VARCHAR}, #{attachment,jdbcType=VARCHAR},
+      #{activityRemark,jdbcType=VARCHAR}, #{mainPage,jdbcType=VARCHAR}, #{mainTitle,jdbcType=VARCHAR},
+      #{content,jdbcType=VARCHAR},#{subTitle,jdbcType=VARCHAR},#{price,jdbcType=DOUBLE},#{coupon,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.other.entity.Activity" >
+    insert into activity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="activityPage != null" >
+        activity_page,
+      </if>
+      <if test="activityPosition != null" >
+        activity_position,
+      </if>
+      <if test="activityNo != null" >
+        activity_no,
+      </if>
+      <if test="activityName != null" >
+        activity_name,
+      </if>
+      <if test="activityStart != null" >
+        activity_start,
+      </if>
+      <if test="activityEnd != null" >
+        activity_end,
+      </if>
+      <if test="activityType != null" >
+        activity_type,
+      </if>
+      <if test="activitySort != null" >
+        activity_sort,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="activityRemark != null" >
+        activity_remark,
+      </if>
+      <if test="mainPage != null" >
+        main_page,
+      </if>
+      <if test="mainTitle != null" >
+        main_title,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="subTitle != null" >
+      sub_title,
+    </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="coupon != null" >
+        coupon
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="activityPage != null" >
+        #{activityPage,jdbcType=VARCHAR},
+      </if>
+      <if test="activityPosition != null" >
+        #{activityPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="activityNo != null" >
+        #{activityNo,jdbcType=BIGINT},
+      </if>
+      <if test="activityName != null" >
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityStart != null" >
+        #{activityStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityEnd != null" >
+        #{activityEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityType != null" >
+        #{activityType,jdbcType=VARCHAR},
+      </if>
+      <if test="activitySort != null" >
+      #{activitySort,jdbcType=VARCHAR},
+    </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="activityRemark != null" >
+        #{activityRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="mainPage != null" >
+        #{mainPage,jdbcType=VARCHAR},
+      </if>
+      <if test="mainTitle != null" >
+        #{mainTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="subTitle != null" >
+        #{subTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="coupon != null" >
+        #{coupon,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.other.entity.Activity" >
+    update activity
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="activityPage != null" >
+        activity_page = #{activityPage,jdbcType=VARCHAR},
+      </if>
+      <if test="activityPosition != null" >
+        activity_position = #{activityPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="activityNo != null" >
+        activity_no = #{activityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="activityName != null" >
+        activity_name = #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityStart != null" >
+        activity_start = #{activityStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityEnd != null" >
+        activity_end = #{activityEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityType != null" >
+        activity_type = #{activityType,jdbcType=VARCHAR},
+      </if>
+      <if test="activitySort != null" >
+        activity_sort = #{activitySort,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="activityRemark != null" >
+        activity_remark = #{activityRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="mainPage != null" >
+        main_page = #{mainPage,jdbcType=VARCHAR},
+      </if>
+      <if test="mainTitle != null" >
+        main_title = #{mainTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="subTitle != null" >
+        sub_title = #{subTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="coupon != null" >
+        coupon = #{coupon,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.other.entity.Activity" >
+    update activity
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      activity_page = #{activityPage,jdbcType=VARCHAR},
+      activity_position = #{activityPosition,jdbcType=VARCHAR},
+      activity_no = #{activityNo,jdbcType=VARCHAR},
+      activity_name = #{activityName,jdbcType=VARCHAR},
+      activity_start = #{activityStart,jdbcType=TIMESTAMP},
+      activity_end = #{activityEnd,jdbcType=TIMESTAMP},
+      activity_type = #{activityType,jdbcType=VARCHAR},
+      activity_sort = #{activitySort,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      activity_remark = #{activityRemark,jdbcType=VARCHAR},
+      main_page = #{mainPage,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      main_title = #{mainTitle,jdbcType=VARCHAR},
+      sub_title = #{subTitle,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DOUBLE},
+      coupon = #{coupon,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+<!-- 查询一种活动最新一条-->
+  <select id="getHotOneACT" resultMap="BaseResultMap" parameterType="java.lang.String">
+select
+ activity.id, activity.state,activity.create_time, activity.activity_position,
+    activity.activity_start, activity.activity_end, activity.activity_type,
+    activity.attachment, activity.activity_remark, activity.main_page,
+    activity.main_title,activity.sub_title,activity.price
+ from activity
+ where  activity.activity_type = #{activityType,jdbcType=VARCHAR}
+ and activity.create_time =
+(select max(a.create_time) time from activity a where a.activity_type = #{activityType,jdbcType=VARCHAR})
+  </select>
+  <select id="getHotOneACT1" resultMap="BaseResultMap" parameterType="java.util.Map">
+select act1.* from
+activity act1
+INNER JOIN (
+	SELECT
+		MAX(create_time) AS create_time
+	FROM
+		(
+SELECT
+	activity.id,
+	activity.state,
+	activity.create_time,
+	activity.activity_position,
+	activity.activity_start,
+	activity.activity_end,
+	activity.activity_type,
+	activity.attachment,
+	activity.activity_remark,
+	activity.main_page,
+	activity.main_title,
+	activity.sub_title,
+	activity.price
+FROM
+	activity where activity.state = #{state,jdbcType=INTEGER}
+AND activity.main_page = 1
+and activity.activity_position =#{cityName,jdbcType=VARCHAR}
+ and activity.activity_type =#{activityType,jdbcType=VARCHAR}) act
+) b ON act1.create_time = b.create_time
+  </select>
+  <select id="getHotACTList" resultType="java.util.Map" parameterType="java.util.Map">
+select act1.* from
+activity act1
+INNER JOIN (
+	SELECT
+		MAX(create_time) AS create_time
+	FROM
+		(
+SELECT
+	activity.id,
+	activity.state,
+	activity.create_time,
+	activity.activity_position,
+	activity.activity_start,
+	activity.activity_end,
+	activity.activity_type,
+	activity.attachment,
+	activity.activity_remark,
+	activity.main_page,
+	activity.main_title,
+	activity.sub_title,
+	activity.price
+FROM
+	activity where activity.state = #{state,jdbcType=INTEGER}
+AND activity.main_page = 1
+and activity.activity_position =#{cityName,jdbcType=VARCHAR}
+) act
+	GROUP BY
+		act.activity_type
+) b ON act1.create_time = b.create_time
+  </select>
+</mapper>

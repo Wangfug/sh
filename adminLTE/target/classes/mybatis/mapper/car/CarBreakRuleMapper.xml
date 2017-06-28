@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.car.CarBreakRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.car.entity.CarBreakRule" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="Create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="Illegal_content" property="illegalContent" jdbcType="VARCHAR" />
+    <result column="violation_fine" property="violationFine" jdbcType="VARCHAR" />
+    <result column="illegal_deduction" property="illegalDeduction" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customerId" jdbcType="BIGINT" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="car_id" property="carId" jdbcType="BIGINT" />
+    <result column="illegal_time" property="illegalTime" jdbcType="TIMESTAMP" />
+    <result column="illegal_no" property="illegalNo" jdbcType="VARCHAR" />
+    <result column="deal_shop" property="dealShop" jdbcType="BIGINT" />
+    <result column="illegal_position" property="illegalPosition" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+  id, Create_by, create_time, state, last_time, last_by, Illegal_content, violation_fine,order_no
+  illegal_deduction, customer_id, attachment, car_id,illegal_time,illegal_no,deal_shop,illegal_position,remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from car_break_rule
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectDetailByPrimaryKey" resultType="java.util.Map" parameterType="java.lang.Long" >
+    select
+    cbr.*,car.car_code
+    from car_break_rule cbr left join car on car.id=cbr.car_id
+    where cbr.id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from car_break_rule
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="carId != null" >
+        and car_id = #{carId,jdbcType=BIGINT }
+      </if>
+      <if test="customerId != null" >
+        and customer_id = #{customerId,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllDetailList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    cbr.*,car.car_code,cu.name
+    from car_break_rule cbr LEFT JOIN  car on car.id= cbr.car_id left join  customer cu on cu.id = cbr.customer_id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="car_code != null" >
+        and car.car_code LIKE CONCAT(CONCAT('%', #{car_code}), '%')
+      </if>
+
+      <if test="state != null" >
+        and cbr.state = #{state,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from car_break_rule
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.car.entity.CarBreakRule" >
+    insert into car_break_rule (id, Create_by, create_time,
+      state, last_time, last_by, 
+      Illegal_content, violation_fine, illegal_deduction, 
+      customer_id, attachment, car_id,illegal_time,illegal_no,deal_shop,illegal_position,remark,order_no
+      )
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{illegalContent,jdbcType=VARCHAR}, #{violationFine,jdbcType=VARCHAR}, #{illegalDeduction,jdbcType=VARCHAR}, 
+      #{customerId,jdbcType=BIGINT}, #{attachment,jdbcType=VARCHAR}, #{carId,jdbcType=BIGINT},
+       #{illegalTime,jdbcType=TIMESTAMP},#{illegalNo,jdbcType=VARCHAR}, #{dealShop,jdbcType=BIGINT},
+        #{illegalPosition,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{orderNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.car.entity.CarBreakRule" >
+    insert into car_break_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        Create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null  and state !='0'" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="illegalContent != null" >
+        Illegal_content,
+      </if>
+      <if test="violationFine != null" >
+        violation_fine,
+      </if>
+      <if test="illegalDeduction != null" >
+        illegal_deduction,
+      </if>
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
+      <if test="illegalTime != null" >
+        illegal_time,
+      </if>
+      <if test="illegalNo != null" >
+        illegal_no,
+      </if>
+      <if test="dealShop != null" >
+        deal_shop,
+      </if>
+      <if test="illegalPosition != null" >
+        illegal_position,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="orderNo != null" >
+        order_no
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="illegalContent != null" >
+        #{illegalContent,jdbcType=VARCHAR},
+      </if>
+      <if test="violationFine != null" >
+        #{violationFine,jdbcType=VARCHAR},
+      </if>
+      <if test="illegalDeduction != null" >
+        #{illegalDeduction,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="illegalTime != null" >
+        #{illegalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="illegalNo != null" >
+        #{illegalNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dealShop != null" >
+        #{dealShop,jdbcType=BIGINT},
+      </if>
+      <if test="illegalPosition != null" >
+        #{illegalPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark= #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        order_no= #{orderNo,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.car.entity.CarBreakRule" >
+    update car_break_rule
+    <set >
+      <if test="createBy != null" >
+        Create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="illegalContent != null" >
+        Illegal_content = #{illegalContent,jdbcType=VARCHAR},
+      </if>
+      <if test="violationFine != null" >
+        violation_fine = #{violationFine,jdbcType=VARCHAR},
+      </if>
+      <if test="illegalDeduction != null" >
+        illegal_deduction = #{illegalDeduction,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="carId != null" >
+        car_id = #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="illegalTime != null" >
+        illegal_time= #{illegalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="illegalNo != null" >
+        illegal_no=  #{illegalNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dealShop != null" >
+        deal_shop= #{dealShop,jdbcType=BIGINT},
+      </if>
+      <if test="illegalPosition != null" >
+        illegal_position= #{illegalPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark= #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        order_no= #{orderNo,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.car.entity.CarBreakRule" >
+    update car_break_rule
+    set Create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      Illegal_content = #{illegalContent,jdbcType=VARCHAR},
+      violation_fine = #{violationFine,jdbcType=VARCHAR},
+      illegal_deduction = #{illegalDeduction,jdbcType=VARCHAR},
+      customer_id = #{customerId,jdbcType=BIGINT},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      car_id = #{carId,jdbcType=BIGINT},
+      illegal_time= #{illegalTime,jdbcType=TIMESTAMP},
+      illegal_no=  #{illegalNo,jdbcType=VARCHAR},
+      deal_shop= #{dealShop,jdbcType=BIGINT},
+      illegal_position=#{illegalPosition,jdbcType=VARCHAR},
+      remark= #{remark,jdbcType=VARCHAR},
+      order_no= #{orderNo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getOnecarBreakRule" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from car_break_rule where illegal_no=  #{illegalNo,jdbcType=VARCHAR}
+  </select>
+</mapper>

@@ -28,6 +28,20 @@
     from t_base_dept
     where ID = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByPrimaryKey2" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_dept
+    where DEPT_CODE = #{code,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey1" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    dept.*
+    from t_base_dept dept,car_shops shop
+    where dept.COMPANY_CODE = shop.shop_code
+    and  dept.DEPT_CODE = #{deptCode,jdbcType=VARCHAR}
+    and  dept.COMPANY_CODE = #{shopCode,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from t_base_dept
     where ID = #{id,jdbcType=BIGINT}
@@ -133,18 +147,66 @@
       UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=BIGINT}
   </update>
-  
+
   <select id="findBmListTreeRoot" resultMap="CompanyMap" >
 	select c.COMPANY_CODE,c.COMPANY_NAME
-	from t_base_company c
+	from t_base_company c where c.COMPANY_CODE = c.PARENT_COMANY_CODE
 	order by c.company_type,c.COMPANY_CODE 
   </select> 
   
   <select id="findBmListTree" resultMap="BaseResultMap" parameterType="java.lang.String" >
 	select d.DEPT_CODE,d.DEPT_NAME
 	from t_base_company c,t_base_dept d
-	  where c.company_code=d.company_code
+	  where c.COMPANY_CODE=d.COMPANY_CODE
 	  and d.PARENT_CODE=#{parentCode,jdbcType=VARCHAR}
 	  order by d.DEPT_CODE
-  </select>   
+  </select>
+  <select id="getDeptListTree" resultMap="BaseResultMap">
+    select d.DEPT_CODE,d.DEPT_NAME,d.PARENT_CODE,d.COMPANY_CODE
+    from t_base_dept d
+    order by d.DEPT_CODE
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_dept
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="deptCode != null" >
+        and DEPT_CODE  LIKE CONCAT(CONCAT('%', #{deptCode}), '%')
+      </if>
+      <if test="deptName != null" >
+        and DEPT_NAME  LIKE CONCAT(CONCAT('%', #{deptName}), '%')
+      </if>
+      <if test="parentCode != null" >
+        and PARENT_CODE  LIKE CONCAT(CONCAT('%', #{parentCode}), '%')
+      </if>
+      <if test="companyCode != null" >
+        and COMPANY_CODE  LIKE CONCAT(CONCAT('%', #{companyCode}), '%')
+      </if>
+    </trim>
+  </select>
+<!-- 门店取代公司 -->
+ <!-- <select id="getDeptListByCompany" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_dept
+    where COMPANY_CODE = #{comCode,jdbcType=VARCHAR} and DEPT_CODE = PARENT_CODE
+  </select>-->
+
+  <select id="getDeptListByCompany" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_dept
+    where COMPANY_CODE = #{comCode,jdbcType=VARCHAR} and DEPT_CODE = PARENT_CODE
+  </select>
+
+
+  <select id="getBmListTreeByParent" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_dept
+    where PARENT_CODE = #{parentCode,jdbcType=VARCHAR} and DEPT_CODE &lt;&gt; PARENT_CODE
+  </select>
+
 </mapper>

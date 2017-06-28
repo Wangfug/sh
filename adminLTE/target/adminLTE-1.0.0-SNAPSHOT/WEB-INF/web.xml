@@ -9,6 +9,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			classpath*:/applicationContext.xml,
+			classpath*:/applicationContext-quartz.xml,	<!--读取定时任务配置-->
 			classpath*:/applicationContext-shiro.xml
 		</param-value>
 	</context-param>

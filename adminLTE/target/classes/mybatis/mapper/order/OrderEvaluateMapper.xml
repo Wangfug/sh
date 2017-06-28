@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.order.OrderEvaluateMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.order.entity.OrderEvaluate" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="vehicle_condition" property="vehicleCondition" jdbcType="VARCHAR" />
+    <result column="get_vehicle_service" property="getVehicleService" jdbcType="VARCHAR" />
+    <result column="return_vehicle_service" property="returnVehicleService" jdbcType="VARCHAR" />
+    <result column="open_order" property="openOrder" jdbcType="VARCHAR" />
+    <result column="close_order" property="closeOrder" jdbcType="VARCHAR" />
+    <result column="total_service" property="totalService" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="open_opinion" property="openOpinion" jdbcType="VARCHAR" />
+    <result column="close_opinion" property="closeOpinion" jdbcType="VARCHAR" />
+    <result column="total_opinion" property="totalOpinion" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, grade, content, vehicle_condition, 
+    get_vehicle_service, return_vehicle_service, open_order, close_order, total_service, 
+    order_no, attachment, open_opinion, close_opinion, total_opinion
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_evaluate
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!-- 根据条件查询多条订单 -->
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from order_evaluate
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="orderNo != null" >
+        and order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+      </if>
+      <if test="state != null" >
+        and state  LIKE CONCAT(CONCAT('%', #{state}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from order_evaluate
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.order.entity.OrderEvaluate" >
+    insert into order_evaluate (id, create_by, create_time, 
+      state, last_time, last_by, 
+      grade, content, vehicle_condition, 
+      get_vehicle_service, return_vehicle_service, 
+      open_order, close_order, total_service, 
+      order_no, attachment, open_opinion, 
+      close_opinion, total_opinion)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{grade,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{vehicleCondition,jdbcType=VARCHAR}, 
+      #{getVehicleService,jdbcType=VARCHAR}, #{returnVehicleService,jdbcType=VARCHAR}, 
+      #{openOrder,jdbcType=VARCHAR}, #{closeOrder,jdbcType=VARCHAR}, #{totalService,jdbcType=VARCHAR}, 
+      #{orderNo,jdbcType=VARCHAR}, #{attachment,jdbcType=VARCHAR}, #{openOpinion,jdbcType=VARCHAR},
+      #{closeOpinion,jdbcType=VARCHAR}, #{totalOpinion,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.order.entity.OrderEvaluate" >
+    insert into order_evaluate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="vehicleCondition != null" >
+        vehicle_condition,
+      </if>
+      <if test="getVehicleService != null" >
+        get_vehicle_service,
+      </if>
+      <if test="returnVehicleService != null" >
+        return_vehicle_service,
+      </if>
+      <if test="openOrder != null" >
+        open_order,
+      </if>
+      <if test="closeOrder != null" >
+        close_order,
+      </if>
+      <if test="totalService != null" >
+        total_service,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="openOpinion != null" >
+        open_opinion,
+      </if>
+      <if test="closeOpinion != null" >
+        close_opinion,
+      </if>
+      <if test="totalOpinion != null" >
+        total_opinion,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleCondition != null" >
+        #{vehicleCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="getVehicleService != null" >
+        #{getVehicleService,jdbcType=VARCHAR},
+      </if>
+      <if test="returnVehicleService != null" >
+        #{returnVehicleService,jdbcType=VARCHAR},
+      </if>
+      <if test="openOrder != null" >
+        #{openOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="closeOrder != null" >
+        #{closeOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="totalService != null" >
+        #{totalService,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="openOpinion != null" >
+        #{openOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="closeOpinion != null" >
+        #{closeOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="totalOpinion != null" >
+        #{totalOpinion,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.order.entity.OrderEvaluate" >
+    update order_evaluate
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleCondition != null" >
+        vehicle_condition = #{vehicleCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="getVehicleService != null" >
+        get_vehicle_service = #{getVehicleService,jdbcType=VARCHAR},
+      </if>
+      <if test="returnVehicleService != null" >
+        return_vehicle_service = #{returnVehicleService,jdbcType=VARCHAR},
+      </if>
+      <if test="openOrder != null" >
+        open_order = #{openOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="closeOrder != null" >
+        close_order = #{closeOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="totalService != null" >
+        total_service = #{totalService,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="openOpinion != null" >
+        open_opinion = #{openOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="closeOpinion != null" >
+        close_opinion = #{closeOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="totalOpinion != null" >
+        total_opinion = #{totalOpinion,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.order.entity.OrderEvaluate" >
+    update order_evaluate
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      grade = #{grade,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      vehicle_condition = #{vehicleCondition,jdbcType=VARCHAR},
+      get_vehicle_service = #{getVehicleService,jdbcType=VARCHAR},
+      return_vehicle_service = #{returnVehicleService,jdbcType=VARCHAR},
+      open_order = #{openOrder,jdbcType=VARCHAR},
+      close_order = #{closeOrder,jdbcType=VARCHAR},
+      total_service = #{totalService,jdbcType=VARCHAR},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      open_opinion = #{openOpinion,jdbcType=VARCHAR},
+      close_opinion = #{closeOpinion,jdbcType=VARCHAR},
+      total_opinion = #{totalOpinion,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

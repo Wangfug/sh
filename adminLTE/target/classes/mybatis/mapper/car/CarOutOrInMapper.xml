@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.car.CarOutOrInMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.car.entity.CarOutOrIn" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="car_id" property="carId" jdbcType="BIGINT" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="approve_by" property="approveBy" jdbcType="BIGINT" />
+    <result column="out_emp" property="outEmp" jdbcType="BIGINT" />
+    <result column="out_position" property="outPosition" jdbcType="VARCHAR" />
+    <result column="dispatch_no" property="dispatchNo" jdbcType="VARCHAR" />
+    <result column="out_time" property="outTime" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="in_or_out" property="inOrOut" jdbcType="VARCHAR" />
+    <result column="car_shop" property="carShop" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, car_id, reason, approve_by, 
+    out_emp, out_position, dispatch_no, out_time, remark, in_or_out, car_shop,order_no
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from car_out_or_in
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  select
+  <include refid="Base_Column_List" />
+  from car_out_or_in
+  <trim prefix="where" prefixOverrides="and | or">
+    <if test="carId != null" >
+      and car_id = #{carId,jdbcType=BIGINT }
+    </if>
+  </trim>
+  </select>
+
+  <select id="getAllDetail" resultType="java.util.Map" parameterType="java.util.Map">
+    select cooi.*,car.car_code,osp.shop_name,m.member_name ename,emp.e_no eno
+    from car_out_or_in  cooi
+    LEFT JOIN car on car.id = cooi.car_id
+    left join car_shops osp on osp.id = cooi.car_shop
+    left join t_base_employee emp on emp.id=cooi.out_emp
+    left join t_base_member m on emp.create_by=m.member_code
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="car_id != null">
+        and car.car_code  LIKE CONCAT(CONCAT('%', #{car_id}), '%')
+      </if>
+      <if test="dispatch_no != null" >
+        and dispatch_no  LIKE CONCAT(CONCAT('%', #{dispatch_no}), '%')
+      </if>
+      <if test="in_or_out != null" >
+        and in_or_out = #{in_or_out,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from car_out_or_in
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.car.entity.CarOutOrIn" >
+    insert into car_out_or_in (id, create_by, create_time, 
+      state, last_time, last_by, 
+      car_id, reason, approve_by, 
+      out_emp, out_position, dispatch_no, 
+      out_time, remark, in_or_out, 
+      car_shop,order_no)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{carId,jdbcType=BIGINT}, #{reason,jdbcType=VARCHAR}, #{approveBy,jdbcType=BIGINT}, 
+      #{outEmp,jdbcType=BIGINT}, #{outPosition,jdbcType=VARCHAR}, #{dispatchNo,jdbcType=VARCHAR}, 
+      #{outTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, #{inOrOut,jdbcType=VARCHAR}, 
+      #{carShop,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.car.entity.CarOutOrIn" >
+    insert into car_out_or_in
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="approveBy != null" >
+        approve_by,
+      </if>
+      <if test="outEmp != null" >
+        out_emp,
+      </if>
+      <if test="outPosition != null" >
+        out_position,
+      </if>
+      <if test="dispatchNo != null" >
+        dispatch_no,
+      </if>
+      <if test="outTime != null" >
+        out_time,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="inOrOut != null" >
+        in_or_out,
+      </if>
+      <if test="carShop != null" >
+        car_shop,
+      </if>
+      <if test="orderNo != null" >
+        order_no
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="approveBy != null" >
+        #{approveBy,jdbcType=BIGINT},
+      </if>
+      <if test="outEmp != null" >
+        #{outEmp,jdbcType=BIGINT},
+      </if>
+      <if test="outPosition != null" >
+        #{outPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchNo != null" >
+        #{dispatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTime != null" >
+        #{outTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="inOrOut != null" >
+        #{inOrOut,jdbcType=VARCHAR},
+      </if>
+      <if test="carShop != null" >
+        #{carShop,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.car.entity.CarOutOrIn" >
+    update car_out_or_in
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carId != null" >
+        car_id = #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="approveBy != null" >
+        approve_by = #{approveBy,jdbcType=BIGINT},
+      </if>
+      <if test="outEmp != null" >
+        out_emp = #{outEmp,jdbcType=BIGINT},
+      </if>
+      <if test="outPosition != null" >
+        out_position = #{outPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="dispatchNo != null" >
+        dispatch_no = #{dispatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTime != null" >
+        out_time = #{outTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="inOrOut != null" >
+        in_or_out = #{inOrOut,jdbcType=VARCHAR},
+      </if>
+      <if test="carShop != null" >
+        car_shop = #{carShop,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.car.entity.CarOutOrIn" >
+    update car_out_or_in
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      car_id = #{carId,jdbcType=BIGINT},
+      reason = #{reason,jdbcType=VARCHAR},
+      approve_by = #{approveBy,jdbcType=BIGINT},
+      out_emp = #{outEmp,jdbcType=BIGINT},
+      out_position = #{outPosition,jdbcType=VARCHAR},
+      dispatch_no = #{dispatchNo,jdbcType=VARCHAR},
+      out_time = #{outTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      in_or_out = #{inOrOut,jdbcType=VARCHAR},
+      car_shop = #{carShop,jdbcType=BIGINT},
+      order_no = #{orderNo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.custom.CustomerDiscountMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.custom.entity.CustomerDiscount" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="discount_state" property="discountState" jdbcType="INTEGER" />
+    <result column="discount_number" property="discountNumber" jdbcType="BIGINT" />
+    <result column="discount_info" property="discountInfo" jdbcType="VARCHAR" />
+    <result column="validtime" property="validtime" jdbcType="TIMESTAMP" />
+    <result column="discount_money" property="discountMoney" jdbcType="DOUBLE" />
+    <result column="minimum_consumption" property="minimumConsumption" jdbcType="DOUBLE" />
+    <result column="discount_title" property="discountTitle" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, discount_state, discount_number, discount_info,
+     validtime,discount_money,minimum_consumption,discount_title
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer_discount
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from customer_discount
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="validtime != null" >
+        and validtime  &gt;= str_to_date(#{validtime},'%Y-%M-%d %H:%m:%s')
+      </if>
+    </trim>
+  </select>
+
+  <select id="getEffectiveList" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from customer_discount
+   where discount_state = 1
+    and validtime &gt;= SYSDATE()
+  </select>
+
+
+
+  <select id="getAllList1" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    id,discount_info
+    from customer_discount
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from customer_discount
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.custom.entity.CustomerDiscount" useGeneratedKeys="true" keyProperty="id">
+    insert into customer_discount (id, create_by, create_time, 
+      discount_state, discount_number, discount_info, 
+      validtime,discount_money,minimum_consumption,discount_title)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{discountState,jdbcType=INTEGER}, #{discountNumber,jdbcType=BIGINT}, #{discountInfo,jdbcType=VARCHAR}, 
+      #{validtime,jdbcType=INTEGER},#{discountMoney,jdbcType=DOUBLE},#{minimumConsumption,jdbcType=DOUBLE},
+      ,#{discountTitle,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.custom.entity.CustomerDiscount" useGeneratedKeys="true" keyProperty="id">
+    insert into customer_discount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="discountState != null" >
+        discount_state,
+      </if>
+      <if test="discountNumber != null" >
+        discount_number,
+      </if>
+      <if test="discountInfo != null" >
+        discount_info,
+      </if>
+      <if test="validtime != null" >
+        validtime,
+      </if>
+      <if test="discountMoney != null" >
+        discount_money,
+      </if>
+        <if test="minimumConsumption != null" >
+        minimum_consumption,
+      </if>
+      <if test="discountTitle != null" >
+        discount_title
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="discountState != null" >
+        #{discountState,jdbcType=INTEGER},
+      </if>
+      <if test="discountNumber != null" >
+        #{discountNumber,jdbcType=BIGINT},
+      </if>
+      <if test="discountInfo != null" >
+        #{discountInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="validtime != null" >
+        #{validtime,jdbcType=INTEGER},
+      </if>
+      <if test="discountMoney != null" >
+        #{discountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumConsumption != null" >
+        #{minimumConsumption,jdbcType=DOUBLE},
+      </if>
+      <if test="discountTitle != null" >
+        #{discountTitle,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.custom.entity.CustomerDiscount" >
+    update customer_discount
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="discountState != null" >
+        discount_state = #{discountState,jdbcType=INTEGER},
+      </if>
+      <if test="discountNumber != null" >
+        discount_number = #{discountNumber,jdbcType=BIGINT},
+      </if>
+      <if test="discountInfo != null" >
+        discount_info = #{discountInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="validtime != null" >
+        validtime = #{validtime,jdbcType=INTEGER},
+      </if>
+      <if test="discountMoney != null" >
+        discount_money = #{discountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumConsumption != null" >
+        minimum_consumption = #{minimumConsumption,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumConsumption != null" >
+        discount_title = #{discountTitle,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.custom.entity.CustomerDiscount" >
+    update customer_discount
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      discount_state = #{discountState,jdbcType=INTEGER},
+      discount_number = #{discountNumber,jdbcType=BIGINT},
+      discount_info = #{discountInfo,jdbcType=VARCHAR},
+      validtime = #{validtime,jdbcType=INTEGER},
+      discount_money = #{discountMoney,jdbcType=DOUBLE},
+      minimum_consumption = #{minimumConsumption,jdbcType=DOUBLE},
+      discount_title = #{discountTitle,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--有效优惠券-->
+  <select id="getAllDiscount" resultType="java.util.Map" parameterType="java.util.Map">
+    select
+    dis.id, dis.discount_number discountNumber,dis.discount_info discountInfo,
+    dis.validtime,dis.discount_money discountMoney,dis.minimum_consumption minimumConsumption,
+    dis.discount_title discountTitle,hold.id holdId,hold.order_no,hold.state
+    from customer_discount_hold hold
+    left join customer c on c.id = hold.customer
+    left join customer_discount dis on dis.id = hold.discount
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="availableTime != null">
+        and dis.validtime &gt;= SYSDATE()
+        <if test="cusId != null" >
+          and c.id = #{cusId,jdbcType=BIGINT}
+        </if>
+        <if test="state != null" >
+          and hold.state = #{state,jdbcType=INTEGER}
+        </if>
+        <if test="disState != null" >
+          and  dis.discount_state = #{disState,jdbcType=INTEGER}
+        </if>
+        <if test="allMoney != null" >
+          and  dis.minimum_consumption &gt;= #{allMoney,jdbcType=DOUBLE}
+        </if>
+      </if>
+
+      <if test="availableTime == null" >
+        (
+        dis.validtime  &lt; SYSDATE()
+        AND dis.validtime &gt;= date_sub(SYSDATE(), INTERVAL 3 MONTH)
+        )
+        and c.id = #{cusId,jdbcType=BIGINT}
+        or(
+        hold.state = '0' or dis.discount_state = '0'
+        )
+      </if>
+    </trim>
+  </select>
+
+</mapper>

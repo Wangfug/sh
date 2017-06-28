@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.order.OrderFeeMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.order.entity.OrderFee" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="car_rent_fee" property="carRentFee" jdbcType="DOUBLE" />
+    <result column="send_car_fee" property="sendCarFee" jdbcType="DOUBLE" />
+    <result column="base_fee" property="baseFee" jdbcType="DOUBLE" />
+    <result column="other_fee" property="otherFee" jdbcType="DOUBLE" />
+    <result column="Additional_bujimianpei" property="additionalBujimianpei" jdbcType="DOUBLE" />
+    <result column="handing_charge" property="handingCharge" jdbcType="DOUBLE" />
+    <result column="Additional_fee_for_three" property="additionalFeeForThree" jdbcType="DOUBLE" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="total_fee" property="totalFee" jdbcType="DOUBLE" />
+    <result column="pre_authorized" property="preAuthorized" jdbcType="DOUBLE" />
+    <result column="pre_authorized_way" property="preAuthorizedWay" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, car_rent_fee, send_car_fee, 
+    base_fee, other_fee, Additional_bujimianpei, handing_charge, Additional_fee_for_three, 
+    order_no, total_fee, pre_authorized,pre_authorized_way
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_fee
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!-- 根据条件查询多条订单 -->
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from order_fee
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="orderNo != null" >
+        and order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+      </if>
+      <if test="state != null" >
+        and state  LIKE CONCAT(CONCAT('%', #{state}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from order_fee
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.order.entity.OrderFee" >
+    insert into order_fee (id, create_by, create_time, 
+      state, last_time, last_by, 
+      car_rent_fee, send_car_fee, base_fee, 
+      other_fee, Additional_bujimianpei, handing_charge, 
+      Additional_fee_for_three, order_no, total_fee, 
+      pre_authorized,pre_authorized_way)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{carRentFee,jdbcType=DOUBLE}, #{sendCarFee,jdbcType=DOUBLE}, #{baseFee,jdbcType=DOUBLE}, 
+      #{otherFee,jdbcType=DOUBLE}, #{additionalBujimianpei,jdbcType=DOUBLE}, #{handingCharge,jdbcType=DOUBLE}, 
+      #{additionalFeeForThree,jdbcType=DOUBLE}, #{orderNo,jdbcType=VARCHAR}, #{totalFee,jdbcType=DOUBLE},
+      #{preAuthorized,jdbcType=DOUBLE},#{preauthorizedway,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective"  useGeneratedKeys="true" keyProperty="feeId"   parameterType="com.lte.admin.order.entity.OrderFee" >
+    insert into order_fee
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="carRentFee != null" >
+        car_rent_fee,
+      </if>
+      <if test="sendCarFee != null" >
+        send_car_fee,
+      </if>
+      <if test="baseFee != null" >
+        base_fee,
+      </if>
+      <if test="otherFee != null" >
+        other_fee,
+      </if>
+      <if test="additionalBujimianpei != null" >
+        Additional_bujimianpei,
+      </if>
+      <if test="handingCharge != null" >
+        handing_charge,
+      </if>
+      <if test="additionalFeeForThree != null" >
+        Additional_fee_for_three,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="totalFee != null" >
+        total_fee,
+      </if>
+      <if test="preAuthorized != null" >
+        pre_authorized,
+      </if>
+      <if test="preAuthorizedWay != null" >
+        pre_authorized_way,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carRentFee != null" >
+        #{carRentFee,jdbcType=DOUBLE},
+      </if>
+      <if test="sendCarFee != null" >
+        #{sendCarFee,jdbcType=DOUBLE},
+      </if>
+      <if test="baseFee != null" >
+        #{baseFee,jdbcType=DOUBLE},
+      </if>
+      <if test="otherFee != null" >
+        #{otherFee,jdbcType=DOUBLE},
+      </if>
+      <if test="additionalBujimianpei != null" >
+        #{additionalBujimianpei,jdbcType=DOUBLE},
+      </if>
+      <if test="handingCharge != null" >
+        #{handingCharge,jdbcType=DOUBLE},
+      </if>
+      <if test="additionalFeeForThree != null" >
+        #{additionalFeeForThree,jdbcType=DOUBLE},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null" >
+        #{totalFee,jdbcType=DOUBLE},
+      </if>
+      <if test="preAuthorized != null" >
+        #{preAuthorized,jdbcType=DOUBLE},
+      </if>
+      <if test="preAuthorizedWay != null" >
+        #{preAuthorized_way,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.order.entity.OrderFee" >
+    update order_fee
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carRentFee != null" >
+        car_rent_fee = #{carRentFee,jdbcType=DOUBLE},
+      </if>
+      <if test="sendCarFee != null" >
+        send_car_fee = #{sendCarFee,jdbcType=DOUBLE},
+      </if>
+      <if test="baseFee != null" >
+        base_fee = #{baseFee,jdbcType=DOUBLE},
+      </if>
+      <if test="otherFee != null" >
+        other_fee = #{otherFee,jdbcType=DOUBLE},
+      </if>
+      <if test="additionalBujimianpei != null" >
+        Additional_bujimianpei = #{additionalBujimianpei,jdbcType=DOUBLE},
+      </if>
+      <if test="handingCharge != null" >
+        handing_charge = #{handingCharge,jdbcType=DOUBLE},
+      </if>
+      <if test="additionalFeeForThree != null" >
+        Additional_fee_for_three = #{additionalFeeForThree,jdbcType=DOUBLE},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null" >
+        total_fee = #{totalFee,jdbcType=DOUBLE},
+      </if>
+      <if test="preAuthorized != null" >
+        pre_authorized = #{preAuthorized,jdbcType=DOUBLE},
+      </if>
+      <if test="preAuthorizedWay != null" >
+        pre_authorized_way = #{preAuthorizedWay,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.order.entity.OrderFee" >
+    update order_fee
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      car_rent_fee = #{carRentFee,jdbcType=DOUBLE},
+      send_car_fee = #{sendCarFee,jdbcType=DOUBLE},
+      base_fee = #{baseFee,jdbcType=DOUBLE},
+      other_fee = #{otherFee,jdbcType=DOUBLE},
+      Additional_bujimianpei = #{additionalBujimianpei,jdbcType=DOUBLE},
+      handing_charge = #{handingCharge,jdbcType=DOUBLE},
+      Additional_fee_for_three = #{additionalFeeForThree,jdbcType=DOUBLE},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      total_fee = #{totalFee,jdbcType=DOUBLE},
+      pre_authorized = #{preAuthorized,jdbcType=DOUBLE},
+      pre_authorized_way = #{preAuthorizedWay,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
