@@ -3,6 +3,7 @@ package com.lte.admin.car.entity;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 /**
  * @author Andy
@@ -30,23 +31,58 @@ public class CarRentPrice implements Serializable{
 	private String brand;
     //model 	
 	private String model;
-    //pricdeByDay 	
-	private Double pricdeByDay;
+    //priceByDay 	
+	private Double priceByDay;
     //priceByHour 	
 	private Double priceByHour;
     //carShop 	
 	private Long carShop;
-	public CarRentPrice(){
+
+	private Double feeInsurance;
+	private Double feeDeductible;
+
+	private int hotcar;//热门车型：1-是，0-否
+	private String img;
+
+	public String getImg() {
+		return img;
 	}
 
+	public void setImg(String img) {
+		this.img = img;
+	}
+
+	public int getHotcar() {
+		return hotcar;
+	}
+
+	public void setHotcar(int hotcar) {
+		this.hotcar = hotcar;
+	}
+
+	public Double getFeeInsurance() {
+		return feeInsurance;
+	}
+
+	public void setFeeInsurance(Double feeInsurance) {
+		this.feeInsurance = feeInsurance;
+	}
+
+	public Double getFeeDeductible() {
+		return feeDeductible;
+	}
+
+	public void setFeeDeductible(Double feeDeductible) {
+		this.feeDeductible = feeDeductible;
+	}
+
+	public CarRentPrice(){
+	}
 	public CarRentPrice(
 		Long id
 	){
 		this.id = id;
 	}
-
-	
-		
 	public Long getId() {
 		return this.id;
 	}
@@ -127,12 +163,12 @@ public class CarRentPrice implements Serializable{
 		this.model = value;
 	}
 		
-	public Double getPricdeByDay() {
-		return this.pricdeByDay;
+	public Double getPriceByDay() {
+		return this.priceByDay;
 	}
 
-	public void setPricdeByDay(Double value) {
-		this.pricdeByDay = value;
+	public void setPriceByDay(Double value) {
+		this.priceByDay = value;
 	}
 		
 	public Double getPriceByHour() {
@@ -163,9 +199,13 @@ public String toString() {
 		.append("Area",getArea())
 		.append("Brand",getBrand())
 		.append("Model",getModel())
-		.append("PricdeByDay",getPricdeByDay())
+		.append("PriceByDay",getPriceByDay())
 		.append("PriceByHour",getPriceByHour())
 		.append("CarShop",getCarShop())
+		.append("FeeInsurance",getFeeInsurance())
+		.append("FeeDeductible",getFeeDeductible())
+			.append("Hotcar",getHotcar())
+			.append("Img",getImg())
 		.toString();
 }
 

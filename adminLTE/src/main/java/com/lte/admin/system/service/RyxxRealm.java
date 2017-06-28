@@ -90,9 +90,9 @@ public class RyxxRealm extends AuthorizingRealm {
 			info.addRole(ryxxRole.getJobcode());
 		}
 		// 赋予角色
-		for (UserRole userRole : userRoleService.findRoleListByUserId(shiroRyxx.getId())) {
-			info.addRole(roleService.get(userRole.getRoleId()).getRoleCode());
-		}
+//		for (UserRole userRole : userRoleService.findRoleListByUserId(shiroRyxx.getId())) {
+//			info.addRole(roleService.get(userRole.getRoleId()).getRoleCode());
+//		}
 //		// 赋予权限
 //		if (UserUtil.getCurrentUser().getName().equals("admin")) {
 //			for (Permission permission : permissionService.getAll()) {

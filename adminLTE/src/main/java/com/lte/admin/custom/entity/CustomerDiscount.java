@@ -22,8 +22,14 @@ public class CustomerDiscount implements Serializable{
 	private Long discountNumber;
     //discountInfo 	
 	private String discountInfo;
-    //discountBelong 	
-	private String discountBelong;
+    //validtime 	
+	private java.sql.Timestamp validtime;
+	//面值
+	private Double minimumConsumption;
+	//最低消费
+	private Double discountMoney;
+	//最低消费
+	private String discountTitle;
 	public CustomerDiscount(){
 	}
 
@@ -33,8 +39,30 @@ public class CustomerDiscount implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public String getDiscountTitle() {
+		return discountTitle;
+	}
+
+	public void setDiscountTitle(String discountTitle) {
+		this.discountTitle = discountTitle;
+	}
+
+	public Double getMinimumConsumption() {
+		return minimumConsumption;
+	}
+
+	public void setMinimumConsumption(Double minimumConsumption) {
+		this.minimumConsumption = minimumConsumption;
+	}
+
+	public Double getDiscountMoney() {
+		return discountMoney;
+	}
+
+	public void setDiscountMoney(Double discountMoney) {
+		this.discountMoney = discountMoney;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -83,12 +111,12 @@ public class CustomerDiscount implements Serializable{
 		this.discountInfo = value;
 	}
 		
-	public String getDiscountBelong() {
-		return this.discountBelong;
+	public java.sql.Timestamp getValidtime() {
+		return this.validtime;
 	}
 
-	public void setDiscountBelong(String value) {
-		this.discountBelong = value;
+	public void setValidtime(java.sql.Timestamp value) {
+		this.validtime = value;
 	}
 
 public String toString() {
@@ -99,7 +127,7 @@ public String toString() {
 		.append("DiscountState",getDiscountState())
 		.append("DiscountNumber",getDiscountNumber())
 		.append("DiscountInfo",getDiscountInfo())
-		.append("DiscountBelong",getDiscountBelong())
+		.append("Validtime",getValidtime())
 		.toString();
 }
 

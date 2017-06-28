@@ -30,4 +30,5 @@ public class MemberJob {
     public void setMemberCode(String memberCode) {
         this.memberCode = memberCode == null ? null : memberCode.trim();
     }
+
 }

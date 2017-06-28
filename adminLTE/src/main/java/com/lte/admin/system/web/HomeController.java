@@ -31,7 +31,8 @@ public class HomeController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String home(Model model) {
-		String gsdm = UserUtil.getCurrentUser().getCompanyCode();
+//		String gsdm = UserUtil.getCurrentUser().getCompanyCode();
+		String gsdm = UserUtil.getCurrentUser().getDeptCode();
 		String userBz = UserUtil.getCurrentUser().getUserBz();
 		String accountInfoUrl = getAccountInfoUrl(userBz);
 		model.addAttribute("userBz", userBz);
@@ -66,11 +67,11 @@ public class HomeController extends BaseController {
 	 */
 	private String getAccountInfoUrl(String userBz) {
 		String accountInfoUrl = "myAccount/platformAccount";
-		if (userBz.equals(DictConsts.GSBZ_FB)) {
-			accountInfoUrl = "myAccount/branchAccount";
-		} else if (userBz.equals(DictConsts.GSBZ_ZB)) {
-			accountInfoUrl = "myAccount/headquarterAccount";
-		}
+//		if (userBz.equals(DictConsts.GSBZ_FB)) {
+//			accountInfoUrl = "myAccount/branchAccount";
+//		} else if (userBz.equals(DictConsts.GSBZ_ZB)) {
+//			accountInfoUrl = "myAccount/headquarterAccount";
+//		}
 		return accountInfoUrl;
 	}
 }

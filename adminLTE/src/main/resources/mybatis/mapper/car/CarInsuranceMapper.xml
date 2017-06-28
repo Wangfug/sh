@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.car.CarInsuranceMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.car.entity.CarInsurance" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="car_id" property="carId" jdbcType="BIGINT" />
+    <result column="insurance_starttime" property="insuranceStarttime" jdbcType="TIMESTAMP" />
+    <result column="insurance_endtime" property="insuranceEndtime" jdbcType="TIMESTAMP" />
+    <result column="insurance_comp" property="insuranceComp" jdbcType="VARCHAR" />
+    <result column="insurance_type" property="insuranceType" jdbcType="VARCHAR" />
+    <result column="insurance_by" property="insuranceBy" jdbcType="VARCHAR" />
+    <result column="insurance_salesman" property="insuranceSalesman" jdbcType="VARCHAR" />
+    <result column="insurance_type_money" property="insuranceTypeMoney" jdbcType="DOUBLE" />
+    <result column="total_money" property="totalMoney" jdbcType="DOUBLE" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="insurance_id" property="insuranceId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, car_id, insurance_starttime, 
+    insurance_endtime, insurance_comp, insurance_type, insurance_by, insurance_salesman, 
+    insurance_type_money, total_money, remark, attachment,insurance_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from car_insurance
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectDetailByPrimaryKey" resultType="java.util.Map" parameterType="java.lang.Long" >
+    select
+   ci.*,car.car_code
+    from car_insurance ci left join car on car.id = ci.car_id
+    where ci.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from car_insurance
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="carId != null" >
+        and car_id = #{carId,jdbcType=BIGINT }
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllDetail" resultType="java.util.Map" parameterType="java.util.Map">
+    select ci.*,car.car_code from car_insurance  ci LEFT JOIN car on car.id = ci.car_id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="car_code != null" >
+        and car.car_code  LIKE CONCAT(CONCAT('%', #{car_code}), '%')
+      </if>
+      <if test="insurance_id != null" >
+        and insurance_id  LIKE CONCAT(CONCAT('%', #{insurance_id}), '%')
+      </if>
+    </trim>
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from car_insurance
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.car.entity.CarInsurance" >
+    insert into car_insurance (id, create_by, create_time, 
+      state, last_time, last_by, 
+      car_id, insurance_starttime, insurance_endtime, 
+      insurance_comp, insurance_type, insurance_by, 
+      insurance_salesman, insurance_type_money, total_money, 
+      remark, attachment,insurance_id)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{carId,jdbcType=BIGINT}, #{insuranceStarttime,jdbcType=TIMESTAMP}, #{insuranceEndtime,jdbcType=TIMESTAMP}, 
+      #{insuranceComp,jdbcType=VARCHAR}, #{insuranceType,jdbcType=VARCHAR}, #{insuranceBy,jdbcType=VARCHAR}, 
+      #{insuranceSalesman,jdbcType=VARCHAR}, #{insuranceTypeMoney,jdbcType=DOUBLE}, #{totalMoney,jdbcType=DOUBLE}, 
+      #{remark,jdbcType=VARCHAR}, #{attachment,jdbcType=VARCHAR},#{insuranceId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.car.entity.CarInsurance" >
+    insert into car_insurance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
+      <if test="insuranceStarttime != null" >
+        insurance_starttime,
+      </if>
+      <if test="insuranceEndtime != null" >
+        insurance_endtime,
+      </if>
+      <if test="insuranceComp != null" >
+        insurance_comp,
+      </if>
+      <if test="insuranceType != null" >
+        insurance_type,
+      </if>
+      <if test="insuranceBy != null" >
+        insurance_by,
+      </if>
+      <if test="insuranceSalesman != null" >
+        insurance_salesman,
+      </if>
+      <if test="insuranceTypeMoney != null" >
+        insurance_type_money,
+      </if>
+      <if test="totalMoney != null" >
+        total_money,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="insuranceId != null" >
+        insurance_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="insuranceStarttime != null" >
+        #{insuranceStarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insuranceEndtime != null" >
+        #{insuranceEndtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insuranceComp != null" >
+        #{insuranceComp,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceType != null" >
+        #{insuranceType,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceBy != null" >
+        #{insuranceBy,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceSalesman != null" >
+        #{insuranceSalesman,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceTypeMoney != null" >
+        #{insuranceTypeMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="totalMoney != null" >
+        #{totalMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceId != null" >
+        #{insuranceId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.car.entity.CarInsurance" >
+    update car_insurance
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="carId != null" >
+        car_id = #{carId,jdbcType=BIGINT},
+      </if>
+      <if test="insuranceStarttime != null" >
+        insurance_starttime = #{insuranceStarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insuranceEndtime != null" >
+        insurance_endtime = #{insuranceEndtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insuranceComp != null" >
+        insurance_comp = #{insuranceComp,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceType != null" >
+        insurance_type = #{insuranceType,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceBy != null" >
+        insurance_by = #{insuranceBy,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceSalesman != null" >
+        insurance_salesman = #{insuranceSalesman,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceTypeMoney != null" >
+        insurance_type_money = #{insuranceTypeMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="totalMoney != null" >
+        total_money = #{totalMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="insuranceId != null" >
+        insurance_id = #{insuranceId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.car.entity.CarInsurance" >
+    update car_insurance
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      car_id = #{carId,jdbcType=BIGINT},
+      insurance_starttime = #{insuranceStarttime,jdbcType=TIMESTAMP},
+      insurance_endtime = #{insuranceEndtime,jdbcType=TIMESTAMP},
+      insurance_comp = #{insuranceComp,jdbcType=VARCHAR},
+      insurance_type = #{insuranceType,jdbcType=VARCHAR},
+      insurance_by = #{insuranceBy,jdbcType=VARCHAR},
+      insurance_salesman = #{insuranceSalesman,jdbcType=VARCHAR},
+      insurance_type_money = #{insuranceTypeMoney,jdbcType=DOUBLE},
+      total_money = #{totalMoney,jdbcType=DOUBLE},
+      remark = #{remark,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      insurance_id = #{insuranceId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

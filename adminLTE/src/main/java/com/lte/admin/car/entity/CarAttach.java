@@ -36,7 +36,27 @@ public class CarAttach implements Serializable{
 	private String remark;
     //attachement 	
 	private String attachement;
+	//状态
+	private Integer type;
+	private String carCode;
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
 	public CarAttach(){
+	}
+
+	public String getCarCode() {
+		return carCode;
+	}
+
+	public void setCarCode(String carCode) {
+		this.carCode = carCode;
 	}
 
 	public CarAttach(
@@ -166,6 +186,7 @@ public String toString() {
 		.append("AttachEnd",getAttachEnd())
 		.append("Remark",getRemark())
 		.append("Attachement",getAttachement())
+			.append("Type",getType())
 		.toString();
 }
 

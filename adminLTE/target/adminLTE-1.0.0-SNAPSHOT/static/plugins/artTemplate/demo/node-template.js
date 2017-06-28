@@ -31,5 +31,5 @@ var html = template('node-template/index', {
 });
 
 
-console.log(html);
+// console.log(html);
 //console.log(template.cache)

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.other.t_base_cityMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.other.entity.TbaseCity" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="city_pinyin" property="cityPinyin" jdbcType="VARCHAR" />
+    <result column="city_three_code" property="cityThreeCode" jdbcType="VARCHAR" />
+    <result column="city_first_word" property="cityFirstWord" jdbcType="VARCHAR" />
+    <result column="parent_city" property="parentCity" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, city_name, city_pinyin, city_three_code, 
+    city_first_word, parent_city
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_base_city
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_city
+  </select>
+
+  <select id="getAllList1" resultType="java.util.Map" parameterType="java.util.Map" >
+   select tt.id, tt.create_time, tt.state, tt.city_name, tt.city_pinyin, tt.city_three_code,
+    tt.city_first_word, tt.parent_city,a.city_name parentname from t_base_city tt INNER JOIN (select * from t_base_city ) a on a.id = tt.parent_city
+    <trim prefix="where" prefixOverrides="and | or">
+    <if test="parentname != null" >
+      and a.city_name  LIKE CONCAT(CONCAT('%', #{parentname}), '%')
+    </if>
+    <if test="cityname != null" >
+      and tt.city_name  LIKE CONCAT(CONCAT('%', #{cityname}), '%')
+    </if>
+    </trim>
+  </select>
+  <select id="getAllList2" resultType="java.util.Map" parameterType="java.util.Map" >
+    select id,city_name from t_base_city
+  </select>
+
+  <select id="getListByParent" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from t_base_city
+    where parent_city = #{pid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_base_city
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.other.entity.TbaseCity" >
+    insert into t_base_city (id, create_by, create_time, 
+      state, last_time, last_by, 
+      city_name, city_pinyin, city_three_code, 
+      city_first_word, parent_city)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{cityName,jdbcType=VARCHAR}, #{cityPinyin,jdbcType=VARCHAR}, #{cityThreeCode,jdbcType=VARCHAR}, 
+      #{cityFirstWord,jdbcType=VARCHAR}, #{parentCity,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.other.entity.TbaseCity" >
+    insert into t_base_city
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="cityName != null" >
+        city_name,
+      </if>
+      <if test="cityPinyin != null" >
+        city_pinyin,
+      </if>
+      <if test="cityThreeCode != null" >
+        city_three_code,
+      </if>
+      <if test="cityFirstWord != null" >
+        city_first_word,
+      </if>
+      <if test="parentCity != null" >
+        parent_city,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityPinyin != null" >
+        #{cityPinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="cityThreeCode != null" >
+        #{cityThreeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityFirstWord != null" >
+        #{cityFirstWord,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCity != null" >
+        #{parentCity,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.other.entity.TbaseCity" >
+    update t_base_city
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="cityName != null" >
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityPinyin != null" >
+        city_pinyin = #{cityPinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="cityThreeCode != null" >
+        city_three_code = #{cityThreeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityFirstWord != null" >
+        city_first_word = #{cityFirstWord,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCity != null" >
+        parent_city = #{parentCity,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.other.entity.TbaseCity" >
+    update t_base_city
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      city_name = #{cityName,jdbcType=VARCHAR},
+      city_pinyin = #{cityPinyin,jdbcType=VARCHAR},
+      city_three_code = #{cityThreeCode,jdbcType=VARCHAR},
+      city_first_word = #{cityFirstWord,jdbcType=VARCHAR},
+      parent_city = #{parentCity,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getNameList" resultType="java.util.Map" parameterType="java.lang.Long">
+    select id,city_name from t_base_city where parent_city=#{pid,jdbcType=BIGINT}
+  </select>
+</mapper>

@@ -7,19 +7,84 @@ import com.lte.admin.common.web.BaseController;
 import com.lte.admin.common.utils.DateUtil;
 import com.lte.admin.order.entity.OrderCarCheck;
 import org.apache.commons.lang3.StringUtils;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.annotation.Resource;
+import com.github.miemiedev.mybatis.paginator.domain.PageList;
+import com.lte.admin.common.persistence.Page;
+import com.lte.admin.common.persistence.PropertyFilter;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.Map;
+
 
 /**
  * @author Andy
  */
 @Controller
-@RequestMapping("")
+@RequestMapping("web/orderCarCheck")
 public class OrderCarCheckController extends BaseController  {
 	@Resource
 	private OrderCarCheckService orderCarCheckService;
+	/**
+	 * 跳转主页
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public String toOrderView(){
+		return "order/orderList";
+	}
 
+	/**
+	 * 增加订单
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "saveOrUpdate",method = RequestMethod.GET)
+	@ResponseBody
+	public String saveOrUpdate(HttpServletRequest request){
+		Session session = SecurityUtils.getSubject().getSession();
+		OrderCarCheck orderCarCheck = getEntity4Request(request);
+		if(orderCarCheck.getId()!=null){
+			orderCarCheckService.update(orderCarCheck);
+		}else{
+			orderCarCheckService.save(orderCarCheck);
+		}
+
+		return "success";
+	}
+
+	/**
+	 * 增加订单
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "delete",method = RequestMethod.GET)
+	@ResponseBody
+	public String delete(HttpServletRequest request){
+		Long id = 0l;
+		if(StringUtils.isNotBlank(request.getParameter("id"))){
+			id = Long.parseLong(request.getParameter("id"));
+			orderCarCheckService.deleteById(id);
+			return "success";
+		}
+
+		return "false";
+	}
+
+	/**
+	 * 获取订单列表
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "getOrderList",method = {RequestMethod.GET,RequestMethod.POST})
+	@ResponseBody
+	public Map<String, Object> getOrderList(HttpServletRequest request){
+		Page<OrderCarCheck> page = getPage(request);
+		Map<String, Object> filters = PropertyFilter.buildFromHttpRequest(request);
+		PageList<OrderCarCheck> page1 = orderCarCheckService.getList(page, filters);
+		return getEasyUIData(page1, request);
+	}
 	public OrderCarCheck getEntity4Request(HttpServletRequest request) {
 			OrderCarCheck entity=new OrderCarCheck();
 			if(StringUtils.isNotBlank(request.getParameter("id"))){

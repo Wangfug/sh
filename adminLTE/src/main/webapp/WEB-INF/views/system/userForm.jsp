@@ -13,8 +13,9 @@
 			<tr>
 				<td>用户名：</td>
 				<td>
-					<input type="hidden" name="id" value="${id }"/>
-					<input id="loginName" name="loginName" class="easyui-validatebox" data-options="width: 150" value="${user.loginName }"> 
+					<input type="hidden" name="pkPsnbasdoc" value="${id }"/>
+					<input id="loginName" name="psnname" class="easyui-validatebox" data-options="width: 150" value="${employee.psnname }" >
+					<span id = "loginCheck" style="display:none"></span>
 				</td>
 			</tr>
 			<c:if test="${action != 'update'}">
@@ -28,19 +29,23 @@
 			</tr>
 			</c:if>
 			<tr>
-				<td>昵称：</td>
-				<td><input name="name" type="text" value="${user.name }" class="easyui-validatebox" data-options="width: 150,required:'required',validType:'length[3,20]'"/></td>
+				<td>真实姓名：</td>
+				<td><input name="memberName" type="text" value="${employee.memberName }" class="easyui-validatebox" data-options="width: 150,required:'required',validType:'length[2,20]'"/></td>
 			</tr>
-			<tr>
-				<td>性别：</td>
+			<%--<tr>
+				<td>工号：</td>
 				<td>
-				<input type="radio" id="man" name="gender" value="1"/><label for="man">男</label>
-				<input type="radio" id="woman" name="gender" value="0"/><label for="woman">女</label>
+					<input type="text" name="eno" value="${employee.eno }" class="easyui-validatebox"  data-options="width: 150,required:'required'"/>
 				</td>
-			</tr>
+			</tr>--%>
 			<tr>
 				<td>电话：</td>
-				<td><input type="text" name="phone" value="${user.phone }" class="easyui-numberbox"  data-options="width: 150"/></td>
+				<td><input type="text" name="mobile" value="${employee.mobile }" class="easyui-numberbox"  data-options="width: 150,required:'required',validType:'phoneRex'" /></td>
+			</tr>
+			<tr>
+				<td>邮箱：</td>
+				<td><input type="text" name="email" value="${employee.email }" class="easyui-validatebox"  data-options="width: 150,required:'required'" validtype="email"
+						   invalidMessage="邮箱格式不正确"/></td>
 			</tr>
 		</table>
 	</form>
@@ -50,7 +55,7 @@
 var action="${action}";
 //用户 添加修改区分
 if(action=='create'){
-	$("input[name='gender'][value=1]").attr("checked",true); 
+//	$("input[name='gender'][value=1]").attr("checked",true);
 	//用户名存在验证
 	$('#loginName').validatebox({    
 	    required: true,    
@@ -60,9 +65,8 @@ if(action=='create'){
 	    }
 	});  
 }else if(action=='update'){
-	$("input[name='loginName']").attr('readonly','readonly');
-	$("input[name='loginName']").css('background','#eee')
-	$("input[name='gender'][value=${user.gender}]").attr("checked",true);
+	$("input[name='psnname']").attr('readonly','readonly');
+	$("input[name='psnname']").css('background','#eee')
 }
 
 //提交表单
@@ -74,7 +78,28 @@ $('#mainform').form({
     success:function(data){   
     	successTip(data,dg,d);
     }    
-});    
+});
+$.extend($.fn.validatebox.defaults.rules, {
+    phoneRex: {
+        validator: function(value){
+            var rex=/^1[3-8]+\d{9}$/;
+            //var rex=/^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/;
+            //区号：前面一个0，后面跟2-3位数字 ： 0\d{2,3}
+            //电话号码：7-8位数字： \d{7,8
+            //分机号：一般都是3位数字： \d{3,}
+            //这样连接起来就是验证电话的正则表达式了：/^((0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/
+            var rex2=/^((0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/;
+            if(rex.test(value)||rex2.test(value))
+            {
+                return true;
+            }else
+            {
+                return false;
+            }
+        },
+        message: '请输入正确电话或手机格式'
+    }
+});
 </script>
 </body>
 </html>

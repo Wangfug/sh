@@ -3,6 +3,7 @@ package com.lte.admin.system.service;
 import java.util.List;
 import java.util.Map;
 
+import com.lte.admin.entity.StaffJob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +14,6 @@ import com.lte.admin.common.persistence.Page;
 import com.lte.admin.common.service.BaseService;
 import com.lte.admin.entity.Company;
 import com.lte.admin.entity.Dept;
-import com.lte.admin.entity.Role;
 import com.lte.admin.system.dao.RoleDao;
 
 /**
@@ -24,56 +24,69 @@ import com.lte.admin.system.dao.RoleDao;
  */
 @Service
 @Transactional(readOnly = true)
-public class RoleService extends BaseService<Role, Integer> {
+public class RoleService extends BaseService<StaffJob, Integer> {
 
 	@Autowired
 	private RoleDao roleDao;
 
-	public Role getRole(Long roleId) {
-		return roleDao.getRole(roleId);
+	public StaffJob getStaffJob(Long roleId) {
+		return roleDao.getStaffJob(roleId);
 	}
 
-	public PageList<Role> searchall(Page<Role> page, Map<String, Object> filters) {
+	public PageList<StaffJob> searchall(Page<StaffJob> page, Map<String, Object> filters) {
 		PageBounds pb = createPageBounds(page);
 
-		return (PageList<Role>) roleDao.getRoleListAll(pb, filters);
+		return (PageList<StaffJob>) roleDao.getStaffJobListAll(pb, filters);
 	}
 
-	public List<Company> getCompanyListTree() {
-		return roleDao.getCompanyListTree();
-	}
-	
 	public List<Dept> getBmListTree(String id) {
 		return roleDao.getBmListTree(id);
 	}
 
-	public void save(Role role) {
-		role.setDelFlag("0");
+	public void save(StaffJob role) {
+		role.setDeleteFlag((byte)0);
 		roleDao.save(role);
 
 	}
 
 	public void delete(Long id) {
-		Role role = new Role();
+		StaffJob role = new StaffJob();
 		role.setId(id);
-		role.setDelFlag("1");
+		role.setDeleteFlag((byte)1);
 		roleDao.update(role);
 
 	}
 
-	public void update(Role role) {
+	public void update(StaffJob role) {
 		roleDao.update(role);
 
 	}
 
-	public Role get(Long id) {
-		return roleDao.getRole(id);
+	public StaffJob get(Long id) {
+		return roleDao.getStaffJob(id);
 	}
 
-	public PageList<Role> search(Page<Role> page, Map<String, Object> filters) {
+	public PageList<StaffJob> search(Page<StaffJob> page, Map<String, Object> filters) {
 		PageBounds pb = createPageBounds(page);
 
-		return (PageList<Role>) roleDao.getRoleList(pb, filters);
+		return (PageList<StaffJob>) roleDao.getStaffJobList(pb, filters);
 	}
 
+	public PageList<Map> search1(Page<StaffJob> page, Map<String, Object> filters) {
+		PageBounds pb = createPageBounds(page);
+
+		return (PageList<Map>) roleDao.getStaffJobList1(pb, filters);
+	}
+
+	public List<Dept> getDeptListTree() {
+		return roleDao.getDeptListTree();
+	}
+
+    public List<Map<String,Object>> getStaffJobList() {
+		return roleDao.getStaffJobList();
+    }
+
+	public List<Map<String,Object>> getStaffJobListBySP(String shopCode) {
+		return roleDao.getStaffJobListBySP(shopCode);
+	}
 }

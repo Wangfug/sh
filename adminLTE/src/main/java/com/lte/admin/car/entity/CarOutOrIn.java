@@ -32,7 +32,7 @@ public class CarOutOrIn implements Serializable{
 	private Long outEmp;
     //outPosition 	
 	private String outPosition;
-    //dispatchNo 	
+    //调度单号
 	private String dispatchNo;
     //outTime 	
 	private java.sql.Timestamp outTime;
@@ -42,6 +42,8 @@ public class CarOutOrIn implements Serializable{
 	private String inOrOut;
     //carShop 	
 	private Long carShop;
+	//订单号
+	private String orderNo;
 	public CarOutOrIn(){
 	}
 
@@ -51,8 +53,14 @@ public class CarOutOrIn implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+
 	public Long getId() {
 		return this.id;
 	}

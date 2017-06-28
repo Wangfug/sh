@@ -31,7 +31,7 @@ public class RolePermissionService extends BaseService<RolePermission, Integer> 
 	/**
 	 * 获取角色权限id集合
 	 * 
-	 * @param id
+	 * @param
 	 * @return List
 	 */
 	public List<GwPermission> getPermissionIds(String roleId) {
@@ -74,6 +74,13 @@ public class RolePermissionService extends BaseService<RolePermission, Integer> 
 //		RyxxRealm userRealm = (RyxxRealm) securityManager.getRealms().iterator().next();
 //		userRealm.clearCachedAuthorizationInfo(pc);
 	}
+	/**
+	 * 赋予角色
+	 */
+	/*public void save(String member,String job) {
+		rolePermissionDao.save(getRolePermission(id, newList.get(i)));
+	}
+	*/
 
 	/**
 	 * 构造角色权限对象

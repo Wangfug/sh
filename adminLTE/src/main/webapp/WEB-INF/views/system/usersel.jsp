@@ -1,4 +1,4 @@
-+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -11,8 +11,9 @@
 <form id="loginForm" action="${ctx}/a/seluser" method="post">
         <c:forEach items="${userlist}"  var="user">
         <br>
-			<div><input type="radio" name="gwxx" value="${user.pkPsndoc}"/>${user.gsname} ${user.bmname} ${user.jobname} ${user.psnname}</div>
-		</c:forEach>	
+			<%--<div><input type="radio" name="gwxx" value="${user.pkPsndoc}"/>${user.gsname} ${user.bmname} ${user.jobname} ${user.psnname}</div>--%>
+            <div><input type="radio" name="gwxx" value="${user.jobCode}"/>${user.memberName} ${user.deptName} ${user.jobName} ${user.companyName}</div>
+        </c:forEach>
 		<br>
         　　　　<input type="button" value="选择" id="selectuser"/>
         <br><br>

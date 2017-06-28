@@ -39,7 +39,7 @@ public class OrderEvaluate implements Serializable{
     //totalService 	
 	private String totalService;
     //orderId 	
-	private Long orderId;
+	private String orderNo;
     //attachment 	
 	private String attachment;
     //openOpinion 	
@@ -171,12 +171,12 @@ public class OrderEvaluate implements Serializable{
 		this.totalService = value;
 	}
 		
-	public Long getOrderId() {
-		return this.orderId;
+	public String getOrderNo() {
+		return this.orderNo;
 	}
 
-	public void setOrderId(Long value) {
-		this.orderId = value;
+	public void setOrderNo(String value) {
+		this.orderNo = value;
 	}
 		
 	public String getAttachment() {
@@ -227,7 +227,7 @@ public String toString() {
 		.append("OpenOrder",getOpenOrder())
 		.append("CloseOrder",getCloseOrder())
 		.append("TotalService",getTotalService())
-		.append("OrderId",getOrderId())
+		.append("OrderNo",getOrderNo())
 		.append("Attachment",getAttachment())
 		.append("OpenOpinion",getOpenOpinion())
 		.append("CloseOpinion",getCloseOpinion())

@@ -8,7 +8,7 @@
     <description>Shiro安全配置</description>
 
     <!-- 读取配置文件 -->
-    <context:property-placeholder ignore-unresolvable="true" location="classpath*:/conf.properties"/>
+    <context:property-placeholder ignore-unresolvable="true" location="classpath*:/application.properties"/>
 
     <!-- Shiro的主要业务层对象基于web的应用程序 -->
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
@@ -38,6 +38,7 @@
                 /static/** = anon
                 ${adminPath}/login = authc
                 ${adminPath}/** = user
+                /web/** = user
                 /rest/**=authcBasic
             </value>
         </property>

@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 /**
  * @author Andy
  */
@@ -34,7 +36,23 @@ public class CarBreakRule implements Serializable{
 	private String attachment;
     //carId 	
 	private Long carId;
+
+	private java.sql.Timestamp illegalTime;
+
+	private String illegalNo;
+	 private Long dealShop;
+	private String illegalPosition;
+	private String remark;
+	private String orderNo;
 	public CarBreakRule(){
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 
 	public CarBreakRule(
@@ -43,8 +61,46 @@ public class CarBreakRule implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getIllegalPosition() {
+		return illegalPosition;
+	}
+
+	public void setIllegalPosition(String illegalPosition) {
+		this.illegalPosition = illegalPosition;
+	}
+
+	public Timestamp getIllegalTime() {
+		return illegalTime;
+	}
+
+	public void setIllegalTime(Timestamp illegalTime) {
+		this.illegalTime = illegalTime;
+	}
+
+	public String getIllegalNo() {
+		return illegalNo;
+	}
+
+	public void setIllegalNo(String illegalNo) {
+		this.illegalNo = illegalNo;
+	}
+
+	public Long getDealShop() {
+		return dealShop;
+	}
+
+	public void setDealShop(Long dealShop) {
+		this.dealShop = dealShop;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -143,7 +199,7 @@ public class CarBreakRule implements Serializable{
 
 public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
-		.append("Id",getId())
+		.append("id",getId())
 		.append("CreateBy",getCreateBy())
 		.append("CreateTime",getCreateTime())
 		.append("State",getState())

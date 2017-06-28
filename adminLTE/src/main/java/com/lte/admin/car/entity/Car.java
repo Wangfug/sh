@@ -3,7 +3,10 @@ package com.lte.admin.car.entity;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 /**
  * @author Andy
  */
@@ -32,8 +35,8 @@ public class Car implements Serializable{
 	private String displacement;
     //blockNumber 	
 	private String blockNumber;
-    //车主 	
-	private Long owner;
+    //车辆归属
+	private int belong;
     //addtionalService 	
 	private String addtionalService;
     //carShop 	
@@ -46,8 +49,8 @@ public class Car implements Serializable{
 	private String frameNo;
     //color 	
 	private String color;
-    //buyYime 	
-	private java.sql.Timestamp buyYime;
+    //buyTime
+	private java.sql.Timestamp buyTime;
     //brand 	
 	private String brand;
     //model 	
@@ -66,6 +69,23 @@ public class Car implements Serializable{
 	private String attachment;
     //vehicleLicense 	
 	private Long vehicleLicense;
+
+	private  double moneyBuy;
+    public long CarId;
+	//车辆行驶里程
+	private String mileage;
+	//所有人
+	private Long owner;
+	//入库时间
+	private java.sql.Timestamp intime;
+	public long getCarId() {
+		return CarId;
+	}
+
+	public void setCarId(long carId) {
+		CarId = carId;
+	}
+
 	public Car(){
 	}
 
@@ -75,8 +95,30 @@ public class Car implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public Timestamp getIntime() {
+		return intime;
+	}
+
+	public void setIntime(Timestamp intime) {
+		this.intime = intime;
+	}
+
+	public Long getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Long owner) {
+		this.owner = owner;
+	}
+
+	public String getMileage() {
+		return mileage;
+	}
+
+	public void setMileage(String mileage) {
+		this.mileage = mileage;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -164,14 +206,7 @@ public class Car implements Serializable{
 	public void setBlockNumber(String value) {
 		this.blockNumber = value;
 	}
-		
-	public Long getOwner() {
-		return this.owner;
-	}
 
-	public void setOwner(Long value) {
-		this.owner = value;
-	}
 		
 	public String getAddtionalService() {
 		return this.addtionalService;
@@ -221,12 +256,12 @@ public class Car implements Serializable{
 		this.color = value;
 	}
 		
-	public java.sql.Timestamp getBuyYime() {
-		return this.buyYime;
+	public java.sql.Timestamp getBuyTime() {
+		return this.buyTime;
 	}
 
-	public void setBuyYime(java.sql.Timestamp value) {
-		this.buyYime = value;
+	public void setBuyTime(java.sql.Timestamp value) {
+		this.buyTime = value;
 	}
 		
 	public String getBrand() {
@@ -301,7 +336,23 @@ public class Car implements Serializable{
 		this.vehicleLicense = value;
 	}
 
-public String toString() {
+	public int getBelong() {
+		return belong;
+	}
+
+	public void setBelong(int belong) {
+		this.belong = belong;
+	}
+
+	public double getMoneyBuy() {
+		return moneyBuy;
+	}
+
+	public void setMoneyBuy(double moneyBuy) {
+		this.moneyBuy = moneyBuy;
+	}
+
+	public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
 		.append("Id",getId())
 		.append("CarName",getCarName())
@@ -314,14 +365,14 @@ public String toString() {
 		.append("CartonNumber",getCartonNumber())
 		.append("Displacement",getDisplacement())
 		.append("BlockNumber",getBlockNumber())
-		.append("Owner",getOwner())
+		.append("belong",getBelong())
 		.append("AddtionalService",getAddtionalService())
 		.append("CarShop",getCarShop())
 		.append("CarCode",getCarCode())
 		.append("EngineNo",getEngineNo())
 		.append("FrameNo",getFrameNo())
 		.append("Color",getColor())
-		.append("BuyYime",getBuyYime())
+		.append("BuyTime",getBuyTime())
 		.append("Brand",getBrand())
 		.append("Model",getModel())
 		.append("LeaveFactoryTime",getLeaveFactoryTime())
@@ -331,6 +382,8 @@ public String toString() {
 		.append("Remark3",getRemark3())
 		.append("Attachment",getAttachment())
 		.append("VehicleLicense",getVehicleLicense())
+		.append("MoneyBuy",getMoneyBuy())
+			.append("CarId",getCarId())
 		.toString();
 }
 

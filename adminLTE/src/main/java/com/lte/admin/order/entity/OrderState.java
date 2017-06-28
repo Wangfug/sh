@@ -18,8 +18,8 @@ public class OrderState implements Serializable{
 	private java.sql.Timestamp createTime;
     //状态 	
 	private Integer state;
-    //orderId 	
-	private Long orderId;
+    //orderNo 	
+	private String orderNo;
     //orderStateInfo 	
 	private String orderStateInfo;
 	public OrderState(){
@@ -65,12 +65,12 @@ public class OrderState implements Serializable{
 		this.state = value;
 	}
 		
-	public Long getOrderId() {
-		return this.orderId;
+	public String getOrderNo() {
+		return this.orderNo;
 	}
 
-	public void setOrderId(Long value) {
-		this.orderId = value;
+	public void setOrderNo(String value) {
+		this.orderNo = value;
 	}
 		
 	public String getOrderStateInfo() {
@@ -87,7 +87,7 @@ public String toString() {
 		.append("CreateBy",getCreateBy())
 		.append("CreateTime",getCreateTime())
 		.append("State",getState())
-		.append("OrderId",getOrderId())
+		.append("OrderNo",getOrderNo())
 		.append("OrderStateInfo",getOrderStateInfo())
 		.toString();
 }

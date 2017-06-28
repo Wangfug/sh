@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.car.CarRentPriceMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.car.entity.CarRentPrice" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="price_by_day" property="priceByDay" jdbcType="DOUBLE" />
+    <result column="price_by_hour" property="priceByHour" jdbcType="DOUBLE" />
+    <result column="car_shop" property="carShop" jdbcType="BIGINT" />
+    <result column="fee_insurance" property="feeInsurance" jdbcType="DOUBLE" />
+    <result column="fee_deductible" property="feeDeductible" jdbcType="DOUBLE" />
+    <result column="hotcar" property="hotcar" jdbcType="INTEGER" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, city, area, brand, model, 
+    price_by_day, price_by_hour, car_shop,fee_insurance,fee_deductible,hotcar,img
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from car_rent_price
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from car_rent_price
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="brand != null" >
+        and brand = #{brand,jdbcType=VARCHAR }
+      </if>
+      <if test="model != null" >
+        and model = #{model,jdbcType=VARCHAR }
+      </if>
+      <if test="carShop != null" >
+        and car_shop = #{carShop,jdbcType=BIGINT }
+      </if>
+    </trim>
+  </select>
+
+  <select id="getAllList1" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    p.id, p.create_by, p.create_time, p.state, p.last_time, p.last_by, p.city, p.area, p.brand, p.model,
+    p.price_by_day, p.price_by_hour, p.car_shop,p.fee_insurance,p.fee_deductible,p.hotcar
+    from car_rent_price p left join car_shops s on p.car_shop = s.id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="brand != null" >
+        and p.brand LIKE CONCAT(CONCAT('%', #{brand}), '%')
+      </if>
+      <if test="model != null" >
+        and p.model LIKE CONCAT(CONCAT('%', #{model}), '%')
+      </if>
+      <if test="carShop != null" >
+        and s.shop_name LIKE CONCAT(CONCAT('%', #{carShop}), '%')
+      </if>
+    </trim>
+  </select>
+
+  <select id="getDeatilByModels" resultType="java.util.Map" parameterType="java.util.Map" >
+    SELECT
+    car.brand,car.model,car.car_shop,
+    ifnull(price.price_by_day,pr.price_by_day) day_price_shop,
+    ifnull(price.price_by_hour,pr.price_by_hour) hour_price_shop,
+    pr.price_by_day day_price_company,
+    pr.price_by_hour hour_price_company,
+    ifnull(price.fee_insurance,pr.fee_insurance) fee_insurance,
+    ifnull(price.fee_deductible,pr.fee_deductible) fee_deductible
+    FROM
+    car_rent_price car
+    LEFT JOIN car_rent_price price on price.brand=car.brand and price.model=car.model
+    <if test="carShopId != null" >
+    and price.car_shop = #{carShopId,jdbcType=BIGINT}
+    </if>
+    LEFT JOIN car_rent_price pr on pr.brand=car.brand and pr.model=car.model and pr.car_shop is null
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="brand != null" >
+        and car.brand = #{brand,jdbcType=VARCHAR}
+      </if>
+      <if test="model != null" >
+        and car.model = #{model,jdbcType=VARCHAR}
+      </if>
+      <if test="model != null and brand != null" >
+      GROUP BY car.brand,car.model
+      </if>
+    </trim>
+  </select>
+
+  <select id="getHotCar" resultType="java.util.Map" parameterType="java.lang.String" >
+SELECT
+	price.brand,price.model,shop.city,car.block_number,car.carton_number,
+	car.displacement,price.img,dict.NAME car_type
+FROM
+	car_rent_price price
+LEFT JOIN car_shops shop on shop.id = price.car_shop
+INNER JOIN car on car.brand = price.brand and price.model = car.model
+LEFT JOIN t_base_dict_type dict on dict.CODE = (select substring_index(car.car_type, ',', 1))
+WHERE
+	price.hotcar = '1'
+  and (shop.city= #{city,jdbcType=VARCHAR} or shop.city is null)
+GROUP BY brand,model
+limit 0,20
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from car_rent_price
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.car.entity.CarRentPrice" >
+    insert into car_rent_price (id, create_by, create_time, 
+      state, last_time, last_by, 
+      city, area, brand, 
+      model, price_by_day, price_by_hour, 
+      car_shop,fee_insurance,fee_deductible,hotcar,img)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, 
+      #{model,jdbcType=VARCHAR}, #{priceByDay,jdbcType=DOUBLE}, #{priceByHour,jdbcType=DOUBLE}, 
+      #{carShop,jdbcType=BIGINT},#{feeInsurance,jdbcType=DOUBLE},#{feeDeductible,jdbcType=DOUBLE},#{hotcar,jdbcType=INTEGER},#{img,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.car.entity.CarRentPrice" >
+    insert into car_rent_price
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="model != null" >
+        model,
+      </if>
+      <if test="priceByDay != null" >
+        price_by_day,
+      </if>
+      <if test="priceByHour != null" >
+        price_by_hour,
+      </if>
+      <if test="carShop != null" >
+        car_shop,
+      </if>
+      <if test="feeInsurance != null" >
+        fee_insurance,
+      </if>
+      <if test="feeDeductible != null" >
+        fee_deductible,
+      </if>
+      <if test="hotcar != null" >
+        hotcar,
+      </if>
+      <if test="img != null" >
+        img,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="priceByDay != null" >
+        #{priceByDay,jdbcType=DOUBLE},
+      </if>
+      <if test="priceByHour != null" >
+        #{priceByHour,jdbcType=DOUBLE},
+      </if>
+      <if test="carShop != null" >
+        #{carShop,jdbcType=BIGINT},
+      </if>
+      <if test="feeInsurance != null" >
+        #{feeInsurance,jdbcType=DOUBLE},
+      </if>
+      <if test="feeDeductible != null" >
+        #{feeDeductible,jdbcType=DOUBLE},
+      </if>
+      <if test="hotcar != null" >
+        #{hotcar,jdbcType=INTEGER},
+      </if>
+      <if test="img != null" >
+        #{img,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.car.entity.CarRentPrice" >
+    update car_rent_price
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        model = #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="priceByDay != null" >
+        price_by_day = #{priceByDay,jdbcType=DOUBLE},
+      </if>
+      <if test="priceByHour != null" >
+        price_by_hour = #{priceByHour,jdbcType=DOUBLE},
+      </if>
+      <!--<if test="carShop != null" >-->
+        car_shop = #{carShop,jdbcType=BIGINT},
+      <!--</if>-->
+      <if test="feeInsurance != null" >
+        fee_insurance =  #{feeInsurance,jdbcType=DOUBLE},
+      </if>
+      <if test="feeDeductible != null" >
+        fee_deductible = #{feeDeductible,jdbcType=DOUBLE},
+      </if>
+      <if test="hotcar != null" >
+        hotcar=  #{hotcar,jdbcType=INTEGER},
+      </if>
+      <if test="img != null" >
+        img =  #{img,jdbcType=VARCHAR},
+      </if>
+
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.car.entity.CarRentPrice" >
+    update car_rent_price
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      model = #{model,jdbcType=VARCHAR},
+      price_by_day = #{priceByDay,jdbcType=DOUBLE},
+      price_by_hour = #{priceByHour,jdbcType=DOUBLE},
+      car_shop = #{carShop,jdbcType=BIGINT},
+        fee_insurance =  #{feeInsurance,jdbcType=DOUBLE},
+         fee_deductible = #{feeDeductible,jdbcType=DOUBLE},
+              hotcar=  #{hotcar,jdbcType=INTEGER},
+      img =  #{img,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

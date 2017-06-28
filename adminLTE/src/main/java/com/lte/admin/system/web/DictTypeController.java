@@ -77,7 +77,7 @@ public class DictTypeController extends BaseController {
 		StringBuilder zglsxCombo = new StringBuilder("<option value='0'>根节点</option>");
 		String ZGLSX_COMBO = "<option value='%s'>%s</option>";
 		for (DictType tmp : DictTypeBeans) {
-			zglsxCombo.append(String.format(ZGLSX_COMBO, tmp.getId(), tmp.getName()));
+			zglsxCombo.append(String.format(ZGLSX_COMBO, tmp.getCode(), tmp.getName()));
 		}
 		model.addAttribute("dictTypeComboHtml", zglsxCombo.toString());
 		return "system/dictTypeForm";
@@ -138,10 +138,11 @@ public class DictTypeController extends BaseController {
 			if(olx.getId().intValue()==tmp.getId().intValue()){
 				continue;
 			}
-			if(dictTypeService.getDictByCode(tmp.getParentCode()).getId().intValue() == tmp.getId().intValue()){
-				zglsxCombo.append(String.format(ZGLSX_COMBOs, tmp.getId(), tmp.getName()));
+//			if(dictTypeService.getDictByCode(tmp.getParentCode()).getId().intValue() == tmp.getId().intValue()){
+			if(dictTypeService.getDictByCode(olx.getParentCode())!=null&&dictTypeService.getDictByCode(olx.getParentCode()).getId().intValue() == tmp.getId().intValue()){
+				zglsxCombo.append(String.format(ZGLSX_COMBOs, tmp.getCode(), tmp.getName()));
 			}else{
-				zglsxCombo.append(String.format(ZGLSX_COMBO, tmp.getId(), tmp.getName()));
+				zglsxCombo.append(String.format(ZGLSX_COMBO, tmp.getCode(), tmp.getName()));
 
 			}
 		}

@@ -42,8 +42,19 @@ public class CarInsurance implements Serializable{
 	private Double totalMoney;
     //remark 	
 	private String remark;
-    //attachment 	
+    //attachment
 	private String attachment;
+	//insurance_id
+	private String insuranceId;
+
+	public String getInsuranceId() {
+		return insuranceId;
+	}
+
+	public void setInsuranceId(String insuranceId) {
+		this.insuranceId = insuranceId;
+	}
+
 	public CarInsurance(){
 	}
 
@@ -210,6 +221,7 @@ public String toString() {
 		.append("TotalMoney",getTotalMoney())
 		.append("Remark",getRemark())
 		.append("Attachment",getAttachment())
+		.append("insuranceId",getInsuranceId())
 		.toString();
 }
 

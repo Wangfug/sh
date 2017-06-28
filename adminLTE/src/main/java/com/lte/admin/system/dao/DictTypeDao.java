@@ -37,7 +37,6 @@ public class DictTypeDao extends BaseDao {
 		return sqlSessionTemplate.selectOne(
 				"com.lte.admin.mapper.DictTypeMapper.getDictByCode", dictCode);
 	}
-
 	public void del(Integer id) {
 		sqlSessionTemplate.delete("com.lte.admin.mapper.DictTypeMapper.delZdlx",id);
 		
@@ -49,5 +48,8 @@ public class DictTypeDao extends BaseDao {
 
 	public List<DictType> getCheck(DictType dict) {
 		return sqlSessionTemplate.selectList("com.lte.admin.mapper.DictTypeMapper.getCheckZdlx",dict);
+	}
+	public List<DictType> getChildrenByParent(String code) {
+		return sqlSessionTemplate.selectList("com.lte.admin.mapper.DictTypeMapper.getChildrenByParent",code);
 	}
 }

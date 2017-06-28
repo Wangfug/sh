@@ -98,7 +98,7 @@ public class GwxxController extends BaseController {
 	 * 修改角色权限
 	 * 
 	 * @param id
-	 * @param newRoleList
+	 * @param
 	 * @return
 	 */
 	@RequiresPermissions("sys:role:permUpd")

@@ -36,6 +36,35 @@ public class MemberLogin {
     private String companyName;
     
     private String companyType;
+	private String shopCode;
+
+	private String shopName;
+
+	private String shopType;
+
+	public String getShopCode() {
+		return shopCode;
+	}
+
+	public void setShopCode(String shopCode) {
+		this.shopCode = shopCode;
+	}
+
+	public String getShopName() {
+		return shopName;
+	}
+
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
+	}
+
+	public String getShopType() {
+		return shopType;
+	}
+
+	public void setShopType(String shopType) {
+		this.shopType = shopType;
+	}
 
 	public String getCompanyType() {
 		return companyType;
@@ -187,6 +216,7 @@ public class MemberLogin {
 	}
 	
 	public boolean isZbUser() {
+		Object obj = this.deptCode;
 		return this.deptCode.startsWith("CHN");
 	}
 

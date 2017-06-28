@@ -5,9 +5,30 @@
 <title></title>
 <%@ include file="/WEB-INF/views/include/easyui.jsp"%>
 </head>
-<body>   
-<table id="ur_dg"></table>
+<body>
+    <%--<select name="companyCode" id="companyCode">
+        <c:forEach var="com" items="${coms}">
+            <c:if test="${com.companyCode eq member.companyCode}">
+                <option value="${com.companyCode}" selected>${com.companyName}</option>
+            </c:if>
+            <c:if test="">
+                <option value="${com.companyCode}">${com.companyName}</option>
+            </c:if>
+        </c:forEach>
+    </select>
+    <select name="deptCode" id="deptCode">
+        <c:forEach var="dept" items="${depts}">
+            <c:if test="${dept.deptCode eq member.deptCode}">
+                <option value="${dept.deptCode}" selected>${com.deptName}</option>
+            </c:if>
+            <c:if test="">
+                <option value="${dept.deptCode}">${com.deptName}</option>
+            </c:if>
+        </c:forEach>
+    </select>--%>
+    <table id="ur_dg"></table>
 <script type="text/javascript">
+//    changeDeptOption($("#companyCode").val());
 	var ur_dg;
 	ur_dg=$('#ur_dg').datagrid({    
 	method: "get",
@@ -15,15 +36,16 @@
     fit : true,
 	fitColumns : true,
 	border : false,
-	idField : 'id',
+	idField : 'jobCode',
 	pagination:false,
 	striped:true,
     columns:[[    
 		{field:'ck',checkbox:true},
         {field:'id',title:'id',hidden:true,sortable:true,width:100},    
-        {field:'name',title:'角色名称',sortable:true,width:100},
-        {field:'roleCode',title:'角色编码',sortable:true,width:100},
-        {field:'description',title:'描述',sortable:true,width:100,tooltip: true}
+        {field:'jobName',title:'岗位名称',sortable:true,width:100},
+        {field:'jobCode',title:'岗位编码',sortable:true,width:100},
+        {field:'deptCode',title:'部门编号',sortable:true,width:100,tooltip: true},
+        {field:'deptName',title:'部门名称',sortable:true,width:100,tooltip: true}
     ]],
     onLoadSuccess:function(){
     	//获取用户拥有角色,选中
@@ -34,7 +56,7 @@
 			success: function(data){
 				if(data){
 					for(var i=0,j=data.length;i<j;i++){
-						ur_dg.datagrid('selectRecord',data[i].roleId);
+						ur_dg.datagrid('selectRecord',data[i].jobCode);
 					}
 				} 
 			}
@@ -43,13 +65,31 @@
     }
 	});
 
+	/*function changeDeptOption(companyCode){
+        $.ajax({
+            async:false,
+            type:'POST',
+//            data:{companyCode:companyCode},
+            contentType:'application/json;charset=utf-8',	//必须
+            url:"/system/user/"+companyCode+"/changeDeptOption",
+            success: function(data){
+                console.log(data);
+               /!* if(data=='success'){
+                    parent.$.messager.show({ title : "提示",msg: "操作成功！", position: "bottomRight" });
+                }else{
+                    $.easyui.messager.alert(data);
+                }*!/
+            }
+        });
+    }*/
+
 //保存用户角色
 function saveUserRole(){
 	var newRoleList=[];
 	var data=ur_dg.datagrid('getSelections');
 	//所选的角色列表
 	for(var i=0,j=data.length;i<j;i++){
-		newRoleList.push(data[i].id);
+		newRoleList.push(data[i].jobCode);
 	}
 	$.ajax({
 		async:false,

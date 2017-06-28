@@ -1,17 +1,12 @@
 package com.lte.admin.system.web;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Date;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.poi.ss.formula.constant.ErrorConstant;
+import com.lte.admin.common.consts.ErrorCodeConst;
+import com.lte.admin.common.exception.AdminLteException;
+import com.lte.admin.common.response.ServiceResponse;
+import com.lte.admin.common.utils.Global;
+import com.lte.admin.common.utils.MathUtils;
+import com.lte.admin.common.web.BaseController;
+import com.lte.admin.system.utils.MultipartFileValidator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.lte.admin.common.consts.ErrorCodeConst;
-import com.lte.admin.common.exception.AdminLteException;
-import com.lte.admin.common.utils.Global;
-import com.lte.admin.common.web.BaseController;
-import com.lte.admin.system.utils.MultipartFileValidator;
+import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * controller
@@ -48,14 +47,25 @@ public class FileController extends BaseController {
 		return "system/fileupload";
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value = "upload", method = {RequestMethod.POST})
 	@ResponseBody
-	public String processUpload(@RequestParam("upFile") MultipartFile file, Model model, HttpServletRequest request) {
-		String filepath = "";
-		validator.validate(file);
-		filepath = saveFile(file, request);
-		// model.addAttribute("filepath", filepath);
-		return filepath;
+	public String processUpload(MultipartFile file, HttpServletRequest request) throws Exception {
+		ServiceResponse serviceResponse = new ServiceResponse();
+		try {
+			validator.validate(file);
+			boolean isLunbo = false;
+			String lunbo = request.getParameter("lunbo");
+			if("lunbo".equals(lunbo)){
+				isLunbo = true;
+			}
+			String j = saveFile(file, request,isLunbo);
+			serviceResponse.setData(j);
+			serviceResponse.setStatus(1);
+			serviceResponse.setInfo("上传成功");
+		}catch (Exception e){
+			serviceResponse.setInfo("上传失败");
+		}
+		return serviceResponse.objectToJson();
 	}
 
 	@RequestMapping(value = "down", method = RequestMethod.GET)
@@ -163,37 +173,70 @@ public class FileController extends BaseController {
 	 * @param request
 	 * @return
 	 */
-	public static String saveFile(MultipartFile file, HttpServletRequest request) {
+//	public static Map<String,Object> saveFile(MultipartFile file, HttpServletRequest request) {
+		public static String saveFile(MultipartFile file, HttpServletRequest request,boolean lunbo) {
+		Map<String,Object> j = new HashMap<String,Object>();
+		String state = "0";
+		String filename1 = "";
+		Long filsize = 0l;
+		String filepath1 = "";
 		String filepath = "";
 		if (file.getOriginalFilename().equals("") && file.getSize() == 0l) {
-			return filepath;
+//			j.put("filpath",filepath);
+//			j.put("filname",filname);
+//			j.put("filsize",filsize);
+			j.put("state",state);
+			return "";
 		}
 		try {
 			String filename = new Date().getTime() + "";
 			String syspath = Global.getConfig("filesavepath");
+			filename1 = file.getOriginalFilename();
+			filsize = file.getSize();
 			// 文件保存路径
 			if (syspath == null) {
 				syspath = "";
 			}
+			filepath1 = filename + "." + getExtensionName(file.getOriginalFilename());
 			if (syspath.startsWith("/")) {
-				filepath = syspath + System.getProperty("file.separator") + filename + "."
-						+ getExtensionName(file.getOriginalFilename());
+				filepath = syspath + System.getProperty("file.separator") + filepath1;
 			} else if (syspath.indexOf(":") > 0) {
-				filepath = syspath + System.getProperty("file.separator") + filename + "."
-						+ getExtensionName(file.getOriginalFilename());
+				filepath = syspath + System.getProperty("file.separator") +filepath1;
 			} else {
 				filepath = request.getSession().getServletContext().getRealPath("")
 						+ System.getProperty("file.separator") + syspath + System.getProperty("file.separator")
-						+ filename + "." + getExtensionName(file.getOriginalFilename());
+						+ filepath1;
 			}
 			File targetFile = new File(filepath);
+			if(lunbo){
+				InputStream is = file.getInputStream();
+				BufferedImage bimage = ImageIO.read(is);
+				int width = bimage.getWidth();
+				int height = bimage.getHeight();
+				double bili = 0.0;
+				if(height!=0){
+					//16/9
+					bili = 	MathUtils.div(width,height);
+					bili = MathUtils.round(bili,2);
+				}
+				if(bili!=1.78){
+					return "bili";
+				}
+
+			}
+
 			if (!targetFile.exists()) {
 				targetFile.mkdirs();
 			}
 			file.transferTo(targetFile);
+			state = "1";
 		} catch (Exception e) {
 			throw new AdminLteException(ErrorCodeConst.FILE_UPLOAD_FAIL, "上传文件失败");
 		}
+		j.put("filpath",filepath);
+		j.put("filname",filename1);
+		j.put("filsize",filsize);
+		j.put("state",state);
 		return filepath;
 	}
 
@@ -206,5 +249,64 @@ public class FileController extends BaseController {
 		}
 		return filename;
 	}
+
+	/**
+	 * 删除单个文件
+	 * @param   sPath    被删除文件的文件名
+	 * @return 单个文件删除成功返回true，否则返回false
+	 */
+	@RequestMapping(value = "deleteOne", method = {RequestMethod.GET,RequestMethod.POST})
+	@ResponseBody
+	public static boolean deleteFile(String sPath) {
+		boolean flag = false;
+		File file = new File(sPath.trim());
+		// 路径为文件且不为空则进行删除
+		if (file.isFile() && file.exists()) {
+			file.delete();
+			flag = true;
+		}
+		return flag;
+	}
+
+	/**
+	 * 删除目录（文件夹）以及目录下的文件
+	 * @param   sPath 被删除目录的文件路径
+	 * @return  目录删除成功返回true，否则返回false
+	 */
+	@RequestMapping(value = "deleteAllFile", method = {RequestMethod.GET,RequestMethod.POST})
+	@ResponseBody
+	public boolean deleteDirectory(String sPath) {
+		//如果sPath不以文件分隔符结尾，自动添加文件分隔符
+		if (!sPath.endsWith(File.separator)) {
+			sPath = sPath + File.separator;
+		}
+		File dirFile = new File(sPath);
+		//如果dir对应的文件不存在，或者不是一个目录，则退出
+		if (!dirFile.exists() || !dirFile.isDirectory()) {
+			return false;
+		}
+		boolean flag = true;
+		//删除文件夹下的所有文件(包括子目录)
+		File[] files = dirFile.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			//删除子文件
+			if (files[i].isFile()) {
+				flag = deleteFile(files[i].getAbsolutePath());
+				if (!flag) break;
+			} //删除子目录
+			else {
+				flag = deleteDirectory(files[i].getAbsolutePath());
+				if (!flag) break;
+			}
+		}
+		if (!flag) return false;
+		//删除当前目录
+		if (dirFile.delete()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 }

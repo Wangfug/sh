@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.order.OrderBillMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.order.entity.OrderBill" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="last_by" property="lastBy" jdbcType="BIGINT" />
+    <result column="bill_type" property="billType" jdbcType="VARCHAR" />
+    <result column="bill_title" property="billTitle" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="linkphone" property="linkphone" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="taxpayer_code" property="taxpayerCode" jdbcType="VARCHAR" />
+    <result column="deposit_bank" property="depositBank" jdbcType="VARCHAR" />
+    <result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+    <result column="addressee_name" property="addresseeName" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customerId" jdbcType="BIGINT" />
+    <result column="readonly" property="readonly" jdbcType="INTEGER" />
+    <result column="express_no" property="expressNo" jdbcType="VARCHAR" />
+    <result column="express" property="express" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, state, last_time, last_by, bill_type, bill_title, address, 
+    linkphone, area, taxpayer_code, deposit_bank, bank_account, addressee_name, order_no, 
+    customer_id,readonly,express_no,express
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_bill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!-- 根据条件查询多条订单 -->
+  <select id="getAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from order_bill
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="orderNo != null">
+        and order_no = #{orderNo,jdbcType=VARCHAR}
+      </if>
+      <if test="state != null" >
+        and state  = #{state,jdbcType=INTEGER}
+      </if>
+      <if test="billType != null" >
+        and bill_type  LIKE CONCAT(CONCAT('%', #{billType}), '%')
+      </if>
+      <if test="addresseeName != null" >
+        and addressee_name  LIKE CONCAT(CONCAT('%', #{addresseeName}), '%')
+      </if>
+      <if test="cusId != null" >
+        and customer_id  = #{cusId,jdbcType=BIGINT}
+      </if>
+      <if test="readonly != null" >
+        and readonly  = #{readonly,jdbcType=INTEGER}
+      </if>
+    </trim>
+
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from order_bill
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.order.entity.OrderBill" >
+    insert into order_bill (id, create_by, create_time, 
+      state, last_time, last_by, 
+      bill_type, bill_title, address, 
+      linkphone, area, taxpayer_code, 
+      deposit_bank, bank_account, addressee_name, 
+      order_no, customer_id,readonly.express_no.express)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{state,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP}, #{lastBy,jdbcType=BIGINT}, 
+      #{billType,jdbcType=VARCHAR}, #{billTitle,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{linkphone,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{taxpayerCode,jdbcType=VARCHAR}, 
+      #{depositBank,jdbcType=VARCHAR}, #{bankAccount,jdbcType=VARCHAR}, #{addresseeName,jdbcType=VARCHAR}, 
+      #{orderNo,jdbcType=VARCHAR}, #{customerId,jdbcType=BIGINT}, #{readonly,jdbcType=INTEGER},#{expressNo,jdbcType=VARCHAR},#{express,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.order.entity.OrderBill" >
+    insert into order_bill
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="lastBy != null" >
+        last_by,
+      </if>
+      <if test="billType != null" >
+        bill_type,
+      </if>
+      <if test="billTitle != null" >
+        bill_title,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="linkphone != null" >
+        linkphone,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="taxpayerCode != null" >
+        taxpayer_code,
+      </if>
+      <if test="depositBank != null" >
+        deposit_bank,
+      </if>
+      <if test="bankAccount != null" >
+        bank_account,
+      </if>
+      <if test="addresseeName != null" >
+        addressee_name,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+      <if test="readonly != null" >
+        readonly
+      </if>
+      <if test="expressNo != null" >
+        express_no,
+      </if>
+      <if test="express != null" >
+        express
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="billType != null" >
+        #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="billTitle != null" >
+        #{billTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="linkphone != null" >
+        #{linkphone,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="taxpayerCode != null" >
+        #{taxpayerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="depositBank != null" >
+        #{depositBank,jdbcType=VARCHAR},
+      </if>
+      <if test="bankAccount != null" >
+        #{bankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="addresseeName != null" >
+        #{addresseeName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="readonly != null" >
+        #{readonly,jdbcType=INTEGER}
+      </if>
+      <if test="expressNo != null" >
+        #{expressNo,jdbcType=VARCHAR},
+      </if>
+      <if test="express != null" >
+        #{express,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.order.entity.OrderBill" >
+    update order_bill
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBy != null" >
+        last_by = #{lastBy,jdbcType=BIGINT},
+      </if>
+      <if test="billType != null" >
+        bill_type = #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="billTitle != null" >
+        bill_title = #{billTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="linkphone != null" >
+        linkphone = #{linkphone,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="taxpayerCode != null" >
+        taxpayer_code = #{taxpayerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="depositBank != null" >
+        deposit_bank = #{depositBank,jdbcType=VARCHAR},
+      </if>
+      <if test="bankAccount != null" >
+        bank_account = #{bankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="addresseeName != null" >
+        addressee_name = #{addresseeName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="readonly != null" >
+        readonly = #{readonly,jdbcType=INTEGER},
+      </if>
+      <if test="expressNo != null" >
+        express_no = #{expressNo,jdbcType=VARCHAR},
+      </if>
+      <if test="express != null" >
+        express =  #{express,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.order.entity.OrderBill" >
+    update order_bill
+    set create_by = #{createBy,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      last_by = #{lastBy,jdbcType=BIGINT},
+      bill_type = #{billType,jdbcType=VARCHAR},
+      bill_title = #{billTitle,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      linkphone = #{linkphone,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      taxpayer_code = #{taxpayerCode,jdbcType=VARCHAR},
+      deposit_bank = #{depositBank,jdbcType=VARCHAR},
+      bank_account = #{bankAccount,jdbcType=VARCHAR},
+      addressee_name = #{addresseeName,jdbcType=VARCHAR},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      customer_id = #{customerId,jdbcType=BIGINT},
+      readonly = #{readonly,jdbcType=INTEGER},
+      express_no = #{expressNo,jdbcType=VARCHAR},
+      express = #{express,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

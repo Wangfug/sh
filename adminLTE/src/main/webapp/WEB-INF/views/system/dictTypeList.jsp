@@ -69,7 +69,7 @@ $(function(){
 
 //弹窗增加
 function add() {
-	d=$("#dlg").dialog({   
+	d=$("#dlg").dialog({
 	    title: '添加字典类型',    
 	    width: 380,    
 	    height: 250,    

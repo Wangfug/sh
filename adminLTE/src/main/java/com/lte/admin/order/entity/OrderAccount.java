@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 /**
  * @author Andy
  */
@@ -21,7 +23,7 @@ public class OrderAccount implements Serializable{
     //realPay 	
 	private Double realPay;
     //bylongOrder 	
-	private Long bylongOrder;
+	private String belongOrder;
     //customer 	
 	private Long customer;
     //payWay 	
@@ -34,6 +36,10 @@ public class OrderAccount implements Serializable{
 	private String acceptAmount;
     //acceptMan 	
 	private String acceptMan;
+	//支付状态
+	private String state;
+	//修改时间
+	private java.sql.Timestamp updateTime;
 	public OrderAccount(){
 	}
 
@@ -43,8 +49,23 @@ public class OrderAccount implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -85,12 +106,12 @@ public class OrderAccount implements Serializable{
 		this.realPay = value;
 	}
 		
-	public Long getBylongOrder() {
-		return this.bylongOrder;
+	public String getBelongOrder() {
+		return this.belongOrder;
 	}
 
-	public void setBylongOrder(Long value) {
-		this.bylongOrder = value;
+	public void setBelongOrder(String value) {
+		this.belongOrder = value;
 	}
 		
 	public Long getCustomer() {
@@ -141,14 +162,15 @@ public class OrderAccount implements Serializable{
 		this.acceptMan = value;
 	}
 
-public String toString() {
+
+	public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
 		.append("Id",getId())
 		.append("CreateBy",getCreateBy())
 		.append("CreateTime",getCreateTime())
 		.append("TotalMoney",getTotalMoney())
 		.append("RealPay",getRealPay())
-		.append("BylongOrder",getBylongOrder())
+		.append("BelongOrder",getBelongOrder())
 		.append("Customer",getCustomer())
 		.append("PayWay",getPayWay())
 		.append("PayAmount",getPayAmount())

@@ -1,7 +1,9 @@
 package com.lte.admin.system.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.lte.admin.common.response.ServiceResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -18,6 +20,9 @@ import com.lte.admin.entity.MemberLogin;
 import com.lte.admin.system.service.MemberRealm.ShiroMember;
 import com.lte.admin.system.service.MemberService;
 import com.lte.admin.system.utils.UserUtil;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 登录controller
@@ -66,7 +71,7 @@ public class LoginController {
 				
 				su.setDeptCode(memberLogin.getDeptCode());
 				su.setJobCode(memberLogin.getJobCode());
-				su.setCompanyCode(memberLogin.getCompanyCode());
+				su.setCompanyCode(memberLogin.getShopCode());
 				session.setAttribute("user", memberLogin);
 				return "redirect:" + Global.getAdminPath();
 			}
@@ -88,15 +93,17 @@ public class LoginController {
 			return "system/usersel";
 		} else {
 			ShiroMember su = UserUtil.getCurrentShiroUser();
-
-			MemberLogin memberLogin = 
-					memberService.getMemberByMemberCodeAndJobCode(su.getMemberCode(), su.getJobCode());
+			MemberLogin memberLogin =
+					memberService.getMemberByMemberCodeAndJobCode(su.getMemberCode(), gwxx);
+//			MemberLogin memberLogin =
+//					memberService.getMemberByMemberCodeAndJobCode(su.getMemberCode(), su.getJobCode());
 //			su.setMemberCode(memberLogin.getMemberCode());
 //			su.setDeptCode(memberLogin.getDeptCode());
 //			su.setJobCode(memberLogin.getJobCode());
 //			su.setCompanyCode(memberLogin.getCompanyCode());
 			Session session = SecurityUtils.getSubject().getSession();
 			session.setAttribute("user", memberLogin);
+			String url = "redirect:" + Global.getAdminPath();
 			return "redirect:" + Global.getAdminPath();
 		}
 
@@ -117,8 +124,8 @@ public class LoginController {
 
 	/**
 	 * 登出
-	 * 
-	 * @param userName
+	 *
+	 * @param
 	 * @param model
 	 * @return
 	 */
@@ -128,5 +135,4 @@ public class LoginController {
 		subject.logout();
 		return "system/login";
 	}
-
 }

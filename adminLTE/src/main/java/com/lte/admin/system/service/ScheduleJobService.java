@@ -44,7 +44,6 @@ public class ScheduleJobService {
 	/**
 	 * 添加定时任务
 	 * 
-	 * @param ScheduleJob
 	 */
 	public void add(ScheduleJob scheduleJob) {
 		@SuppressWarnings("rawtypes")

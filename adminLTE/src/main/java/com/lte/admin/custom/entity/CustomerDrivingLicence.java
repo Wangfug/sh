@@ -30,6 +30,17 @@ public class CustomerDrivingLicence implements Serializable{
 	private String fileNumber;
     //attachment 	
 	private String attachment;
+
+	private long drivingLicenceId;
+
+	public long getDrivingLicenceId() {
+		return drivingLicenceId;
+	}
+
+	public void setDrivingLicenceId(long drivingLicenceId) {
+		this.drivingLicenceId = drivingLicenceId;
+	}
+
 	public CustomerDrivingLicence(){
 	}
 
@@ -38,8 +49,6 @@ public class CustomerDrivingLicence implements Serializable{
 	){
 		this.id = id;
 	}
-
-	
 		
 	public Long getId() {
 		return this.id;

@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 /**
  * @author Andy
  */
@@ -13,7 +15,7 @@ public class OrderBill implements Serializable{
     //编号 	
 	private Long id;
     //创建人编号 	
-	private Integer createBy;
+	private Long createBy;
     //创建时间 	
 	private java.sql.Timestamp createTime;
     //状态 	
@@ -22,7 +24,7 @@ public class OrderBill implements Serializable{
 	private java.sql.Timestamp lastTime;
     //修改人 	
 	private Long lastBy;
-    //发票抬头类型 	
+    //发票抬头类型 	1--普通发票 2--增值税发票
 	private String billType;
     //发票抬头内容 	
 	private String billTitle;
@@ -41,157 +43,177 @@ public class OrderBill implements Serializable{
     //收件人姓名 	
 	private String addresseeName;
     //orderId 	
-	private Long orderId;
+	private String orderNo;
     //customerId 	
 	private Long customerId;
-	public OrderBill(){
+	//是否只读  0不是  1只读
+	private Integer readonly;
+
+	private String expressNo;//快递单号
+
+	private String express;//快递公司
+
+	public String getExpressNo() {
+		return expressNo;
 	}
 
-	public OrderBill(
-		Long id
-	){
+	public void setExpressNo(String expressNo) {
+		this.expressNo = expressNo;
+	}
+
+	public String getExpress() {
+		return express;
+	}
+
+	public void setExpress(String express) {
+		this.express = express;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	
-		
-	public Long getId() {
-		return this.id;
+	public Long getCreateBy() {
+		return createBy;
 	}
 
-	public void setId(Long value) {
-		this.id = value;
-	}
-		
-	public Integer getCreateBy() {
-		return this.createBy;
+	public void setCreateBy(Long createBy) {
+		this.createBy = createBy;
 	}
 
-	public void setCreateBy(Integer value) {
-		this.createBy = value;
-	}
-		
-	public java.sql.Timestamp getCreateTime() {
-		return this.createTime;
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 
-	public void setCreateTime(java.sql.Timestamp value) {
-		this.createTime = value;
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
-		
+
 	public Integer getState() {
-		return this.state;
+		return state;
 	}
 
-	public void setState(Integer value) {
-		this.state = value;
-	}
-		
-	public java.sql.Timestamp getLastTime() {
-		return this.lastTime;
+	public void setState(Integer state) {
+		this.state = state;
 	}
 
-	public void setLastTime(java.sql.Timestamp value) {
-		this.lastTime = value;
+	public Timestamp getLastTime() {
+		return lastTime;
 	}
-		
+
+	public void setLastTime(Timestamp lastTime) {
+		this.lastTime = lastTime;
+	}
+
 	public Long getLastBy() {
-		return this.lastBy;
+		return lastBy;
 	}
 
-	public void setLastBy(Long value) {
-		this.lastBy = value;
+	public void setLastBy(Long lastBy) {
+		this.lastBy = lastBy;
 	}
-		
+
 	public String getBillType() {
-		return this.billType;
+		return billType;
 	}
 
-	public void setBillType(String value) {
-		this.billType = value;
+	public void setBillType(String billType) {
+		this.billType = billType;
 	}
-		
+
 	public String getBillTitle() {
-		return this.billTitle;
+		return billTitle;
 	}
 
-	public void setBillTitle(String value) {
-		this.billTitle = value;
+	public void setBillTitle(String billTitle) {
+		this.billTitle = billTitle;
 	}
-		
+
 	public String getAddress() {
-		return this.address;
+		return address;
 	}
 
-	public void setAddress(String value) {
-		this.address = value;
+	public void setAddress(String address) {
+		this.address = address;
 	}
-		
+
 	public String getLinkphone() {
-		return this.linkphone;
+		return linkphone;
 	}
 
-	public void setLinkphone(String value) {
-		this.linkphone = value;
+	public void setLinkphone(String linkphone) {
+		this.linkphone = linkphone;
 	}
-		
+
 	public String getArea() {
-		return this.area;
+		return area;
 	}
 
-	public void setArea(String value) {
-		this.area = value;
+	public void setArea(String area) {
+		this.area = area;
 	}
-		
+
 	public String getTaxpayerCode() {
-		return this.taxpayerCode;
+		return taxpayerCode;
 	}
 
-	public void setTaxpayerCode(String value) {
-		this.taxpayerCode = value;
+	public void setTaxpayerCode(String taxpayerCode) {
+		this.taxpayerCode = taxpayerCode;
 	}
-		
+
 	public String getDepositBank() {
-		return this.depositBank;
+		return depositBank;
 	}
 
-	public void setDepositBank(String value) {
-		this.depositBank = value;
+	public void setDepositBank(String depositBank) {
+		this.depositBank = depositBank;
 	}
-		
+
 	public String getBankAccount() {
-		return this.bankAccount;
+		return bankAccount;
 	}
 
-	public void setBankAccount(String value) {
-		this.bankAccount = value;
+	public void setBankAccount(String bankAccount) {
+		this.bankAccount = bankAccount;
 	}
-		
+
 	public String getAddresseeName() {
-		return this.addresseeName;
+		return addresseeName;
 	}
 
-	public void setAddresseeName(String value) {
-		this.addresseeName = value;
-	}
-		
-	public Long getOrderId() {
-		return this.orderId;
+	public void setAddresseeName(String addresseeName) {
+		this.addresseeName = addresseeName;
 	}
 
-	public void setOrderId(Long value) {
-		this.orderId = value;
+	public String getOrderNo() {
+		return orderNo;
 	}
-		
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+
 	public Long getCustomerId() {
-		return this.customerId;
+		return customerId;
 	}
 
-	public void setCustomerId(Long value) {
-		this.customerId = value;
+	public void setCustomerId(Long customerId) {
+		this.customerId = customerId;
 	}
 
-public String toString() {
+	public Integer getReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(Integer readonly) {
+		this.readonly = readonly;
+	}
+
+	public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
 		.append("Id",getId())
 		.append("CreateBy",getCreateBy())
@@ -208,8 +230,11 @@ public String toString() {
 		.append("DepositBank",getDepositBank())
 		.append("BankAccount",getBankAccount())
 		.append("AddresseeName",getAddresseeName())
-		.append("OrderId",getOrderId())
+		.append("OrderNo",getOrderNo())
 		.append("CustomerId",getCustomerId())
+			.append("Readonly",getReadonly())
+			.append("Express",getExpress())
+			.append("ExpressNo",getExpressNo())
 		.toString();
 }
 

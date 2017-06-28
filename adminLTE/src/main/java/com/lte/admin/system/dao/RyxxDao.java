@@ -4,15 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.lte.admin.entity.*;
 import org.springframework.stereotype.Repository;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.lte.admin.common.dao.BaseDao;
-import com.lte.admin.entity.Gwxx;
-import com.lte.admin.entity.Ryxx;
-import com.lte.admin.entity.RyxxKey;
-import com.lte.admin.entity.RyxxLogin;
-import com.lte.admin.entity.UserRole;
 
 /**
  * 用户DAO
@@ -24,7 +20,9 @@ import com.lte.admin.entity.UserRole;
 public class RyxxDao extends BaseDao {
 
 	public Ryxx findByloginName(String psncode) {
-		return sqlSessionTemplate.selectOne("findByloginNameRyxx", psncode);
+//		Ryxx ryxx= new Ryxx();
+//		Member member =
+		return sqlSessionTemplate.selectOne("com.lte.admin.mapper.MemberMapper.selectBymemberCode1", psncode);
 		// return sqlSessionTemplate.selectOne("findByloginName", loginName);
 	}
 
@@ -32,8 +30,13 @@ public class RyxxDao extends BaseDao {
 		return sqlSessionTemplate.selectList("getRyxxRolesByRyxxId", id);
 	}
 
-	public Ryxx getRyxxById(String assignee) {
-		return sqlSessionTemplate.selectOne("findByRyxxId", assignee);
+	public Ryxx getRyxxById(Long assignee) {
+		Ryxx ryxx = new Ryxx();
+		Member member = sqlSessionTemplate.selectOne("com.lte.admin.mapper.MemberMapper.selectByPrimaryKey", assignee);
+		ryxx.setMemberName(member.getMemberName());
+		ryxx.setPsnname(member.getMemberCode());
+		ryxx.setMobile(member.getMobile());
+		return ryxx;
 	}
 
 	public List<Ryxx> getRyxxList(PageBounds pb, Map<String, Object> filters) {
@@ -46,17 +49,21 @@ public class RyxxDao extends BaseDao {
 	}
 
 	public void save(Ryxx ryxx) {
-		sqlSessionTemplate.insert("saveRyxx", ryxx);
-
+		sqlSessionTemplate.insert("com.lte.admin.mapper.MemberMapper.saveRyxx", ryxx);
 	}
 
 	public void delete(Long id) {
-		sqlSessionTemplate.delete("deleteRyxx", id);
+		sqlSessionTemplate.delete("com.lte.admin.mapper.MemberMapper.deleteByPrimaryKey", id);
 
 	}
 
 	public void update(Ryxx ryxx) {
-		sqlSessionTemplate.update("updataRyxx", ryxx);
+		Member member = new Member();
+		member.setId(Long.valueOf(ryxx.getId()));
+		member.setMemberName(ryxx.getMemberName());
+		member.setMemberCode(ryxx.getPsnname());
+		member.setMobile(ryxx.getMobile());
+		sqlSessionTemplate.update("com.lte.admin.mapper.MemberMapper.updateByPrimaryKeySelective", member);
 
 	}
 
@@ -76,7 +83,7 @@ public class RyxxDao extends BaseDao {
 	}
 
 	public void updatePwd(Ryxx ryxx) {
-		sqlSessionTemplate.update("updatePwd", ryxx);
+		sqlSessionTemplate.update("com.lte.admin.mapper.MemberMapper.updatePwd", ryxx);
 
 	}
 

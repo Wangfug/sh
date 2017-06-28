@@ -1,24 +1,79 @@
 
 package com.lte.admin.other.controller;
+
+import com.github.miemiedev.mybatis.paginator.domain.PageList;
+import com.lte.admin.common.persistence.Page;
+import com.lte.admin.common.persistence.PropertyFilter;
+import com.lte.admin.common.utils.DateUtil;
+import com.lte.admin.common.web.BaseController;
+import com.lte.admin.entity.MemberLogin;
+import com.lte.admin.other.entity.PickupPrice;
 import com.lte.admin.other.service.PickupPriceService;
+import com.lte.admin.system.utils.UserUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.lte.admin.common.web.BaseController;
-import com.lte.admin.common.utils.DateUtil;
-import com.lte.admin.other.entity.PickupPrice;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.util.Map;
 
 /**
  * @author Andy
  */
 @Controller
-@RequestMapping("")
+@RequestMapping("web/pickupPrice")
 public class PickupPriceController extends BaseController  {
 	@Resource
 	private PickupPriceService pickupPriceService;
+	/**
+	 * 跳转主页
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public String toOtherView(){
+		return "other/pickupPriceList";
+	}
+
+	/**
+	 * 增加活动
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "saveOrUpdate",method = RequestMethod.POST)
+	@ResponseBody
+	public String saveOrUpdate(HttpServletRequest request){
+		MemberLogin user = UserUtil.getCurrentUser();
+		PickupPrice pickupPrice = getEntity4Request(request);
+		if(pickupPrice.getId()!=null){
+			pickupPrice.setLastTime(new Timestamp(System.currentTimeMillis()));
+			pickupPrice.setLastBy(user.getId());
+			pickupPriceService.update(pickupPrice);
+		}else{
+			pickupPrice.setCreateTime(new Timestamp(System.currentTimeMillis()));
+			pickupPrice.setCreateBy(user.getId());
+			pickupPrice.setLastTime(new Timestamp(System.currentTimeMillis()));
+			pickupPrice.setLastBy(user.getId());
+			pickupPriceService.save(pickupPrice);
+		}
+		return "success";
+	}
+
+	/**
+	 * 获取订单列表
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "getPickupPriceList",method = {RequestMethod.GET,RequestMethod.POST})
+	@ResponseBody
+	public Map<String, Object> getPickupPriceList(HttpServletRequest request){
+		Page<PickupPrice> page = getPage(request);
+		Map<String, Object> filters = PropertyFilter.buildFromHttpRequest(request);
+		PageList<PickupPrice> page1 = pickupPriceService.getList(page, filters);
+		return getEasyUIData(page1, request);
+	}
 
 	public PickupPrice getEntity4Request(HttpServletRequest request) {
 			PickupPrice entity=new PickupPrice();

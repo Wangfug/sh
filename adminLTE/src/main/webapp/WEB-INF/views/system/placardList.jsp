@@ -53,7 +53,6 @@ $(function(){
     columns:[[    
 		{field:'id',title:'id',hidden:true},  
 		{field:'title',title:'标题',sortable:true,width:100,formatter : function(value, row, index) {
-            console.log(value)
 			return '<a href="javascript:;" onclick="viewtz('+row.id+',\''+row.title+'\');">'+value+'</a>';
 		}},
         {field:'isTop',title:'置顶',sortable:true,width:100,formatter : function(value, row, index) {

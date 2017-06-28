@@ -28,6 +28,8 @@ public class CarOccupy implements Serializable{
 	private java.sql.Timestamp timeEnd;
     //carId 	
 	private Long carId;
+	//订单号
+	private String orderNo;
 	public CarOccupy(){
 	}
 
@@ -37,8 +39,14 @@ public class CarOccupy implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+
 	public Long getId() {
 		return this.id;
 	}

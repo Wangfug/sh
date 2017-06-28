@@ -49,11 +49,41 @@ public class CarShops implements Serializable{
     //businessEnd 	
 	private java.sql.Timestamp businessEnd;
     //shopManager 	
-	private Long shopManager;
+	private String shopManager;
     //postcode 	
 	private String postcode;
-    //remark 	
+    //remark
 	private String remark;
+	//营业时间
+	private String yysj;
+	//门店编码
+	private String shopCode;
+	//父级编码
+	private String parentCode;
+	//出车门店单位
+	private String sellShop;
+	//店长名
+	private String dianzhang;
+
+	private double lon;//经度
+	private double lat;//纬度
+
+	public double getLon() {
+		return lon;
+	}
+
+	public void setLon(double lon) {
+		this.lon = lon;
+	}
+
+	public double getLat() {
+		return lat;
+	}
+
+	public void setLat(double lat) {
+		this.lat = lat;
+	}
+
 	public CarShops(){
 	}
 
@@ -63,8 +93,37 @@ public class CarShops implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public String getDianzhang() {
+		return dianzhang;
+	}
+
+	public void setDianzhang(String dianzhang) {
+		this.dianzhang = dianzhang;
+	}
+
+	public String getSellShop() {
+		return sellShop;
+	}
+
+	public void setSellShop(String sellShop) {
+		this.sellShop = sellShop;
+	}
+
+	public String getShopCode() {
+		return shopCode;
+	}
+	public void setShopCode(String shopCode) {
+		this.shopCode = shopCode;
+	}
+
+	public String getParentCode() {
+		return parentCode;
+	}
+
+	public void setParentCode(String parentCode) {
+		this.parentCode = parentCode;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -217,11 +276,11 @@ public class CarShops implements Serializable{
 		this.businessEnd = value;
 	}
 		
-	public Long getShopManager() {
+	public String getShopManager() {
 		return this.shopManager;
 	}
 
-	public void setShopManager(Long value) {
+	public void setShopManager(String value) {
 		this.shopManager = value;
 	}
 		
@@ -241,7 +300,15 @@ public class CarShops implements Serializable{
 		this.remark = value;
 	}
 
-public String toString() {
+	public String getYysj() {
+		return yysj;
+	}
+
+	public void setYysj(String yysj) {
+		this.yysj = yysj;
+	}
+
+	public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
 		.append("Id",getId())
 		.append("ShopName",getShopName())
@@ -265,6 +332,9 @@ public String toString() {
 		.append("ShopManager",getShopManager())
 		.append("Postcode",getPostcode())
 		.append("Remark",getRemark())
+		.append("Yysj",getYysj())
+			.append("Lon",getLon())
+			.append("Lat",getLat())
 		.toString();
 }
 

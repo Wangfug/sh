@@ -5,14 +5,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>汇通达金融服务平台</title>
+<title>舜昊租车平台</title>
 <%@ include file="/WEB-INF/views/include/easyui.jsp"%>
 <%@ include file="/WEB-INF/views/include/validation.jsp"%>
 <c:set var="GSBZ_PT" value="<%= DictConsts.GSBZ_PT %>"/>
 <c:set var="GSBZ_FB" value="<%= DictConsts.GSBZ_FB %>"/>
 <c:set var="GSBZ_ZB" value="<%= DictConsts.GSBZ_ZB %>"/>
 <script type="text/javascript" src="${ctx}/static/plugins/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ctx}/static/js/xd_index.js?${currentTime}"></script>
+<script type="text/javascript" src="${ctx}/static/js/index.js?${currentTime}"></script>
 
 <!--导入首页启动时需要的相应资源文件(首页相应功能的 js 库、css样式以及渲染首页界面的 js 文件)-->
 <link href="${ctx}/static/css/style.css?${currentTime}" rel="stylesheet" />

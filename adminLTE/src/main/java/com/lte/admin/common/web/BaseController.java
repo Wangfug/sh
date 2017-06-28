@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.lte.admin.common.utils.*;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -23,10 +24,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 import com.lte.admin.common.exception.AdminLteException;
 import com.lte.admin.common.persistence.Page;
-import com.lte.admin.common.utils.ConvertUtils;
-import com.lte.admin.common.utils.DateUtils;
-import com.lte.admin.common.utils.Reflections;
-import com.lte.admin.common.utils.StringUtils;
 
 /**
  * 基础控制器 其他控制器继承此控制器获得日期字段类型转换和防止XSS攻击的功能
@@ -90,6 +87,9 @@ public class BaseController {
 			pageSize = Integer.valueOf(request.getParameter("rows"));
 		if (StringUtils.isNotEmpty(request.getParameter("sort")))
 			orderBy = request.getParameter("sort").toString();
+				if(orderBy.indexOf("_")==-1){
+					orderBy = parseString.camel2Underline(orderBy);
+				}
 		if (StringUtils.isNotEmpty(request.getParameter("order")))
 			order = request.getParameter("order").toString();
 		if (StringUtils.notBlank(orderBy, order)) {
@@ -102,7 +102,6 @@ public class BaseController {
 	/**
 	 * 获取easyui分页数据
 	 * 
-	 * @param page1
 	 * @return map对象
 	 */
 	public <T> Map<String, Object> getEasyUIData(PageList<T> pageList, HttpServletRequest request) {
@@ -136,9 +135,8 @@ public class BaseController {
 
 	@ExceptionHandler
 	public String exp(HttpServletRequest request, Exception ex) {
-		ex.printStackTrace();
 		String resultViewName = "error/500";
-
+		ex.printStackTrace();
 		// 记录日志
 		log.error(ex.getMessage(), ex);
 		request.setAttribute("ex", ex);

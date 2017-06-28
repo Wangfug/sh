@@ -3,6 +3,12 @@ package com.lte.admin.system.service;
 import java.util.List;
 import java.util.Map;
 
+import com.lte.admin.car.dao.CarShopsDao;
+import com.lte.admin.car.entity.CarShops;
+import com.lte.admin.custom.dao.TbaseEmployeeDao;
+import com.lte.admin.custom.entity.TbaseEmployee;
+import com.lte.admin.entity.*;
+import com.lte.admin.system.dao.UserRoleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +19,8 @@ import com.lte.admin.common.persistence.Page;
 import com.lte.admin.common.service.BaseService;
 import com.lte.admin.common.utils.security.Digests;
 import com.lte.admin.common.utils.security.Encodes;
-import com.lte.admin.entity.Gwxx;
-import com.lte.admin.entity.Ryxx;
-import com.lte.admin.entity.RyxxKey;
-import com.lte.admin.entity.RyxxLogin;
-import com.lte.admin.entity.UserRole;
 import com.lte.admin.system.dao.RyxxDao;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 /**
  * 用户service
@@ -27,7 +29,7 @@ import com.lte.admin.system.dao.RyxxDao;
  * @date 2015年1月13日
  */
 @Service
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class RyxxService extends BaseService<Ryxx, Integer> {
 
 	/** 加密方法 */
@@ -37,18 +39,58 @@ public class RyxxService extends BaseService<Ryxx, Integer> {
 
 	@Autowired
 	private RyxxDao ryxxDao;
+	@Autowired
+	private TbaseEmployeeDao tbaseEmployeeDao;
+	@Autowired
+	private UserRoleDao userRoleDao;
+	@Autowired
+	private CarShopsDao carShopsDao;
 
 	/**
 	 * 保存用户
 	 * 
-	 * @param Ryxx
+	 * @param
 	 */
 	@Transactional(readOnly = false)
 	public void save(Ryxx ryxx) {
 		entryptPassword(ryxx);
 		// ryxx.setCreateDate(DateUtils.getSysTimestamp());
-		ryxxDao.save(ryxx);
+		 ryxxDao.save(ryxx);
 	}
+
+	/**
+	 * 保存员工
+	 */
+
+	@Transactional(readOnly = false)
+	public boolean save(Ryxx ryxx,TbaseEmployee tbaseEmployee) {
+		entryptPassword(ryxx);
+		// ryxx.setCreateDate(DateUtils.getSysTimestamp());
+		boolean result = false;
+		try{
+			ryxxDao.save(ryxx);
+			tbaseEmployeeDao.saveTbaseEmployee(tbaseEmployee);
+			result = true;
+		}catch(Exception e){
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			result = false;
+		}
+		return result;
+	}
+	/**
+	 * 构建UserRole
+	 *
+	 * @param memberCode
+	 * @param jobCode
+	 * @return UserRole
+	 */
+	private UserRole getUserRole(String memberCode, String jobCode) {
+		UserRole ur = new UserRole();
+		ur.setMemberCode(memberCode);
+		ur.setJobCode(jobCode);
+		return ur;
+	}
+
 
 	/**
 	 * 修改密码
@@ -67,9 +109,19 @@ public class RyxxService extends BaseService<Ryxx, Integer> {
 	 * @param id
 	 */
 	@Transactional(readOnly = false)
-	public void delete(Long id) {
-		if (!isSupervisor(id))
-			ryxxDao.delete(id);
+	public boolean delete(Long id,Long empId) {
+		boolean res = false;
+		try{
+			if (!isSupervisor(id)){
+				ryxxDao.delete(id);
+				tbaseEmployeeDao.delete(empId);
+				res = true;
+			}
+		}catch(Exception e){
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			res = false;
+		}
+		return res;
 	}
 
 	/**
@@ -107,7 +159,7 @@ public class RyxxService extends BaseService<Ryxx, Integer> {
 	 * 验证原密码是否正确
 	 * 
 	 * @param ryxx
-	 * @param oldPwd
+	 * @param
 	 * @return
 	 */
 	public boolean checkPassword(Ryxx ryxx, String oldPassword) {
@@ -123,7 +175,7 @@ public class RyxxService extends BaseService<Ryxx, Integer> {
 	/**
 	 * 修改用户登录
 	 * 
-	 * @param ryxx
+	 * @param
 	 */
 	// public void updateRyxxLogin(Ryxx ryxx){
 	// ryxx.setLoginCount((ryxx.getLoginCount()==null?0:ryxx.getLoginCount())+1);
@@ -146,6 +198,20 @@ public class RyxxService extends BaseService<Ryxx, Integer> {
 		ryxxDao.update(ryxx);
 
 	}
+	public boolean update(Ryxx ryxx,TbaseEmployee tbaseEmployee) {
+		boolean result = false;
+		try{
+			ryxxDao.update(ryxx);
+			tbaseEmployeeDao.updateTbaseEmployee(tbaseEmployee);
+			result = true;
+		}catch(Exception e){
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			result = false;
+		}
+		return result;
+
+
+	}
 
 	public List<RyxxLogin> getRygwList(String id, String loginName) {
 		return ryxxDao.getRygwList(id, loginName);
@@ -161,7 +227,7 @@ public class RyxxService extends BaseService<Ryxx, Integer> {
 		return ryxxDao.getRoleByUserId(userId);
 	}
 
-	public Ryxx getRyxxById(String assignee) {
+	public Ryxx getRyxxById(Long assignee) {
 		return ryxxDao.getRyxxById(assignee);
 	}
 

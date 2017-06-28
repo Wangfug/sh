@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 /**
  * @author Andy
  */
@@ -16,13 +18,13 @@ public class OrderWork implements Serializable{
 	private Long createBy;
     //创建时间 	
 	private java.sql.Timestamp createTime;
-    //状态 	
+    //0--取车单 1--还车单
 	private Integer orderType;
     //修改时间 	
 	private java.sql.Timestamp lastTime;
     //修改人 	
 	private Long lastBy;
-    //way 	
+    //0--上门送取 1--门店取还
 	private String way;
     //address 	
 	private String address;
@@ -35,13 +37,17 @@ public class OrderWork implements Serializable{
     //eno 	
 	private Long eno;
     //orderId 	
-	private Long orderId;
+	private String orderNo;
     //attachment 	
 	private String attachment;
     //carId 	
 	private Long carId;
     //carCheckDetail 	
 	private String carCheckDetail;
+	//执行时间
+	private java.sql.Timestamp runTime;
+	//工单是否有效
+	private Integer state;
 	public OrderWork(){
 	}
 
@@ -51,8 +57,22 @@ public class OrderWork implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public Timestamp getRunTime() {
+		return runTime;
+	}
+
+	public void setRunTime(Timestamp runTime) {
+		this.runTime = runTime;
+	}
+
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -149,12 +169,12 @@ public class OrderWork implements Serializable{
 		this.eno = value;
 	}
 		
-	public Long getOrderId() {
-		return this.orderId;
+	public String getOrderNo() {
+		return this.orderNo;
 	}
 
-	public void setOrderId(Long value) {
-		this.orderId = value;
+	public void setOrderNo(String value) {
+		this.orderNo = value;
 	}
 		
 	public String getAttachment() {
@@ -195,7 +215,7 @@ public String toString() {
 		.append("OrderState",getOrderState())
 		.append("CarShop",getCarShop())
 		.append("Eno",getEno())
-		.append("OrderId",getOrderId())
+		.append("OrderId",getOrderNo())
 		.append("Attachment",getAttachment())
 		.append("CarId",getCarId())
 		.append("CarCheckDetail",getCarCheckDetail())

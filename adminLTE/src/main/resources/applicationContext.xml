@@ -18,7 +18,7 @@
 	<description>Spring公共配置 </description>
 	
 	<!-- 读取配置文件 -->
-	<context:property-placeholder ignore-unresolvable="true" location="classpath*:/conf.properties" />
+	<context:property-placeholder ignore-unresolvable="true" location="classpath*:/application.properties" />
 
 	<!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
 	<context:component-scan base-package="com.lte.admin">
@@ -73,7 +73,7 @@
 	<!-- aop记录方法执行时间 -->
     <!--<bean id="methodAccessLogInterceptor" class="com.lte.admin.common.interceptor.MethodAccessLogInterceptor"></bean>
 	<aop:config proxy-target-class="true">
-		<aop:pointcut id="apiAopPointcut"  expression="execution(* com.lte.admin..*.*(..))" />
+		<aop:pointcut id="apiAopPointcut"  expression="execution(* com.lte..*Controller.*(..))" />
 		<aop:advisor pointcut-ref="apiAopPointcut" advice-ref="methodAccessLogInterceptor" />
 	</aop:config>-->
 

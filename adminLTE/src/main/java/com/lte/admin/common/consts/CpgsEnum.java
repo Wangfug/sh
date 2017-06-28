@@ -16,8 +16,8 @@ import com.lte.admin.common.utils.StringUtils;
  */
 public enum CpgsEnum {
 
-	/** 1 ：汇通达 */
-	CPGS_HTD("1", "汇通达"),
+	/** 1 ：舜昊 */
+	CPGS_HTD("1", "舜昊"),
 
 	/** 2 ：五星控股 */
 	CPGS_5STAR("2", "五星"),

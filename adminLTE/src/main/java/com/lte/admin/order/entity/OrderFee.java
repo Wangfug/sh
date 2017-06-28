@@ -37,11 +37,24 @@ public class OrderFee implements Serializable{
     //additionalFeeForThree 	
 	private Double additionalFeeForThree;
     //orderId 	
-	private Long orderId;
+	private String orderNo;
     //totalFee 	
 	private Double totalFee;
     //preAuthorized 	
 	private Double preAuthorized;
+	//预授权方式 0--余额扣抵  1--信用卡锁定
+	private Integer preAuthorizedWay;
+
+	private long feeId;//主键-便于保存返回主键
+
+	public long getFeeId() {
+		return feeId;
+	}
+
+	public void setFeeId(long feeId) {
+		this.feeId = feeId;
+	}
+
 	public OrderFee(){
 	}
 
@@ -157,12 +170,12 @@ public class OrderFee implements Serializable{
 		this.additionalFeeForThree = value;
 	}
 		
-	public Long getOrderId() {
-		return this.orderId;
+	public String getOrderNo() {
+		return this.orderNo;
 	}
 
-	public void setOrderId(Long value) {
-		this.orderId = value;
+	public void setOrderNo(String value) {
+		this.orderNo = value;
 	}
 		
 	public Double getTotalFee() {
@@ -181,7 +194,15 @@ public class OrderFee implements Serializable{
 		this.preAuthorized = value;
 	}
 
-public String toString() {
+	public Integer getPreAuthorizedWay() {
+		return preAuthorizedWay;
+	}
+
+	public void setPreAuthorizedWay(Integer preAuthorizedWay) {
+		this.preAuthorizedWay = preAuthorizedWay;
+	}
+
+	public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
 		.append("Id",getId())
 		.append("CreateBy",getCreateBy())
@@ -196,9 +217,10 @@ public String toString() {
 		.append("AdditionalBujimianpei",getAdditionalBujimianpei())
 		.append("HandingCharge",getHandingCharge())
 		.append("AdditionalFeeForThree",getAdditionalFeeForThree())
-		.append("OrderId",getOrderId())
+		.append("OrderNo",getOrderNo())
 		.append("TotalFee",getTotalFee())
 		.append("PreAuthorized",getPreAuthorized())
+			.append("feeId",getFeeId())
 		.toString();
 }
 

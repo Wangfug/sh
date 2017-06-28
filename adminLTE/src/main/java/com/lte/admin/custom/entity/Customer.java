@@ -3,6 +3,7 @@ package com.lte.admin.custom.entity;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 /**
  * @author Andy
@@ -17,7 +18,7 @@ public class Customer implements Serializable{
     //创建时间 	
 	private java.sql.Timestamp createTime;
     //状态 	
-	private Integer state;
+	private Integer state;//状态：0-默认，1-等待审核，2-认证已通过，3-认证未通过，4-黑名单
     //修改时间 	
 	private java.sql.Timestamp lastTime;
     //修改人 	
@@ -42,6 +43,29 @@ public class Customer implements Serializable{
 	private String otherCard;
     //integral 	
 	private Long integral;
+	//锁定余额
+	private Double lockBalance;
+
+	private String img;//身份证照片+实时照片
+
+	private String authReason;
+
+	public String getAuthReason() {
+		return authReason;
+	}
+
+	public void setAuthReason(String authReason) {
+		this.authReason = authReason;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
+	}
+
 	public Customer(){
 	}
 
@@ -51,8 +75,6 @@ public class Customer implements Serializable{
 		this.id = id;
 	}
 
-	
-		
 	public Long getId() {
 		return this.id;
 	}
@@ -181,7 +203,15 @@ public class Customer implements Serializable{
 		this.integral = value;
 	}
 
-public String toString() {
+	public Double getLockBalance() {
+		return lockBalance;
+	}
+
+	public void setLockBalance(Double lockBalance) {
+		this.lockBalance = lockBalance;
+	}
+
+	public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
 		.append("Id",getId())
 		.append("CreateBy",getCreateBy())
@@ -199,6 +229,8 @@ public String toString() {
 		.append("DrivingLicence",getDrivingLicence())
 		.append("OtherCard",getOtherCard())
 		.append("Integral",getIntegral())
+			.append("Img",getImg())
+			.append("AuthReason",getAuthReason())
 		.toString();
 }
 

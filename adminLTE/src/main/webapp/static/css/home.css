@@ -1,0 +1,56 @@
+
+#body{
+    width: 100%;
+    position: fixed;
+    top:0px;
+    bottom:0px;
+    background: url("../images/background/beijingtu.jpg") no-repeat;
+    background-size:100% 100%;
+}
+#body ul{
+    width: 100%;
+    margin-left: 20px;
+}
+#body .li{
+    margin:20px 20px;
+    width: 30%;
+    height:100px;
+    display:inline-block;
+    font-family: sans-serif;
+    font-size: larger;
+    font-color: white;
+    line-height: 100px;
+    text-align: center;
+}
+#body .li .abtn{
+    width: 100%;
+    height:100px;
+    background-color: #f6faff ;
+    letter-spacing:5px;
+    display:inline-block;
+    line-height: 100px;
+    border-radius: 10px;
+    text-decoration: none;
+    left:0;
+}
+#body .right1{
+   align:right;
+}
+#body .left1{
+    align:left;
+}
+#showOrder{
+    width: 100%;
+    height:30px;
+    line-height: 30px;
+    display:none;
+}
+#newOrderNumber{
+    width: 200px;
+    color:red;
+    text-align: center;
+    position:fixed;
+    top:20px;
+    right:20px;
+    background-color: #f6faff ;
+}

@@ -1,5 +1,6 @@
 package com.lte.admin.common.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 public class TreeNode {
@@ -9,6 +10,8 @@ public class TreeNode {
 	private String iconCls;
 	private String state;
 	private Map<String, String> attributes;
+	private List<TreeNode> children;
+
 
 	public String getId() {
 		return id;
@@ -50,4 +53,11 @@ public class TreeNode {
 		this.attributes = attributes;
 	}
 
+	public List<TreeNode> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<TreeNode> children) {
+		this.children = children;
+	}
 }

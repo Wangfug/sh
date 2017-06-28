@@ -11,17 +11,28 @@
 <body class="easyui-layout" data-options="fit: true">
 <div data-options="region:'north',split:true,border:false" style="padding:5px;height:auto;overflow: hidden;">
     	 <form id="searchFrom" action="">
-   				 <input type="hidden" name="filter_deptCode" id="filter_deptCode"/>
+   				 <%--<input type="hidden" name="filter_deptCode" id="filter_deptCode"/>--%>
+			 <input type="hidden" name="filter_deptCode" id="deptCode"/>
+			 <input type="hidden" name="filter_comCode" id="comCode"/>
         	    <input type="text" name="filter_memberCode" class="easyui-validatebox" data-options="width:150,prompt: '帐号'"/>
        	        <input type="text" name="filter_memberName" class="easyui-validatebox" data-options="width:150,prompt: '姓名'"/>
 		        <span class="toolbar-item dialog-tool-separator"></span>
-		        <a href="javascript(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="cx()">查询</a>
+		        <a href="javascript(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="cx()" id = "cxByDept">查询</a>
 		        <span class="toolbar-item dialog-tool-separator"></span>
 		        <a href="javascript(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="cpwd()">修改密码</a>
 		        <span class="toolbar-item dialog-tool-separator"></span>
-		        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-hamburg-suppliers" plain="true" onclick="userForRole()">用户角色</a>
-		        
-			</form>
+		        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-hamburg-suppliers" plain="true" onclick="userForRole()">用户岗位</a>
+			 <span class="toolbar-item dialog-tool-separator"></span>
+			 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-hamburg-suppliers" plain="true" onclick="add()">添加用户</a>
+			 <span class="toolbar-item dialog-tool-separator"></span>
+					<shiro:hasPermission name="sys:user:update">
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-hamburg-suppliers" plain="true" onclick="upd()">修改用户</a>
+					</shiro:hasPermission>
+			<span class="toolbar-item dialog-tool-separator"></span>
+					 <shiro:hasPermission name="sys:user:delete">
+						 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-hamburg-suppliers" plain="true" onclick="del()">删除用户</a>
+					 </shiro:hasPermission>
+		 </form>
 		
     </div>
        <div data-options="region:'center',split:true,border:false" >
@@ -44,31 +55,31 @@ var d;
 $(function(){   
 	
 	//部门树
-	$("#bmtree").tree({
+	/*$("#bmtree").tree({
 		url: "role/bmlist",
 		method:"get",
-		onSelect:function(node){ 
+		onSelect:function(node){*/
 			//alert("node:" + node);
 			//debugger;
 			//dg.datagrid("reload",{filter_deptcode:node.id,});
-			if(node.id==$("#filter_deptCode").val()){
+			/*if(node.id==$("#filter_deptCode").val()){
 				$("#filter_deptCode").val("");
 				$('#bmtree').find('.tree-node-selected').removeClass('tree-node-selected');
 			}else{
 				$("#filter_deptCode").val(node.id);
-			}
+			}*/
 			// alert(node.id); //选择某个节点时执行的函数；
-		 }
-	});	
+	/*	 }
+	});*/
 	
 	dg=$('#dg').datagrid({    
 	method: "post",
-    url:'${ctx}/system/user/json', 
+    url:'${ctx}/system/user/json',
     fit : true,
 	fitColumns : true,
 	border : false,
-	idField : 'member_code',
-	sortName: 'member_code',
+	idField : 'membercode',
+	sortName: 'membercode',
 	striped:true,
 	pagination:true,
 	rownumbers:true,
@@ -77,11 +88,13 @@ $(function(){
 	pageList : [ 10, 20, 30, 40, 50 ],
 	singleSelect:true,
     columns:[[    
-        {field:'memberCode',title:'帐号',sortable:true,width:100},    
-        {field:'memberName',title:'姓名',sortable:true,width:100},
-        {field:'companyName',title:'公司',sortable:true},
-        {field:'deptName',title:'部门',sortable:true,width:100},
-        {field:'jobName',title:'岗位',sortable:true,width:100},
+        {field:'membercode',title:'帐号',sortable:true,width:100},
+        {field:'membername',title:'姓名',sortable:true,width:100},
+        {field:'mobile',title:'手机号',sortable:false,width:100},
+        {field:'eno',title:'工号',sortable:false,width:100},
+        {field:'job',title:'岗位',sortable:true,width:100},
+        {field:'dept',title:'部门',sortable:false,width:100},
+        {field:'company',title:'门店',sortable:false,width:100}
 
     ]],
     headerContextMenu: [
@@ -100,19 +113,37 @@ $(function(){
     toolbar:'#tb'
 	});
 	$("#searchFrom :text").keydown(function (e) { if (e.which == 13) { cx();e.preventDefault(); } });
+
+
 	$("#bmtree").tree({
 		url: "role/bmlist",
 		method:"get",
-		onSelect:function(node){ 
+		onSelect:function(node){
+		    if(node.attributes.type == "部门"){
+				$("#deptCode").val(node.id);
+                $("#comCode").val(node.attributes.comCode);
+//                alert($("#deptCode").val()+"         "+$("#comCode").val());
+//                var obj=$("#searchFrom").serializeObject();
+//                dg.datagrid('load',obj);
+                $("#cxByDept").trigger("click");
+            }
+
 			//dg.datagrid("reload",{filter_deptcode:node.id,});
-			if(node.id==$("#filter_deptCode").val()){
-				$("#filter_deptCode").val("");
-				$('#bmtree').find('.tree-node-selected').removeClass('tree-node-selected');
-			}else{
-				$("#filter_deptCode").val(node.id);
-			}
+//			if(node.id==$("#filter_deptCode").val()){
+//				$("#filter_deptCode").val("");
+//				$('#bmtree').find('.tree-node-selected').removeClass('tree-node-selected');
+//			}else{
+//				$("#filter_deptCode").val(node.id);
+//			}
 			// alert(node.id); //选择某个节点时执行的函数；
-		 }
+		 },
+        onBeforeExpand:function(node,param){
+            $('#bmtree').tree('options').url = "role/bmlist?Id=" + node.id +"&type="+node.attributes.type;
+        }/*,
+        onExpand:function(node,param){
+            console.log(node)
+            console.log(param)
+        }*/
 	});
 });
 
@@ -190,13 +221,14 @@ function userForRole(){
 	    title: '用户角色管理',    
 	    width: 580,    
 	    height: 350,  
-	    href:'${ctx}/system/user/'+row.id+'/userRole',
+	    href:'${ctx}/system/user/'+row.membercode+'/userRole',
 	    maximizable:true,
 	    modal:true,
 	    buttons:[{
 			text:'确认',
 			handler:function(){
 				saveUserRole();
+                dg.datagrid('reload');
 				d.panel('close');
 			}
 		},{
@@ -261,7 +293,7 @@ function cpwd(){
 	    title: '修改密码',    
 	    width: 350,    
 	    height: 200,    
-	    href:'${ctx}/system/user/updateRyxxPwd/'+row.psncode,
+	    href:'${ctx}/system/user/updateRyxxPwd/'+row.membercode,
 	    maximizable:true,
 	    modal:true,
 	    buttons:[{

@@ -33,7 +33,7 @@
         
 </div>
 <table id="dg"></table> 
-<div id="dlg"></div>  
+<div id="dlg"></div>
 <script type="text/javascript">
 var dg;
 $(function(){   

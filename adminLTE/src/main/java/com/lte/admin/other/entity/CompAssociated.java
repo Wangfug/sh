@@ -40,6 +40,21 @@ public class CompAssociated implements Serializable{
 	private String remark;
     //attachment 	
 	private String attachment;
+
+	private Integer type;
+
+	//attachment
+	private String idCardNo;
+	private Integer 	idCardType;
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
 	public CompAssociated(){
 	}
 
@@ -49,8 +64,22 @@ public class CompAssociated implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public String getIdCardNo() {
+		return idCardNo;
+	}
+
+	public void setIdCardNo(String idCardNo) {
+		this.idCardNo = idCardNo;
+	}
+
+	public Integer getIdCardType() {
+		return idCardType;
+	}
+
+	public void setIdCardType(Integer idCardType) {
+		this.idCardType = idCardType;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -188,6 +217,9 @@ public String toString() {
 		.append("Phone",getPhone())
 		.append("Remark",getRemark())
 		.append("Attachment",getAttachment())
+			.append("Type",getType())
+			.append("IdCardNo",getIdCardNo())
+			.append("IdCardType",getIdCardType())
 		.toString();
 }
 

@@ -62,4 +62,7 @@ public class DictTypeService extends BaseService<DictType, Integer>{
 	public List<DictType> getCheck(DictType dict) {
 		return dictTypeDao.getCheck(dict);
 	}
+	public List<DictType> getChildrenByParent(String code) {
+		return dictTypeDao.getChildrenByParent(code);
+	}
 }

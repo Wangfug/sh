@@ -30,6 +30,19 @@ public class CustomerCredential implements Serializable{
 	private Long frontView;
     //backView 	
 	private Long backView;
+	//持有人
+	private Long customer;
+
+	private long credentialId;
+
+	public long getCredentialId() {
+		return credentialId;
+	}
+
+	public void setCredentialId(long credentialId) {
+		this.credentialId = credentialId;
+	}
+
 	public CustomerCredential(){
 	}
 
@@ -121,7 +134,15 @@ public class CustomerCredential implements Serializable{
 		this.backView = value;
 	}
 
-public String toString() {
+	public Long getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Long customer) {
+		this.customer = customer;
+	}
+
+	public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
 		.append("Id",getId())
 		.append("CreateBy",getCreateBy())
@@ -133,6 +154,7 @@ public String toString() {
 		.append("GetTime",getGetTime())
 		.append("FrontView",getFrontView())
 		.append("BackView",getBackView())
+		.append("Customer",getCustomer())
 		.toString();
 }
 

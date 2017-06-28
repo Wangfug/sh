@@ -1,15 +1,17 @@
 package com.lte.admin.system.web;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.lte.admin.car.entity.CarShops;
+import com.lte.admin.car.service.CarShopsService;
+import com.lte.admin.entity.*;
+import com.lte.admin.other.entity.TbaseCompany;
+import com.lte.admin.other.service.TbaseCompanyService;
+import com.lte.admin.system.service.DeptService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.session.Session;
@@ -30,17 +32,12 @@ import com.lte.admin.common.mapper.TreeNode;
 import com.lte.admin.common.persistence.Page;
 import com.lte.admin.common.persistence.PropertyFilter;
 import com.lte.admin.common.web.BaseController;
-import com.lte.admin.entity.Company;
-import com.lte.admin.entity.Dept;
-import com.lte.admin.entity.GwPermission;
-import com.lte.admin.entity.Role;
-import com.lte.admin.entity.Ryxx;
 import com.lte.admin.system.service.RolePermissionService;
 import com.lte.admin.system.service.RoleService;
 
 /**
  * 岗位角色controller
- * 
+ *
  * @author ty
  * @date 2015年1月13日
  */
@@ -53,10 +50,15 @@ public class RoleController extends BaseController {
 
 	@Autowired
 	private RolePermissionService rolePermissionService;
-
+	@Autowired
+	private TbaseCompanyService tbaseCompanyService;
+	@Autowired
+	private DeptService deptService;
+	@Autowired
+	private CarShopsService carShopsService;
 	/**
 	 * 默认页面
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
@@ -71,9 +73,9 @@ public class RoleController extends BaseController {
 	@RequestMapping(value = "json", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> getData(HttpServletRequest request) {
-		Page<Role> page = getPage(request);
+		Page<StaffJob> page = getPage(request);
 		Map<String, Object> filters = PropertyFilter.buildFromHttpRequest(request);
-		PageList<Role> page1 = roleService.searchall(page, filters);
+		PageList<StaffJob> page1 = roleService.searchall(page, filters);
 		return getEasyUIData(page1, request);
 	}
 
@@ -83,16 +85,18 @@ public class RoleController extends BaseController {
 	@RequiresPermissions("sys:role:view")
 	@RequestMapping(value = "jsona", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> getDataA(HttpServletRequest request) {
-		Page<Role> page = getPage(request);
+	public Map<String, Object> getDataA(HttpServletRequest request,String deptCode) {
+		Page<StaffJob> page = getPage(request);
 		Map<String, Object> filters = PropertyFilter.buildFromHttpRequest(request);
-		PageList<Role> page1 = roleService.search(page, filters);
+		filters.put("deptCode",deptCode);
+//		PageList<StaffJob> page1 = roleService.search(page, filters);
+		PageList<Map> page1 = roleService.search1(page, filters);
 		return getEasyUIData(page1, request);
 	}
 
 	/**
 	 * 获取角色拥有的权限ID集合
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -103,12 +107,27 @@ public class RoleController extends BaseController {
 		List<GwPermission> permissionIdList = rolePermissionService.getPermissionIds(id);
 		return permissionIdList;
 	}
+	/**
+	 * 获取角色拥有的权限ID集合
+	 *
+	 * @param id
+	 * @return
+	 */
+	/*@RequiresPermissions("sys:role:permView")
+	@RequestMapping("{id}/json")
+	@ResponseBody
+	public List<GwPermission> getRolePermissions(@PathVariable("id") String id) {
+		List<GwPermission> permissionIdList = rolePermissionService.getPermissionIds(id);
+		return permissionIdList;
+	}*/
+
+
 
 	/**
 	 * 修改角色权限
-	 * 
+	 *
 	 * @param id
-	 * @param newRoleList
+	 * @param
 	 * @return
 	 */
 	@RequiresPermissions("sys:role:permUpd")
@@ -145,6 +164,47 @@ public class RoleController extends BaseController {
 
 		return "success";
 	}
+	/**
+	 * 修改角色权限
+	 *
+	 * @param id
+	 * @param
+	 * @return
+	 */
+	/*@RequiresPermissions("sys:role:permUpd")
+	@RequestMapping(value = "{id}/updatePermission")
+	@ResponseBody
+	public String updateRolePermission(@PathVariable("id") String id, @RequestBody List<Long> newRoleIdList,
+									   HttpSession session) {
+		List<GwPermission> oldRoleIdList = rolePermissionService.getPermissionIds(id);
+
+		// 获取application中的sessions
+		@SuppressWarnings("rawtypes")
+		HashSet sessions = (HashSet) session.getServletContext().getAttribute("sessions");
+		if (null != sessions) {// 当前如果有正在使用的用户，需要更新正在使用的用户的权限
+
+			@SuppressWarnings("unchecked")
+			Iterator<Session> iterator = sessions.iterator();
+			PrincipalCollection pc = null;
+
+			// 遍历sessions
+			while (iterator.hasNext()) {
+				HttpSession s = (HttpSession) iterator.next();
+				Ryxx user = (Ryxx) s.getAttribute("user");
+				// if(user.getId()==id){
+				pc = (PrincipalCollection) s.getAttribute(user.getPkPsnbasdoc());
+				// 清空该用户权限缓存
+				rolePermissionService.clearUserPermCache(pc);
+				s.removeAttribute(user.getPkPsnbasdoc());
+				break;
+				// }
+			}
+		}
+
+		rolePermissionService.updateRolePermission(id, oldRoleIdList, newRoleIdList);
+
+		return "success";
+	}*/
 
 	/**
 	 * 添加角色跳转
@@ -155,7 +215,7 @@ public class RoleController extends BaseController {
 	@RequiresPermissions("sys:role:add")
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Model model) {
-		model.addAttribute("role", new Role());
+		model.addAttribute("role", new StaffJob());
 		model.addAttribute("action", "create");
 		return "system/roleForm";
 	}
@@ -170,7 +230,7 @@ public class RoleController extends BaseController {
 	@RequiresPermissions("sys:role:add")
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	@ResponseBody
-	public String create(@Valid Role role, Model model) {
+	public String create(@Valid StaffJob role, Model model) {
 		roleService.save(role);
 		return "success";
 	}
@@ -200,7 +260,7 @@ public class RoleController extends BaseController {
 	@RequiresPermissions("sys:role:update")
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@ResponseBody
-	public String update(@Valid @ModelAttribute("role") Role role, Model model) {
+	public String update(@Valid @ModelAttribute("role") StaffJob role, Model model) {
 		roleService.update(role);
 		return "success";
 	}
@@ -228,40 +288,68 @@ public class RoleController extends BaseController {
 
 	@RequestMapping(value = "bmlist", method = RequestMethod.GET)
 	@ResponseBody
-	public List<TreeNode> bmlist(@RequestParam(value = "id", defaultValue = "") String id) {
+	public List<TreeNode> bmlist(@RequestParam(value = "id", defaultValue = "") String id,@RequestParam(value = "type", defaultValue = "")String type) {
 		List<TreeNode> treeList = new ArrayList<TreeNode>();
 		if (StringUtils.isBlank(id)) {
-			List<Company> companyList = roleService.getCompanyListTree();
-			for (Company company : companyList) {
+			//门店取代公司
+//			List<Company> companyList = tbaseCompanyService.getCompanyListTree();
+			List<CarShops> companyRootList = carShopsService.getCarShopListTree();
+			for (CarShops carShops : companyRootList) {
 				TreeNode e = new TreeNode();
-				e.setId(company.getCompanyCode());
-				e.setText(company.getCompanyName());
+				e.setId(carShops.getShopCode());
+				e.setText(carShops.getShopName());
 				e.setState("closed");
-//				if (bm.getBm04().equals("1")) {
-//					e.setState("open");
-//				} else {
-//					e.setState("closed");
-//				}
+				Map<String,String> attrs = new HashMap<String,String>();
+				attrs.put("type","公司");
+				e.setAttributes(attrs);
 				treeList.add(e);
 			}
 		} else {
-			List<Dept> bmlist = roleService.getBmListTree(id);
-			
-			for (Dept dept : bmlist) {
-				TreeNode e = new TreeNode();
-				e.setId(dept.getDeptCode());
-				e.setText(dept.getDeptName());
-				e.setState("closed");
-//				if (bm.getBm04().equals("1")) {
-//					e.setState("open");
-//				} else {
-//					e.setState("closed");
-//				}
-				treeList.add(e);
-			}			
+			if("公司".equals(type)){
+				//根据公司找子公司
+//				List<TbaseCompany> companyList = tbaseCompanyService.getCompanyListTreeByParent(id);
+				List<CarShops> carShopsSubList = carShopsService.getCarShopsListTreeByParent(id);
+				for (CarShops carShops : carShopsSubList) {
+					TreeNode e = new TreeNode();
+					e.setId(carShops.getShopCode());
+					e.setText(carShops.getShopName());
+					e.setState("closed");
+					Map<String,String> attrs = new HashMap<String,String>();
+					attrs.put("type","公司");
+					e.setAttributes(attrs);
+					treeList.add(e);
+				}
+				//根据公司找部门
+				List<Dept> bmlist = deptService.getDeptListByCompany(id);
+				for (Dept dept : bmlist) {
+					TreeNode e = new TreeNode();
+					e.setId(dept.getDeptCode());
+					e.setText(dept.getDeptName());
+					e.setState("closed");
+					e.setIconCls("tree-file");
+					Map<String,String> attrs = new HashMap<String,String>();
+					attrs.put("type","部门");
+					attrs.put("comCode",dept.getCompanyCode());
+					e.setAttributes(attrs);
+					treeList.add(e);
+				}
+			}else if("部门".equals(type)){
+				//根据部门找子部门
+				List<Dept> bmlist = deptService.getBmListTreeByParent(id);
+				for (Dept dept : bmlist) {
+					TreeNode e = new TreeNode();
+					e.setId(dept.getDeptCode());
+					e.setText(dept.getDeptName());
+					e.setState("closed");
+					e.setIconCls("tree-file");
+					Map<String,String> attrs = new HashMap<String,String>();
+					attrs.put("type","部门");
+					attrs.put("comCode",dept.getCompanyCode());
+					e.setAttributes(attrs);
+					treeList.add(e);
+				}
+			}
 		}
-		
-
 		return treeList;
 	}
 }

@@ -53,12 +53,17 @@ public class LogController extends BaseController {
 	@ResponseBody
 	public Map<String, Object> list(HttpServletRequest request) {
 		Page<Log> logPage = getPage(request);
-		Map<String, Object> filters = PropertyFilter.buildFromHttpRequest(request);
-		if (filters.size() > 0) {
-			logPage.setPageNo(1);
+		PageList<Log> page1 = null;
+		try{
+			Map<String, Object> filters = PropertyFilter.buildFromHttpRequest(request);
+			if (filters.size() > 0) {
+				logPage.setPageNo(1);
+			}
+			page1= logService.search(logPage, filters);
+			// 构造easyui表格数据
+		}catch(Exception e){
+			return null;
 		}
-		PageList<Log> page1 = logService.search(logPage, filters);
-		// 构造easyui表格数据
 		return getEasyUIData(page1, request);
 	}
 

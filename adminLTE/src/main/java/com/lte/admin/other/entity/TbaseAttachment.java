@@ -29,7 +29,7 @@ public class TbaseAttachment implements Serializable{
     //附件 	
 	private String remark;
     //fileSize 	
-	private Integer fileSize;
+	private Long fileSize;
 	public TbaseAttachment(){
 	}
 
@@ -113,11 +113,11 @@ public class TbaseAttachment implements Serializable{
 		this.remark = value;
 	}
 		
-	public Integer getFileSize() {
+	public Long getFileSize() {
 		return this.fileSize;
 	}
 
-	public void setFileSize(Integer value) {
+	public void setFileSize(Long value) {
 		this.fileSize = value;
 	}
 

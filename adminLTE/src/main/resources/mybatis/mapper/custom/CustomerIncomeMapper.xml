@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lte.admin.mapper.custom.CustomerIncomeMapper" >
+  <resultMap id="BaseResultMap" type="com.lte.admin.custom.entity.CustomerIncome" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="income_order" property="incomeOrder" jdbcType="BIGINT" />
+    <result column="income_car" property="incomeCar" jdbcType="BIGINT" />
+    <result column="income_customer" property="incomeCustomer" jdbcType="BIGINT" />
+    <result column="income_account" property="incomeAccount" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, income_order, income_car, income_customer, income_account
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer_income
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getAllList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select
+    ci.*,c.name,car.car_code,o.order_no
+    from customer_income ci left join customer c on ci.income_customer = c.id
+    left join car on ci.income_car = car.id
+    left join order_info o on ci.income_order = o.id
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="name != null" >
+        and c.name  LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </if>
+      <if test="carCode != null" >
+        and car.car_code  LIKE CONCAT(CONCAT('%', #{carCode}), '%')
+      </if>
+      <if test="orderNo != null" >
+        and o.order_no  LIKE CONCAT(CONCAT('%', #{orderNo}), '%')
+      </if>
+    </trim>
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from customer_income
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lte.admin.custom.entity.CustomerIncome" >
+    insert into customer_income (id, create_by, create_time, 
+      income_order, income_car, income_customer, 
+      income_account)
+    values (#{id,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{incomeOrder,jdbcType=BIGINT}, #{incomeCar,jdbcType=BIGINT}, #{incomeCustomer,jdbcType=BIGINT}, 
+      #{incomeAccount,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lte.admin.custom.entity.CustomerIncome" >
+    insert into customer_income
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="incomeOrder != null" >
+        income_order,
+      </if>
+      <if test="incomeCar != null" >
+        income_car,
+      </if>
+      <if test="incomeCustomer != null" >
+        income_customer,
+      </if>
+      <if test="incomeAccount != null" >
+        income_account,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="incomeOrder != null" >
+        #{incomeOrder,jdbcType=BIGINT},
+      </if>
+      <if test="incomeCar != null" >
+        #{incomeCar,jdbcType=BIGINT},
+      </if>
+      <if test="incomeCustomer != null" >
+        #{incomeCustomer,jdbcType=BIGINT},
+      </if>
+      <if test="incomeAccount != null" >
+        #{incomeAccount,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lte.admin.custom.entity.CustomerIncome" >
+    update customer_income
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="incomeOrder != null" >
+        income_order = #{incomeOrder,jdbcType=BIGINT},
+      </if>
+      <if test="incomeCar != null" >
+        income_car = #{incomeCar,jdbcType=BIGINT},
+      </if>
+      <if test="incomeCustomer != null" >
+        income_customer = #{incomeCustomer,jdbcType=BIGINT},
+      </if>
+      <if test="incomeAccount != null" >
+        income_account = #{incomeAccount,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lte.admin.custom.entity.CustomerIncome" >
+    update customer_income
+    set create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      income_order = #{incomeOrder,jdbcType=BIGINT},
+      income_car = #{incomeCar,jdbcType=BIGINT},
+      income_customer = #{incomeCustomer,jdbcType=BIGINT},
+      income_account = #{incomeAccount,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -29,8 +29,8 @@
     select 
     <include refid="Base_Column_List" />
     from t_base_dict_type
-    where CODE = #{dictCode,jdbcType=VARCHAR}
-  </select> 
+    where code = #{dictCode,jdbcType=VARCHAR}
+  </select>
   <delete id="delZdlx" parameterType="java.lang.Long" >
     delete from t_base_dict_type
     where ID = #{id,jdbcType=BIGINT}
@@ -208,7 +208,7 @@
   <select id="findPZdlxList" resultMap="BaseResultMap" >
     select 
     <include refid="Base_Column_List" />
-    from t_base_dict_type where DELETE_FLAG=0 and PARENT_CODE=0 order by ID 
+    from t_base_dict_type where DELETE_FLAG='0' and PARENT_CODE='0'order by ID
   </select>
   <select id="findFZdlxList" resultMap="BaseResultMap" >
     select 
@@ -225,5 +225,11 @@
 	<if test="id !=null and id !='' " >
 		 <![CDATA[ and ID <>  #{id,jdbcType=DECIMAL} ]]>
 	</if>
+  </select>
+  <select id = "getChildrenByParent" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from t_base_dict_type where DELETE_FLAG=0
+    and PARENT_CODE = #{code,jdbcType=BIGINT}
   </select>
 </mapper>

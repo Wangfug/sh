@@ -52,6 +52,37 @@ public class OrderInfo implements Serializable{
 	private Double realPay;
     //finalFee 	
 	private Long finalFee;
+	//假删除标识
+	private Integer deleteFlag;
+	//取车方式：0：上门送取/1：门店自取
+	private String way;
+	//是否开具发票 0：开发票/1：不开发票
+	private String invoice;
+	//是否预授权：0：上门送取/1：门店自取
+	private String isPreAuthorized;
+	//支付状态 0：未支付/1：支付部分2:完全支付
+	private String payState;
+	//订单开始车辆里程
+	private String initialMileage;
+	//订单结束车辆里程
+	private String finalMileage;
+	//取车门店
+	private Long carShopGet;
+	//还车门店
+	private Long carShopReturn;
+	//取车地址
+	private String addressGet;
+	//订单结束车辆里程
+	private String addressReturn;
+
+	public String getWay() {
+		return way;
+	}
+
+	public void setWay(String way) {
+		this.way = way;
+	}
+
 	public OrderInfo(){
 	}
 
@@ -61,8 +92,54 @@ public class OrderInfo implements Serializable{
 		this.id = id;
 	}
 
-	
-		
+	public Long getCarShopGet() {
+		return carShopGet;
+	}
+
+	public void setCarShopGet(Long carShopGet) {
+		this.carShopGet = carShopGet;
+	}
+
+	public Long getCarShopReturn() {
+		return carShopReturn;
+	}
+
+	public void setCarShopReturn(Long carShopReturn) {
+		this.carShopReturn = carShopReturn;
+	}
+
+	public String getAddressGet() {
+		return addressGet;
+	}
+
+	public void setAddressGet(String addressGet) {
+		this.addressGet = addressGet;
+	}
+
+	public String getAddressReturn() {
+		return addressReturn;
+	}
+
+	public void setAddressReturn(String addressReturn) {
+		this.addressReturn = addressReturn;
+	}
+
+	public String getInitialMileage() {
+		return initialMileage;
+	}
+
+	public void setInitialMileage(String initialMileage) {
+		this.initialMileage = initialMileage;
+	}
+
+	public String getFinalMileage() {
+		return finalMileage;
+	}
+
+	public void setFinalMileage(String finalMileage) {
+		this.finalMileage = finalMileage;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -231,7 +308,39 @@ public class OrderInfo implements Serializable{
 		this.finalFee = value;
 	}
 
-public String toString() {
+	public Integer getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(Integer deleteFlag) {
+		this.deleteFlag = deleteFlag;
+	}
+
+	public String getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(String invoice) {
+		this.invoice = invoice;
+	}
+
+	public String getIsPreAuthorized() {
+		return isPreAuthorized;
+	}
+
+	public void setIsPreAuthorized(String isPreAuthorized) {
+		this.isPreAuthorized = isPreAuthorized;
+	}
+
+	public String getPayState() {
+		return payState;
+	}
+
+	public void setPayState(String payState) {
+		this.payState = payState;
+	}
+
+	public String toString() {
 	return new ToStringBuilder(this,org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE)
 		.append("Id",getId())
 		.append("CreateBy",getCreateBy())
@@ -254,6 +363,7 @@ public String toString() {
 		.append("RealCarType",getRealCarType())
 		.append("RealPay",getRealPay())
 		.append("FinalFee",getFinalFee())
+			.append("way",getWay())
 		.toString();
 }
 

@@ -1,5 +1,8 @@
 package com.lte.admin.custom.service;
 
+import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
+import com.github.miemiedev.mybatis.paginator.domain.PageList;
+import com.lte.admin.common.persistence.Page;
 import com.lte.admin.custom.entity.CustomerIncome;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,47 @@ import java.util.HashMap;
 public class CustomerIncomeService extends BaseService<CustomerIncome, Integer>{
 	@Autowired
 	private CustomerIncomeDao customerIncomeDao;
+	/**
+	 * 新增车辆门店信息
+	 * @param customerIncome
+	 * @return
+	 */
+	public String saveCustomerIncome(CustomerIncome customerIncome) {
+		return customerIncomeDao.saveCustomerIncome(customerIncome);
+	}
 
+	/**
+	 * 更新车辆门店信息
+	 * @param customerIncome
+	 * @return
+	 */
+	public String updateCustomerIncome(CustomerIncome customerIncome) {
+		return customerIncomeDao.updateCustomerIncome(customerIncome);
+	}
+
+	/**
+	 * 根据条件查询
+	 * @param page
+	 * @param filters
+	 * @return
+	 */
+	public PageList<CustomerIncome> getList(Page page, Map<String, Object> filters) {
+		PageBounds pb = createPageBounds(page);
+		return (PageList<CustomerIncome>) customerIncomeDao.getCustomerIncomeList(pb,filters);
+	}
+
+	/**
+	 * 根据主键查询
+	 * @param id
+	 * @return
+	 */
+	public CustomerIncome getOneCustomerIncome(long id){
+		return customerIncomeDao.getOneCustomerIncome(id);
+	}
+
+	public List<CustomerIncome> getList() {
+		return  customerIncomeDao.getList();
+	}
 		
 }
 

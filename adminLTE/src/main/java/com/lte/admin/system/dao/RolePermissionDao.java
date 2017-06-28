@@ -21,12 +21,12 @@ public class RolePermissionDao extends BaseDao {
 	/**
 	 * 查询角色拥有的权限id
 	 * 
-	 * @param roleId
+	 * @param jobCode
 	 * @return 结果集合
 	 */
 	@SuppressWarnings("unchecked")
-	public List<GwPermission> findPermissionIds(String roleId) {
-		return sqlSessionTemplate.selectList("findPermissionsByGw", roleId);
+	public List<GwPermission> findPermissionIds(String jobCode) {
+		return sqlSessionTemplate.selectList("com.lte.admin.mapper.JobPermissionMapper.findPermissionsByGw", jobCode);
 		// String hql="select rp.permission.id from RolePermission rp where
 		// rp.role.id=?0";
 		// Query query= createQuery(hql, roleId);
@@ -43,21 +43,21 @@ public class RolePermissionDao extends BaseDao {
 		GwPermission rp = new GwPermission();
 		rp.setPermissionId(permissionId);
 		rp.setPkOmJob(id);
-		sqlSessionTemplate.delete("deleteGP", rp);
+		sqlSessionTemplate.delete("com.lte.admin.mapper.JobPermissionMapper.deleteGP", rp);
 		// String hql="delete RolePermission rp where rp.role.id=?0 and
 		// rp.permission.id=?1";
 		// batchExecute(hql, roleId,permissionId);
 	}
 
 	public void save(GwPermission gwPermission) {
-		sqlSessionTemplate.insert("saveGwPermission", gwPermission);
+		sqlSessionTemplate.insert("com.lte.admin.mapper.JobPermissionMapper.insertSelective", gwPermission);
 	}
 
 	public List<GwPermission> findPermissionsByGwAndPID(String job, String permissionId) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("job", job);
 		map.put("permissionId", permissionId);
-		return sqlSessionTemplate.selectList("findPermissionsByGwAndPID", map);
+		return sqlSessionTemplate.selectList("com.lte.admin.mapper.JobPermissionMapper.findPermissionsByGwAndPID", map);
 	}
 
 }

@@ -11,11 +11,11 @@
 	<table>
 		<tr>
 			<td>密码：<input type="hidden" name="psncode" value="${user.psncode }"/></td>
-			<td><input id="plainPassword" name="plainPassword" type="password" class="required" minlength="6" maxlength="20"/></td>
+			<td><input id="plainPassword" name="plainPassword" type="password" class="easyui-validatebox" required="required" minlength="6" maxlength="20"/></td>
 		</tr>
 		<tr>
 			<td>确认密码：</td>
-			<td><input id="confirmPassword" name="confirmPassword" type="password" class="required" equalTo="#plainPassword"/></td>
+			<td><input id="confirmPassword" name="confirmPassword" type="password" class="easyui-validatebox" required="required" equalTo="#plainPassword"/></td>
 		</tr>
 		<tr>
 			<td><input id="submit" type="submit" value="submit" style="display: none"/></td>

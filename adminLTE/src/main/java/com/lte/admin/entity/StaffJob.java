@@ -14,6 +14,7 @@ public class StaffJob {
     private Byte deleteFlag;
 
     private Date updateTime;
+    private Long deptId;
 
     public Long getId() {
         return id;
@@ -61,5 +62,13 @@ public class StaffJob {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
     }
 }

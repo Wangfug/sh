@@ -24,11 +24,11 @@ public class UserRoleDao extends BaseDao {
 	 * @param userId
 	 * @param roleId
 	 */
-	public void deleteUR(String userId, Long roleId) {
+	public void deleteUR(String userId, String roleId) {
 		UserRole ur = new UserRole();
-		ur.setRoleId(roleId);
-		ur.setUserId(userId);
-		sqlSessionTemplate.delete("delUserRolesByUser", ur);
+		ur.setMemberCode(userId);
+		ur.setJobCode(roleId);
+		sqlSessionTemplate.delete("com.lte.admin.mapper.StaffJobMapper.delUserRolesByUser", ur);
 		// String hql="delete UserRole ur where ur.user.id=?0 and
 		// ur.role.id=?1";
 		// batchExecute(hql, userId,roleId);
@@ -48,12 +48,12 @@ public class UserRoleDao extends BaseDao {
 		// return query.list();
 	}
 
-	public List<UserRole> findRoleListByUserId(String userId) {
-		return sqlSessionTemplate.selectList("getUserRolesByUserId", userId);
+	public List<UserRole> findRoleListByUserId(String memberCode) {
+		return sqlSessionTemplate.selectList("com.lte.admin.mapper.StaffJobMapper.getUserRolesByUserId", memberCode);
 	}
 
 	public void save(UserRole userRole) {
-		sqlSessionTemplate.insert("saveUserRolesByUser", userRole);
+		sqlSessionTemplate.insert("com.lte.admin.mapper.StaffJobMapper.saveUserRolesByUser", userRole);
 
 	}
 
@@ -61,7 +61,10 @@ public class UserRoleDao extends BaseDao {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("userid", userId);
 		map.put("roleid", roleid + "");
-		return sqlSessionTemplate.selectList("getUserRolesByUserIdandroleid", map);
+		return sqlSessionTemplate.selectList("com.lte.admin.mapper.StaffJobMapper.getUserRolesByUserIdandroleid", map);
 	}
 
+    public String getDianyuan(String deptCode) {
+		return sqlSessionTemplate.selectOne("com.lte.admin.mapper.StaffJobMapper.getDianyuan", deptCode);
+    }
 }
